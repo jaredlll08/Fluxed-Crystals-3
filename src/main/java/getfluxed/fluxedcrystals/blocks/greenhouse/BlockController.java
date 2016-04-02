@@ -1,6 +1,5 @@
 package getfluxed.fluxedcrystals.blocks.greenhouse;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
@@ -10,7 +9,6 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -48,8 +46,7 @@ public class BlockController extends FCBlock implements ITileEntityProvider{
         List<BlockPos> sides = new ArrayList<>();
 
 
-        List<BlockPos> inner= new ArrayList<>();
-
+        List<BlockPos> inner = new ArrayList<>();
 
 
         int northSize = 0;
@@ -134,7 +131,7 @@ public class BlockController extends FCBlock implements ITileEntityProvider{
             }
         }
         southWest = southWest.offset(EnumFacing.UP, ySize);
-        BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.DOWN,1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.UP, 1)).forEach(blockPos -> inner.add(blockPos));
+        BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.DOWN, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.UP, 1)).forEach(inner::add);
         AxisAlignedBB bound = new AxisAlignedBB(northEast.offset(EnumFacing.UP, ySize), southWest);
         for(BlockPos bp : BlockPos.getAllInBox(northEast.offset(EnumFacing.UP, ySize), southWest)){
             if(!inner.contains(bp)){
@@ -143,27 +140,11 @@ public class BlockController extends FCBlock implements ITileEntityProvider{
                 System.out.println(bp);
             }
 
-            Predicate<EntitySmallFireball> predicate = new Predicate<EntitySmallFireball>()
-            {
-                @Override
-                public boolean apply(EntitySmallFireball input)
-                {
-                    //Check intersections with this entity a little bit over 1x1x1, because it seemed the outer layer of fireballs wasn't
-                    //included otherwise
-                    BlockPos pos = input.getPosition();
 
-                    return bound.intersects(pos.getX() - 0.1D, pos.getY() - 0.1D, pos.getZ() - 0.1D, pos.getX() + 1.1D, pos.getY() + 1.1D, pos.getZ() + 1.1D);
-                }
-            };
-            spawnedEntities.addAll(worldIn.getEntities(EntitySmallFireball.class, predicate));
-
-        }
-        for(Entity ent : spawnedEntities){
-            worldIn.spawnEntityInWorld(ent);
         }
 
         //Gets all the airblocks
-        BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.UP, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.DOWN, 1)).forEach(blockPos -> airPos.add(blockPos));
+        BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.UP, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.DOWN, 1)).forEach(airPos::add);
 
         //Checks for frames around
         for(BlockPos bp : BlockPos.getAllInBox(northEast, southWest)){
