@@ -1,0 +1,16 @@
+package getfluxed.fluxedcrystals.blocks.base;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+
+/**
+ * Created by Jared on 3/17/2016.
+ */
+public class FCBlock extends Block{
+
+
+    public FCBlock() {
+        super(Material.iron);
+        setHardness(1.5f);
+    }
+}
