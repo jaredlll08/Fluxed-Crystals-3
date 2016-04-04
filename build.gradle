@@ -20,7 +20,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 
-version = "1.0"
+version = "1.0.0"
 group= "us.getfluxed" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Fluxed-Crystals 3"
 
