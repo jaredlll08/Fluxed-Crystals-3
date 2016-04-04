@@ -3,7 +3,6 @@ package getfluxed.fluxedcrystals;
 import getfluxed.fluxedcrystals.blocks.FCBlocks;
 import getfluxed.fluxedcrystals.reference.Reference;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -21,7 +20,6 @@ public class FluxedCrystals {
 
 
     public static final Logger logger = LogManager.getLogger(Reference.modid);
-    public static final I18n translate = new I18n();
 
     public static long totalTime = 0;
 

@@ -133,14 +133,9 @@ public class BlockController extends FCBlock implements ITileEntityProvider{
         southWest = southWest.offset(EnumFacing.UP, ySize);
         BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.DOWN, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.UP, 1)).forEach(inner::add);
         AxisAlignedBB bound = new AxisAlignedBB(northEast.offset(EnumFacing.UP, ySize), southWest);
-        for(BlockPos bp : BlockPos.getAllInBox(northEast.offset(EnumFacing.UP, ySize), southWest)){
-            if(!inner.contains(bp)){
-                topLayer.add(bp);
-            }else{
-                System.out.println(bp);
-            }
-
-
+        for(BlockPos bp : bottomLayer){
+            bp = bp.offset(EnumFacing.UP, ySize);
+            topLayer.add(bp);
         }
 
         //Gets all the airblocks
