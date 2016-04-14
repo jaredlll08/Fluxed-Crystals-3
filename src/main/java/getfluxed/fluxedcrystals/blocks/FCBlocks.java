@@ -1,12 +1,12 @@
 package getfluxed.fluxedcrystals.blocks;
 
 import getfluxed.fluxedcrystals.FluxedCrystals;
-import getfluxed.fluxedcrystals.blocks.greenhouse.BlockController;
-import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoil;
+import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
+import getfluxed.fluxedcrystals.blocks.greenhouse.soil.BlockSoil;
 import getfluxed.fluxedcrystals.blocks.greenhouse.powerframes.BlockFrame;
 import getfluxed.fluxedcrystals.reference.Reference;
-import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityController;
-import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityFrame;
+import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
+import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
@@ -26,14 +26,16 @@ public class FCBlocks{
 
     public static Map<String, Block> renderMap = new HashMap<>();
 
-    public static Block ghController = new BlockController();
+    public static Block ghController = new BlockSoilController();
     public static Block ghFrame = new BlockFrame();
+    public static Block ghFrameGlass = new BlockFrame();
     public static Block ghSoil = new BlockSoil();
 
 
     public static void preInit(){
-        registerBlock(ghController, "ghController", TileEntityController.class);
-        registerBlock(ghFrame, "ghFrame", TileEntityFrame.class);
+        registerBlock(ghController, "ghSoilController", TileEntitySoilController.class);
+        registerBlock(ghFrameGlass, "ghFrameGlass", TileEntityMultiBlockComponent.class);
+        registerBlock(ghFrame, "ghFrame", TileEntityMultiBlockComponent.class);
         registerBlock(ghSoil, "ghSoil");
 
 
@@ -90,9 +92,9 @@ public class FCBlocks{
             File baseItem = new File(System.getProperty("user.home") + "/getFluxed/" + key + ".json");
 
             if(System.getProperty("user.home").endsWith("Jared")){
-                baseBlockState = new File(System.getProperty("user.home") + "/Documents/Github/Fluxed-Crystals 3/src/main/resources/assets/fluxedcrystals/blockstates/" + key + ".json");
-                baseBlockModel = new File(System.getProperty("user.home") + "/Documents/Github/Fluxed-Crystals 3/src/main/resources/assets/fluxedcrystals/models/block/" + key + ".json");
-                baseItem = new File(System.getProperty("user.home") + "/Documents/Github/Fluxed-Crystals 3/src/main/resources/assets/fluxedcrystals/models/item/" + key + ".json");
+                baseBlockState = new File(System.getProperty("user.home") + "/Documents/Github/Fluxed-Crystals-3/src/main/resources/assets/fluxedcrystals/blockstates/" + key + ".json");
+                baseBlockModel = new File(System.getProperty("user.home") + "/Documents/Github/Fluxed-Crystals-3/src/main/resources/assets/fluxedcrystals/models/block/" + key + ".json");
+                baseItem = new File(System.getProperty("user.home") + "/Documents/Github/Fluxed-Crystals-3/src/main/resources/assets/fluxedcrystals/models/item/" + key + ".json");
             }
             if(!baseBlockState.exists()){
                 baseBlockState.createNewFile();

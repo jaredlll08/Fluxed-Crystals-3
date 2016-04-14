@@ -1,7 +1,9 @@
 package getfluxed.fluxedcrystals;
 
 import getfluxed.fluxedcrystals.blocks.FCBlocks;
+import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.reference.Reference;
+import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -16,29 +18,28 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 
 @Mod(modid = Reference.modid, name = Reference.name, version = Reference.version, dependencies = Reference.dependencies)
-public class FluxedCrystals {
+public class FluxedCrystals{
 
 
     public static final Logger logger = LogManager.getLogger(Reference.modid);
-
     public static long totalTime = 0;
-
     public static boolean isDevEnv = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent e) {
+    public void preInit(FMLPreInitializationEvent e){
         logger.log(Level.INFO, "Starting PreInit");
         long time = System.currentTimeMillis();
 
         Reference.configDirectory = new File(e.getModConfigurationDirectory(), Reference.modid);
         FCBlocks.preInit();
+        PacketHandler.preInit();
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed PreInit in: " + time + "ms");
     }
 
     @EventHandler
-    public void init(FMLInitializationEvent e) {
+    public void init(FMLInitializationEvent e){
         logger.log(Level.INFO, "Starting Init");
         long time = System.currentTimeMillis();
 
@@ -49,9 +50,11 @@ public class FluxedCrystals {
     }
 
     @EventHandler
-    public void postInit(FMLPostInitializationEvent e) {
+    public void postInit(FMLPostInitializationEvent e){
         logger.log(Level.INFO, "Starting PostInit");
         long time = System.currentTimeMillis();
+        if(isDevEnv)
+            Minecraft.getMinecraft().refreshResources();
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed PostInit in: " + time + "ms");
@@ -59,7 +62,7 @@ public class FluxedCrystals {
 
 
     @EventHandler
-    public void loadComplete(FMLLoadCompleteEvent e) {
+    public void loadComplete(FMLLoadCompleteEvent e){
         logger.log(Level.INFO, "Starting LoadComplete");
         long time = System.currentTimeMillis();
         time = (System.currentTimeMillis() - time);

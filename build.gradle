@@ -1,6 +1,4 @@
-
 buildscript {
-    
     repositories {
         jcenter()
         maven {
@@ -12,7 +10,6 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
-
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
@@ -36,7 +33,7 @@ archivesBaseName = "Fluxed-Crystals 3"
 
 minecraft {
     useDepAts = true
-    version = "1.9-12.16.0.1776-1.9"
+    version = "1.9-12.16.0.1863-1.9"
     runDir = "run"
     mappings = "snapshot_20160312"
 }
@@ -48,7 +45,7 @@ repositories {
 }
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.9:3.0.3.166"
+   // deobfCompile "mezz.jei:jei_1.9:3.0.3.166"
 }
 
 processResources

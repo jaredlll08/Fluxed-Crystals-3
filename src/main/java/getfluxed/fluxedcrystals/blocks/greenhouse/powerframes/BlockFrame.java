@@ -1,20 +1,27 @@
 package getfluxed.fluxedcrystals.blocks.greenhouse.powerframes;
 
-import getfluxed.fluxedcrystals.blocks.base.FCBlock;
-import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityController;
-import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityFrame;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import getfluxed.fluxedcrystals.blocks.base.BlockMultiblockComponent;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Jared on 3/19/2016.
  */
-public class BlockFrame extends FCBlock implements ITileEntityProvider{
+public class BlockFrame extends BlockMultiblockComponent{
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer(){
+        return BlockRenderLayer.TRANSLUCENT;
+    }
+
+    public boolean isFullCube(IBlockState state){
+        return false;
+    }
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityFrame();
+    public boolean isOpaqueCube(IBlockState state){
+        return false;
     }
 
 }
