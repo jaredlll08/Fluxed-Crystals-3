@@ -4,7 +4,6 @@ import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController
 import getfluxed.fluxedcrystals.util.TextureUtils;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fluids.FluidStack;
 
 /**
  * Created by Jared on 4/14/2016.
@@ -12,18 +11,6 @@ import net.minecraftforge.fluids.FluidStack;
 public class RenderController extends TileEntitySpecialRenderer<TileEntitySoilController> {
 
 
-    /**
-     * calculate the rendering heights for all the liquids
-     *
-     * @param capacity Max capacity of smeltery, to calculate how much height one liquid takes up
-     * @param height   Maximum height, basically represents how much height full capacity is
-     * @param min      Minimum amount of height for a fluid. A fluid can never have less than this value height returned
-     * @return Array with heights corresponding to input-list liquids
-     */
-    public static int calcLiquidHeights(FluidStack fluid, int capacity, int height) {
-        float h = (float) fluid.amount / (float) capacity;
-        return (int) Math.ceil(h * (float) height);
-    }
 
     @Override
     public void renderTileEntityAt(TileEntitySoilController te, double x, double y, double z, float partialTicks, int destroyStage) {
@@ -39,11 +26,13 @@ public class RenderController extends TileEntitySpecialRenderer<TileEntitySoilCo
 
                 double currentLiquid = te.tank.getFluidAmount();
                 double maxLiquid = te.tank.getCapacity();
-                double height = ((currentLiquid / maxLiquid));
+                double height = ((currentLiquid / maxLiquid)) * (min.getY() * max.getY());
                 System.out.println(height);
 
 //                TextureUtils.renderFluidCuboid(te.tank.getFluid(), te.getPos(), x, y, z, 2, 3, 4, max.getY()  height - d, max.getY() - d);
-                TextureUtils.renderStackedFluidCuboid(te.tank.getFluid(), x, y, z, min, min, max, min.down().getY(), max.down().getY() + height);
+//                System.out.println(te.getMultiBlock().getAirBlocks().get(0));
+//                System.out.println(te.getPos());
+                TextureUtils.renderStackedFluidCuboid(te.tank.getFluid(), x, y, z, min, min, max, min.down().getY(), min.getY() + height);
 
             }
     }

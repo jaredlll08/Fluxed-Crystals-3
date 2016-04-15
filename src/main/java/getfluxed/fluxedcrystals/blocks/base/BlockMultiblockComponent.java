@@ -11,14 +11,14 @@ import net.minecraft.world.World;
 /**
  * Created by Jared on 4/11/2016.
  */
-public class BlockMultiblockComponent extends FCBlock implements ITileEntityProvider{
+public class BlockMultiblockComponent extends FCBlock implements ITileEntityProvider {
 
 
     @Override
-    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock){
+    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
         super.onNeighborBlockChange(worldIn, pos, state, neighborBlock);
         TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldIn.getTileEntity(pos);
-        if(tile.getMaster() != null){
+        if (tile.getMaster() != null) {
 
             //TODO remove this
 //            worldIn.getBlockState(tile.getMaster()).getBlock().onNeighborBlockChange(worldIn, pos, state, neighborBlock);
@@ -26,19 +26,17 @@ public class BlockMultiblockComponent extends FCBlock implements ITileEntityProv
     }
 
     @Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state){
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 //TODO remove this
         TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldIn.getTileEntity(pos);
-        if(tile.getMaster() != null){
-            System.out.println("before: "+tile.getMultiBlock().isActive());
+        if (tile.getMaster() != null) {
             tile.getMultiBlock().setActive(false);
-            System.out.println("after: "+tile.getMultiBlock().isActive());
         }
         super.breakBlock(worldIn, pos, state);
     }
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta){
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
         return new TileEntityMultiBlockComponent();
     }
 }

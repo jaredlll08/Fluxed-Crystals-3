@@ -61,7 +61,6 @@ public class MessageGHLoad implements IMessage, IMessageHandler<MessageGHLoad, I
     @Override
     public IMessage onMessage(MessageGHLoad message, MessageContext ctx) {
         TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.x, message.y, message.z));
-        System.out.println("called");
         if (tileEntity instanceof TileEntityMultiBlockComponent) {
 
             TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) tileEntity;

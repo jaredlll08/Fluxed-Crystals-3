@@ -48,80 +48,6 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
     private int tick;
 
 
-//    @Override
-//    public void onLoad(){
-//        super.onLoad();
-//        boolean active = true;
-//        if(getMultiBlock().isActive()){
-//            for(BlockPos bp : getMultiBlock().getAirBlocks()){
-//
-//                if(!worldObj.isAirBlock(bp)){
-//                    active = false;
-//                }else{
-//                    //                    worldObj.setBlockState(bp, Blocks.glass.getDefaultState());
-////                    TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
-////                    tile.setMaster(pos);
-//
-////                    if(!worldObj.isRemote)
-////                        PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
-//
-//                }
-//            }
-//            for(BlockPos bp : getMultiBlock().getSides()){
-//                if(!worldObj.isAirBlock(bp)){
-//                    if(!(worldObj.getTileEntity(bp) instanceof TileEntityMultiBlockComponent)){
-//                        active = false;
-//                    }else{
-//                        //                        worldObj.setBlockState(bp, Blocks.stained_glass.getStateFromMeta(6));
-//                        System.out.println(!worldObj.isRemote);
-//                        TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
-//                        tile.setMaster(pos);
-//                        if(!worldObj.isRemote)
-//                            PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
-//
-//                    }
-//                }
-//            }
-//            for(BlockPos bp : getMultiBlock().getBottomLayer()){
-//                if(!bp.equals(multiBlock.getMaster()))
-//                    if(!worldObj.isAirBlock(bp)){
-//                        if(!(worldObj.getTileEntity(bp) instanceof TileEntityMultiBlockComponent)){
-//
-//                            active = false;
-//                        }else{
-//                            //                            worldObj.setBlockState(bp, Blocks.dirt.getDefaultState());
-//                            TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
-//                            tile.setMaster(pos);
-//                            if(!worldObj.isRemote)
-//                                PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
-//
-//                        }
-//                    }
-//            }
-//            for(BlockPos bp : getMultiBlock().getTopLayer()){
-//                if(!worldObj.isAirBlock(bp)){
-//                    if(!(worldObj.getTileEntity(bp) instanceof TileEntityMultiBlockComponent)){
-//                        active = false;
-//                    }else{
-//                        TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
-//                        tile.setMaster(pos);
-//                        if(!worldObj.isRemote)
-//                            PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
-//
-//                        //                        worldObj.setBlockState(bp, Blocks.clay.getDefaultState());
-//                    }
-//                }
-//            }
-//            if(tank.getCapacity() == 0)
-//                this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
-//            if(!worldObj.isRemote)
-//                PacketHandler.INSTANCE.sendToAllAround(new MessageControllerSync(this), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
-//
-//            getMultiBlock().setActive(active);
-//
-//        }
-//    }
-
 
     public TileEntitySoilController() {
         multiBlock = new MultiBlock(getPos());
@@ -363,7 +289,6 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        System.out.println(compound.getCompoundTag("multiblock"));
         setMultiBlock(MultiBlock.readFromNBT(compound.getCompoundTag("multiblock")));
         NBTTagCompound tankTag = compound.getCompoundTag("tank");
         this.tank.readFromNBT(tankTag);
@@ -375,7 +300,6 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
         NBTTagCompound multi = new NBTTagCompound();
         MultiBlock.writeToNBT(multi, getMultiBlock());
         compound.setTag("multiblock", multi);
-        System.out.println(compound);
         NBTTagCompound tankTag = new NBTTagCompound();
         tank.writeToNBT(tankTag);
         compound.setTag("tank", tankTag);

@@ -59,7 +59,7 @@ public class FCBlocks{
 
 
     private static void registerBlock(Block block, String key){
-        block.setUnlocalizedName(key);//.setCreativeTab(MMItems.tab);
+        block.setUnlocalizedName(key).setCreativeTab(FluxedCrystals.tab);
         if(FluxedCrystals.isDevEnv)
             writeFile(block, key);
         renderMap.put(key, block);

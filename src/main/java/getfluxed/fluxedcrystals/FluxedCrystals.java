@@ -4,6 +4,7 @@ import getfluxed.fluxedcrystals.blocks.FCBlocks;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.proxy.IProxy;
 import getfluxed.fluxedcrystals.reference.Reference;
+import getfluxed.fluxedcrystals.util.CreativeTabFC;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -29,6 +30,8 @@ public class FluxedCrystals{
     @SidedProxy(clientSide = "getfluxed.fluxedcrystals.proxy.ClientProxy", serverSide = "getfluxed.fluxedcrystals.proxy.ServerProxy")
     public static IProxy proxy;
 
+
+    public static CreativeTabFC tab = new CreativeTabFC();
     @EventHandler
     public void preInit(FMLPreInitializationEvent e){
         logger.log(Level.INFO, "Starting PreInit");
