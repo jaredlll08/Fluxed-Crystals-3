@@ -2,11 +2,13 @@ package getfluxed.fluxedcrystals.blocks;
 
 import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
-import getfluxed.fluxedcrystals.blocks.greenhouse.soil.BlockSoil;
+import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockFluidIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.powerframes.BlockFrame;
+import getfluxed.fluxedcrystals.blocks.greenhouse.soil.BlockSoil;
 import getfluxed.fluxedcrystals.reference.Reference;
-import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
+import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
+import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityFluidIO;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
@@ -30,15 +32,14 @@ public class FCBlocks{
     public static Block ghFrame = new BlockFrame();
     public static Block ghFrameGlass = new BlockFrame();
     public static Block ghSoil = new BlockSoil();
-
+    public static Block ghFluidIO = new BlockFluidIO();
 
     public static void preInit(){
         registerBlock(ghController, "ghSoilController", TileEntitySoilController.class);
         registerBlock(ghFrameGlass, "ghFrameGlass", TileEntityMultiBlockComponent.class);
         registerBlock(ghFrame, "ghFrame", TileEntityMultiBlockComponent.class);
         registerBlock(ghSoil, "ghSoil");
-
-
+        registerBlock(ghFluidIO, "ghFluidIO", TileEntityFluidIO.class);
     }
 
 

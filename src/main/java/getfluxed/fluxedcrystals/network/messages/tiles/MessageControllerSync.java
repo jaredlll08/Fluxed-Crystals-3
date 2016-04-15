@@ -10,18 +10,18 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageControllerSync implements IMessage, IMessageHandler<MessageControllerSync, IMessage>{
+public class MessageControllerSync implements IMessage, IMessageHandler<MessageControllerSync, IMessage> {
 
     private int x;
     private int y;
     private int z;
     private MultiBlock multiBlock;
 
-    public MessageControllerSync(){
+    public MessageControllerSync() {
 
     }
 
-    public MessageControllerSync(TileEntitySoilController tile){
+    public MessageControllerSync(TileEntitySoilController tile) {
 
         this.x = tile.getPos().getX();
         this.y = tile.getPos().getY();
@@ -30,7 +30,7 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
     }
 
     @Override
-    public void fromBytes(ByteBuf buf){
+    public void fromBytes(ByteBuf buf) {
 
         this.x = buf.readInt();
         this.y = buf.readInt();
@@ -39,7 +39,7 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
     }
 
     @Override
-    public void toBytes(ByteBuf buf){
+    public void toBytes(ByteBuf buf) {
 
         buf.writeInt(this.x);
         buf.writeInt(this.y);
@@ -50,11 +50,14 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
 
 
     @Override
-    public IMessage onMessage(MessageControllerSync message, MessageContext ctx){
+    public IMessage onMessage(MessageControllerSync message, MessageContext ctx) {
         TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.x, message.y, message.z));
 
-        if(tileEntity instanceof TileEntitySoilController){
-            ((TileEntitySoilController) tileEntity).setMultiBlock(message.multiBlock);
+        if (tileEntity instanceof TileEntitySoilController) {
+            TileEntitySoilController tile = (TileEntitySoilController) tileEntity;
+            tile.setMultiBlock(message.multiBlock);
+            if (tile.tank != null)
+                tile.tank.setCapacity(message.multiBlock.getAirBlocks().size() * 16000);
         }
 
         return null;

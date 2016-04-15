@@ -4,9 +4,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -15,10 +17,10 @@ import java.util.List;
 public class MultiBlock{
 
     private BlockPos master;
-    private List<BlockPos> bottomLayer;
-    private List<BlockPos> topLayer;
-    private List<BlockPos> airBlocks;
-    private List<BlockPos> sides;
+    private LinkedList<BlockPos> bottomLayer;
+    private LinkedList<BlockPos> topLayer;
+    private LinkedList<BlockPos> airBlocks;
+    private LinkedList<BlockPos> sides;
     private boolean active;
 
     public MultiBlock(BlockPos master){
@@ -30,7 +32,7 @@ public class MultiBlock{
         this.active = false;
     }
 
-    public MultiBlock(BlockPos master, List<BlockPos> bottomLayer, List<BlockPos> topLayer, List<BlockPos> airBlocks, List<BlockPos> sides, boolean active){
+    public MultiBlock(BlockPos master, LinkedList<BlockPos> bottomLayer, LinkedList<BlockPos> topLayer, LinkedList<BlockPos> airBlocks, LinkedList<BlockPos> sides, boolean active) {
         this.master = master;
         this.bottomLayer = bottomLayer;
         this.topLayer = topLayer;
@@ -38,76 +40,6 @@ public class MultiBlock{
         this.sides = sides;
         this.active = active;
     }
-
-    public BlockPos getMaster(){
-        return master;
-    }
-
-    public void setMaster(BlockPos master){
-        this.master = master;
-    }
-
-    public List<BlockPos> getBottomLayer(){
-        return bottomLayer;
-    }
-
-    public void setBottomLayer(List<BlockPos> bottomLayer){
-        this.bottomLayer = bottomLayer;
-    }
-
-    public List<BlockPos> getTopLayer(){
-        return topLayer;
-    }
-
-    public void setTopLayer(List<BlockPos> topLayer){
-        this.topLayer = topLayer;
-    }
-
-    public List<BlockPos> getAirBlocks(){
-        return airBlocks;
-    }
-
-    public void setAirBlocks(List<BlockPos> airBlocks){
-        this.airBlocks = airBlocks;
-    }
-
-    public List<BlockPos> getSides(){
-        return sides;
-    }
-
-    public List<BlockPos> getAllBlocks(){
-        List<BlockPos> pos = new ArrayList<>();
-        pos.addAll(getAirBlocks());
-        pos.addAll(getBottomLayer());
-        pos.addAll(getSides());
-        pos.addAll(getTopLayer());
-        return pos;
-    }
-
-    public void setSides(List<BlockPos> sides){
-        this.sides = sides;
-    }
-
-    public boolean isActive(){
-        return active;
-    }
-
-    public void setActive(boolean active){
-        this.active = active;
-    }
-
-    @Override
-    public String toString(){
-        return "MultiBlock{" +
-                "master=" + master +
-                ", bottomLayer=" + bottomLayer +
-                ", topLayer=" + topLayer +
-                ", airBlocks=" + airBlocks +
-                ", sides=" + sides +
-                ", active=" + active +
-                '}';
-    }
-
 
     private static BlockPos readPosFromBB(ByteBuf buf){
         return new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
@@ -130,23 +62,22 @@ public class MultiBlock{
 
     }
 
-
     public static MultiBlock readFromNBT(NBTTagCompound tag){
         BlockPos master = readPosFromNBT(tag.getCompoundTag("master"));
-        List<BlockPos> bottomLayer = new ArrayList<>();
+        LinkedList<BlockPos> bottomLayer = new LinkedList<>();
         for(int i = 0; i < tag.getTagList("bottomLayer", Constants.NBT.TAG_COMPOUND).tagCount(); i++){
             bottomLayer.add(readPosFromNBT(tag.getTagList("bottomLayer", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
-        List<BlockPos> topLayer = new ArrayList<>();
+        LinkedList<BlockPos> topLayer = new LinkedList<>();
         for(int i = 0; i < tag.getTagList("topLayer", Constants.NBT.TAG_COMPOUND).tagCount(); i++){
             bottomLayer.add(readPosFromNBT(tag.getTagList("topLayer", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
-        List<BlockPos> airBlocks = new ArrayList<>();
+        LinkedList<BlockPos> airBlocks = new LinkedList<>();
         for(int i = 0; i < tag.getTagList("airBlocks", Constants.NBT.TAG_COMPOUND).tagCount(); i++){
             airBlocks.add(readPosFromNBT(tag.getTagList("airBlocks", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
 
-        List<BlockPos> sides = new ArrayList<>();
+        LinkedList<BlockPos> sides = new LinkedList<>();
         for(int i = 0; i < tag.getTagList("sides", Constants.NBT.TAG_COMPOUND).tagCount(); i++){
             sides.add(readPosFromNBT(tag.getTagList("sides", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
@@ -163,28 +94,28 @@ public class MultiBlock{
                 writePosToNBT(bpTag, bp);
                 bottomLayer.appendTag(bpTag);
             }
-            tag.setTag("bottomLayer", new NBTTagList());
+            tag.setTag("bottomLayer", bottomLayer);
             NBTTagList topLayer = new NBTTagList();
             for(BlockPos bp : multiBlock.getTopLayer()){
                 NBTTagCompound bpTag = new NBTTagCompound();
                 writePosToNBT(bpTag, bp);
                 topLayer.appendTag(bpTag);
             }
-            tag.setTag("topLayer", new NBTTagList());
+            tag.setTag("topLayer", topLayer);
             NBTTagList airBlocks = new NBTTagList();
             for(BlockPos bp : multiBlock.getAirBlocks()){
                 NBTTagCompound bpTag = new NBTTagCompound();
                 writePosToNBT(bpTag, bp);
                 airBlocks.appendTag(bpTag);
             }
-            tag.setTag("airBlocks", new NBTTagList());
+            tag.setTag("airBlocks", airBlocks);
             NBTTagList sides = new NBTTagList();
             for(BlockPos bp : multiBlock.getSides()){
                 NBTTagCompound bpTag = new NBTTagCompound();
                 writePosToNBT(bpTag, bp);
                 sides.appendTag(bpTag);
             }
-            tag.setTag("sides", new NBTTagList());
+            tag.setTag("sides", sides);
             tag.setBoolean("active", multiBlock.isActive());
         }else{
             tag.setTag("bottomLayer", new NBTTagList());
@@ -195,23 +126,22 @@ public class MultiBlock{
         }
     }
 
-
     public static MultiBlock readFromByteBuf(ByteBuf buf){
         BlockPos master = readPosFromBB(buf);
-        List<BlockPos> bottomLayer = new ArrayList<>();
+        LinkedList<BlockPos> bottomLayer = new LinkedList<>();
         for(int i = 0; i < buf.readInt(); i++){
             bottomLayer.add(readPosFromBB(buf));
         }
-        List<BlockPos> topLayer = new ArrayList<>();
+        LinkedList<BlockPos> topLayer = new LinkedList<>();
         for(int i = 0; i < buf.readInt(); i++){
             topLayer.add(readPosFromBB(buf));
         }
-        List<BlockPos> airBlocks = new ArrayList<>();
+        LinkedList<BlockPos> airBlocks = new LinkedList<>();
         for(int i = 0; i < buf.readInt(); i++){
             airBlocks.add(readPosFromBB(buf));
         }
 
-        List<BlockPos> sides = new ArrayList<>();
+        LinkedList<BlockPos> sides = new LinkedList<>();
         for(int i = 0; i < buf.readInt(); i++){
             sides.add(readPosFromBB(buf));
         }
@@ -247,4 +177,93 @@ public class MultiBlock{
             buf.writeBoolean(multiBlock.isActive());
         }
     }
+
+    public BlockPos getMaster() {
+        return master;
+    }
+
+    public void setMaster(BlockPos master) {
+        this.master = master;
+    }
+
+    public List<BlockPos> getBottomLayer() {
+        return bottomLayer;
+    }
+
+    public void setBottomLayer(LinkedList<BlockPos> bottomLayer) {
+        this.bottomLayer = bottomLayer;
+    }
+
+    public List<BlockPos> getTopLayer() {
+        return topLayer;
+    }
+
+    public void setTopLayer(LinkedList<BlockPos> topLayer) {
+        this.topLayer = topLayer;
+    }
+
+    public List<BlockPos> getAirBlocks() {
+        return airBlocks;
+    }
+
+    public void setAirBlocks(LinkedList<BlockPos> airBlocks) {
+        this.airBlocks = airBlocks;
+    }
+
+    public List<BlockPos> getSides() {
+        return sides;
+    }
+
+    public void setSides(LinkedList<BlockPos> sides) {
+        this.sides = sides;
+    }
+
+    public List<BlockPos> getAllBlocks() {
+        List<BlockPos> pos = new ArrayList<>();
+        pos.addAll(getAirBlocks());
+        pos.addAll(getBottomLayer());
+        pos.addAll(getSides());
+        pos.addAll(getTopLayer());
+        return pos;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public String toString() {
+        return "MultiBlock{" +
+                "master=" + master +
+                ", bottomLayer=" + bottomLayer +
+                ", topLayer=" + topLayer +
+                ", airBlocks=" + airBlocks +
+                ", sides=" + sides +
+                ", active=" + active +
+                '}';
+    }
+
+    public boolean containsModule(World world, IGreenHouseModule module) {
+        for (BlockPos bp : getSides()) {
+            if (world.getTileEntity(bp) instanceof IGreenHouseModule) {
+                if (((IGreenHouseModule) world.getTileEntity(bp)).getName().equals(module.getName())) {
+                    return true;
+                }
+            }
+        }
+        for (BlockPos bp : getTopLayer()) {
+            if (world.getTileEntity(bp) instanceof IGreenHouseModule) {
+                if (((IGreenHouseModule) world.getTileEntity(bp)).getName().equals(module.getName())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 }

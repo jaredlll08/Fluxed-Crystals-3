@@ -2,11 +2,12 @@ package getfluxed.fluxedcrystals;
 
 import getfluxed.fluxedcrystals.blocks.FCBlocks;
 import getfluxed.fluxedcrystals.network.PacketHandler;
+import getfluxed.fluxedcrystals.proxy.IProxy;
 import getfluxed.fluxedcrystals.reference.Reference;
-import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -25,6 +26,9 @@ public class FluxedCrystals{
     public static long totalTime = 0;
     public static boolean isDevEnv = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
+    @SidedProxy(clientSide = "getfluxed.fluxedcrystals.proxy.ClientProxy", serverSide = "getfluxed.fluxedcrystals.proxy.ServerProxy")
+    public static IProxy proxy;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent e){
         logger.log(Level.INFO, "Starting PreInit");
@@ -33,6 +37,7 @@ public class FluxedCrystals{
         Reference.configDirectory = new File(e.getModConfigurationDirectory(), Reference.modid);
         FCBlocks.preInit();
         PacketHandler.preInit();
+        proxy.registerRenderers();
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed PreInit in: " + time + "ms");
@@ -53,8 +58,6 @@ public class FluxedCrystals{
     public void postInit(FMLPostInitializationEvent e){
         logger.log(Level.INFO, "Starting PostInit");
         long time = System.currentTimeMillis();
-        if(isDevEnv)
-            Minecraft.getMinecraft().refreshResources();
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed PostInit in: " + time + "ms");
