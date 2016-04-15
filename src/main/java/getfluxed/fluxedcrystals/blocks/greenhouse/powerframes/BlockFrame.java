@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockFrame extends BlockMultiblockComponent{
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer(){
-        return BlockRenderLayer.TRANSLUCENT;
+        return BlockRenderLayer.CUTOUT;
     }
 
     public boolean isFullCube(IBlockState state){
