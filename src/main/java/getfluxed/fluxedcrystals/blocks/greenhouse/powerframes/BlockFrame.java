@@ -13,9 +13,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Jared on 3/19/2016.
  */
-public class BlockFrame extends BlockMultiblockComponent{
+public class BlockFrame extends BlockMultiblockComponent {
     @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer(){
+    public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
@@ -24,23 +24,23 @@ public class BlockFrame extends BlockMultiblockComponent{
         IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
         Block block = iblockstate.getBlock();
 
-        if (blockState != iblockstate) {
+        if (!blockState.equals(iblockstate)) {
             return true;
         }
 
-        if (block == this) {
+        if (block instanceof BlockFrame) {
             return false;
         }
 
         return block instanceof BlockFrame ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
-    public boolean isFullCube(IBlockState state){
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state){
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
