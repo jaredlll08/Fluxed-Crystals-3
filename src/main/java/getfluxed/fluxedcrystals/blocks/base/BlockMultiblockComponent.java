@@ -29,7 +29,7 @@ public class BlockMultiblockComponent extends FCBlock implements ITileEntityProv
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 //TODO remove this
         TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldIn.getTileEntity(pos);
-        if (tile.getMaster() != null) {
+        if (tile.getMaster() != null && tile.getMultiBlock() != null) {
             tile.getMultiBlock().setActive(false);
         }
         super.breakBlock(worldIn, pos, state);

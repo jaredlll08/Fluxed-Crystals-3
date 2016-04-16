@@ -32,17 +32,6 @@ import java.util.LinkedList;
 public class TileEntitySoilController extends TileEntity implements ITickable, IGreenHouseComponent {
 
     public FluidTank tank;
-    //    @Override
-//    public void onLoad() {
-//        super.onLoad();
-//        checkMultiblock();
-//        if (getMultiBlock().isActive()) {
-//            this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
-//        }
-//        if (!worldObj.isRemote)
-//            PacketHandler.INSTANCE.sendToAllAround(new MessageControllerSync(this), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
-//
-//    }
     boolean firstTicked = false;
     private MultiBlock multiBlock;
     private int tick;
@@ -67,8 +56,12 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
             firstTicked = true;
 
         }
+
         if (tick % 40 == 0) {
             if (!getMultiBlock().isActive()) {
+                if (multiBlock.getMaster().equals(new BlockPos(0, 0, 0))) {
+                    multiBlock.setMaster(getPos());
+                }
                 checkMultiblock();
                 if (getMultiBlock().isActive()) {
                     this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
@@ -123,156 +116,157 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
     }
 
     public boolean checkMultiblock() {
-        long time = System.currentTimeMillis();
+        if (isMaster()) {
+            long time = System.currentTimeMillis();
 
-        LinkedList<BlockPos> airPos = new LinkedList<>();
-        LinkedList<BlockPos> bottomLayer = new LinkedList<>();
-        LinkedList<BlockPos> topLayer = new LinkedList<>();
-        LinkedList<BlockPos> sides = new LinkedList<>();
-        LinkedList<BlockPos> inner = new LinkedList<>();
+            LinkedList<BlockPos> airPos = new LinkedList<>();
+            LinkedList<BlockPos> bottomLayer = new LinkedList<>();
+            LinkedList<BlockPos> topLayer = new LinkedList<>();
+            LinkedList<BlockPos> sides = new LinkedList<>();
+            LinkedList<BlockPos> inner = new LinkedList<>();
 
 
-        int northSize = 0;
-        int southSize = 0;
-        int eastSize = 0;
-        int westSize = 0;
+            int northSize = 0;
+            int southSize = 0;
+            int eastSize = 0;
+            int westSize = 0;
 
-        BlockPos southWest = pos;
-        BlockPos northEast = pos;
-        for (EnumFacing fac : EnumFacing.HORIZONTALS) {
-            int count = 0;
-            while (getWorld().getBlockState(pos.offset(fac, ++count)).getBlock() instanceof BlockSoil) {
+            BlockPos southWest = pos;
+            BlockPos northEast = pos;
+            for (EnumFacing fac : EnumFacing.HORIZONTALS) {
+                int count = 0;
+                while (getWorld().getBlockState(pos.offset(fac, ++count)).getBlock() instanceof BlockSoil) {
+                }
+                count--;
+
+                switch (fac) {
+                    case NORTH:
+                        if (northSize == 0 || northSize > count) {
+                            northSize = count;
+                        }
+                        break;
+                    case SOUTH:
+                        if (southSize == 0 || southSize > count) {
+                            southSize = count;
+                        }
+                        break;
+                    case EAST:
+                        if (eastSize == 0 || eastSize > count) {
+                            eastSize = count;
+                        }
+                        break;
+                    case WEST:
+                        if (westSize == 0 || westSize > count) {
+                            westSize = count;
+                        }
+                        break;
+                }
+
+
             }
-            count--;
+            northEast = northEast.offset(EnumFacing.EAST, eastSize + 1).offset(EnumFacing.NORTH, northSize + 1);
+            southWest = southWest.offset(EnumFacing.SOUTH, southSize + 1).offset(EnumFacing.WEST, westSize + 1);
 
-            switch (fac) {
-                case NORTH:
-                    if (northSize == 0 || northSize > count) {
-                        northSize = count;
+            boolean completeStructure = true;
+            int ySize = 0;
+
+            //Checks gets the bottom layer
+            for (BlockPos bp : BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1))) {
+                if (getWorld().getBlockState(bp).getBlock() instanceof BlockSoil || bp.equals(getPos())) {
+                    bottomLayer.add(bp);
+                } else {
+                    return false;
+                }
+
+
+                //Counts the height of the structure (excluding base platform)
+                int y = 1;
+                while ((getWorld().isAirBlock(bp.offset(EnumFacing.UP, y)) || y == 0) && y < 256) {
+                    y++;
+                }
+                if (y == 1 || y == 256 || y < ySize) {
+                    return false;
+                }
+                ySize = y;
+
+            }
+            for (int y = 1; y < ySize; y++) {
+                if (!checkAirLayer(getWorld(), northEast.offset(EnumFacing.UP, y), southWest.offset(EnumFacing.UP, y))) {
+                    return false;
+                }
+
+            }
+            southWest = southWest.offset(EnumFacing.UP, ySize);
+            BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.DOWN, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.UP, 1)).forEach(inner::add);
+            for (BlockPos bp : bottomLayer) {
+                topLayer.add(bp.offset(EnumFacing.UP, ySize));
+            }
+
+            //Gets all the airblocks
+            BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.UP, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.DOWN, 1)).forEach(airPos::add);
+
+            //Checks for frames around
+            for (BlockPos bp : BlockPos.getAllInBox(northEast, southWest)) {
+                if (!inner.contains(bp)) {
+                    sides.add(bp);
+                }
+            }
+
+            //TODO check all arrays here
+            for (BlockPos bp : sides) {
+                if (!(worldObj.getTileEntity(bp) instanceof IFrame)) {
+                    return false;
+                } else {
+                    TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
+                    tile.setMaster(pos);
+                    if (!worldObj.isRemote)
+                        PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 128D));
+
+                }
+            }
+            for (BlockPos bp : bottomLayer) {
+                if (!(worldObj.getBlockState(bp).getBlock() instanceof BlockSoil) && !bp.equals(getPos())) {
+                    return false;
+                } else {
+                    if (!(worldObj.getBlockState(bp).getBlock() instanceof BlockSoilController)) {
+                        TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
+                        tile.setMaster(pos);
+                        if (!worldObj.isRemote)
+                            PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
                     }
-                    break;
-                case SOUTH:
-                    if (southSize == 0 || southSize > count) {
-                        southSize = count;
-                    }
-                    break;
-                case EAST:
-                    if (eastSize == 0 || eastSize > count) {
-                        eastSize = count;
-                    }
-                    break;
-                case WEST:
-                    if (westSize == 0 || westSize > count) {
-                        westSize = count;
-                    }
-                    break;
+                }
             }
-
-
-        }
-        northEast = northEast.offset(EnumFacing.EAST, eastSize + 1).offset(EnumFacing.NORTH, northSize + 1);
-        southWest = southWest.offset(EnumFacing.SOUTH, southSize + 1).offset(EnumFacing.WEST, westSize + 1);
-
-        boolean completeStructure = true;
-        int ySize = 0;
-
-        //Checks gets the bottom layer
-        for (BlockPos bp : BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1))) {
-            if (getWorld().getBlockState(bp).getBlock() instanceof BlockSoil || getWorld().getBlockState(bp).getBlock() instanceof BlockSoilController) {
-                bottomLayer.add(bp);
-            } else {
-                return false;
-            }
-
-
-            //Counts the height of the structure (excluding base platform)
-            int y = 1;
-            while ((getWorld().isAirBlock(bp.offset(EnumFacing.UP, y)) || y == 0) && y < 256) {
-                y++;
-            }
-            if (y == 1 || y == 256 || y < ySize) {
-                return false;
-            }
-            ySize = y;
-
-        }
-        for (int y = 1; y < ySize; y++) {
-            if (!checkAirLayer(getWorld(), northEast.offset(EnumFacing.UP, y), southWest.offset(EnumFacing.UP, y))) {
-                return false;
-            }
-
-        }
-        southWest = southWest.offset(EnumFacing.UP, ySize);
-        BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.DOWN, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.UP, 1)).forEach(inner::add);
-        for (BlockPos bp : bottomLayer) {
-            topLayer.add(bp.offset(EnumFacing.UP, ySize));
-        }
-
-        //Gets all the airblocks
-        BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.UP, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.DOWN, 1)).forEach(airPos::add);
-
-        //Checks for frames around
-        for (BlockPos bp : BlockPos.getAllInBox(northEast, southWest)) {
-            if (!inner.contains(bp)) {
-                sides.add(bp);
-            }
-        }
-
-        //TODO check all arrays here
-        for (BlockPos bp : sides) {
-            if (!(worldObj.getTileEntity(bp) instanceof IFrame)) {
-                return false;
-            } else {
-                TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
-                tile.setMaster(pos);
-                if (!worldObj.isRemote)
-                    PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 128D));
-
-            }
-        }
-        for (BlockPos bp : bottomLayer) {
-            if (!(worldObj.getBlockState(bp).getBlock() instanceof BlockSoil) && !(worldObj.getBlockState(bp).getBlock() instanceof BlockSoilController)) {
-                return false;
-            } else {
-                if (!(worldObj.getBlockState(bp).getBlock() instanceof BlockSoilController)) {
+            for (BlockPos bp : topLayer) {
+                if (!(worldObj.getTileEntity(bp) instanceof IFrame)) {
+                    return false;
+                } else {
                     TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
                     tile.setMaster(pos);
                     if (!worldObj.isRemote)
                         PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
+
                 }
             }
-        }
-        for (BlockPos bp : topLayer) {
-            if (!(worldObj.getTileEntity(bp) instanceof IFrame)) {
-                return false;
-            } else {
-                TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
-                tile.setMaster(pos);
-                if (!worldObj.isRemote)
-                    PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
-
+            for (BlockPos bp : airPos) {
+                if (!worldObj.isAirBlock(bp)) {
+                    return false;
+                } else {
+                }
             }
-        }
-        for (BlockPos bp : airPos) {
-            if (!worldObj.isAirBlock(bp)) {
-                return false;
+
+
+            if (completeStructure) {
+                MultiBlock multiBlock = new MultiBlock(pos, bottomLayer, topLayer, airPos, sides, true);
+                setMultiBlock(multiBlock);
+                this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
             } else {
             }
+            //        if(!worldObj.isRemote)
+            //            PacketHandler.INSTANCE.sendToAllAround(new MessageControllerSync(this), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
+            time = (System.currentTimeMillis() - time);
+            AxisAlignedBB multiblock = new AxisAlignedBB(northEast, southWest);
+            FluxedCrystals.logger.log(Level.INFO, String.format("Completed a %sx%sx%s structure in: %s ms", (int) multiblock.maxX - (int) multiblock.minX + 1, (int) multiblock.maxY - (int) multiblock.minY + 1, (int) multiblock.maxZ - (int) multiblock.minZ + 1, time));
         }
-
-
-        if (completeStructure) {
-            MultiBlock multiBlock = new MultiBlock(pos, bottomLayer, topLayer, airPos, sides, true);
-            setMultiBlock(multiBlock);
-            this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
-        } else {
-        }
-        //        if(!worldObj.isRemote)
-        //            PacketHandler.INSTANCE.sendToAllAround(new MessageControllerSync(this), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
-        time = (System.currentTimeMillis() - time);
-        AxisAlignedBB multiblock = new AxisAlignedBB(northEast, southWest);
-        FluxedCrystals.logger.log(Level.INFO, String.format("Completed a %sx%sx%s structure in: %s ms", (int) multiblock.maxX - (int) multiblock.minX + 1, (int) multiblock.maxY - (int) multiblock.minY + 1, (int) multiblock.maxZ - (int) multiblock.minZ + 1, time));
-
         return false;
     }
 
