@@ -37,7 +37,7 @@ public class TileEntityMultiBlockComponent extends TileEntity implements IGreenH
 
     @Override
     public MultiBlock getMultiBlock() {
-        if (getWorld() != null && getMaster() != null && !getMaster().equals(new BlockPos(0, 0, 0))) {
+        if (getWorld() != null && getMaster() != null && !getMaster().equals(new BlockPos(0, 0, 0)) && getWorld().getTileEntity(getMaster()) != null) {
             return ((IGreenHouseComponent) getWorld().getTileEntity(getMaster())).getMultiBlock();
         }
         return null;

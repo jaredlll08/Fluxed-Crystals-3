@@ -104,7 +104,7 @@ public class TileEntityFluidIO extends TileEntityMultiBlockComponent implements 
 
     @Override
     public boolean canFill(EnumFacing from, Fluid fluid) {
-        if (getWorld() != null && getMaster() != null && getMultiBlock() != null && getMultiBlock().isActive()) {
+        if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
             TileEntitySoilController tile = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
             Fluid tankFluid = getFluidType();
             return tankFluid == null || (tankFluid == fluid && tile.tank.getFluidAmount() < tile.tank.getCapacity());
@@ -113,7 +113,7 @@ public class TileEntityFluidIO extends TileEntityMultiBlockComponent implements 
     }
 
     public Fluid getFluidType() {
-        if (getMaster() != null && getMultiBlock().isActive()) {
+        if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
             TileEntitySoilController tile = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
             return tile.tank.getFluid() != null ? tile.tank.getFluid().getFluid() : null;
         }
@@ -122,7 +122,7 @@ public class TileEntityFluidIO extends TileEntityMultiBlockComponent implements 
 
     @Override
     public boolean canDrain(EnumFacing from, Fluid fluid) {
-        if (getMaster() != null && getMultiBlock().isActive()) {
+        if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
             Fluid tankFluid = getFluidType();
             return tankFluid != null && tankFluid == fluid;
         }

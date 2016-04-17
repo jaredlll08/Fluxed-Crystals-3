@@ -1,15 +1,16 @@
 package getfluxed.fluxedcrystals.tileentities.greenhouse;
 
+import cofh.api.energy.EnergyStorage;
 import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.api.multiblock.IFrame;
 import getfluxed.fluxedcrystals.api.multiblock.IGreenHouseComponent;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
+import getfluxed.fluxedcrystals.blocks.greenhouse.powerframes.BlockFrameBattery;
 import getfluxed.fluxedcrystals.blocks.greenhouse.soil.BlockSoil;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageControllerSync;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageGHLoad;
-import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -34,19 +35,21 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
     public FluidTank tank;
     boolean firstTicked = false;
     private MultiBlock multiBlock;
+    private EnergyStorage energyStorage;
     private int tick;
-
 
 
     public TileEntitySoilController() {
         multiBlock = new MultiBlock(getPos());
         tank = new FluidTank(0);
+        energyStorage = new EnergyStorage(0);
     }
 
     @Override
     public void update() {
         if (getWorld() != null && !firstTicked) {
-            checkMultiblock();
+
+            this.getEnergyStorage().setCapacity(checkMultiblock());
             if (getMultiBlock().isActive()) {
                 this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
             }
@@ -62,7 +65,7 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
                 if (multiBlock.getMaster().equals(new BlockPos(0, 0, 0))) {
                     multiBlock.setMaster(getPos());
                 }
-                checkMultiblock();
+                this.getEnergyStorage().setCapacity(checkMultiblock());
                 if (getMultiBlock().isActive()) {
                     this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
                 }
@@ -70,23 +73,16 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
                     PacketHandler.INSTANCE.sendToAllAround(new MessageControllerSync(this), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
 
             }
+            System.out.println("side: " + getEnergyStorage().getEnergyStored() + ":" + getEnergyStorage().getMaxEnergyStored());
         }
 
-        if (getMultiBlock() != null && getMultiBlock().getAirBlocks() != null)
-            for (BlockPos bp : getMultiBlock().getAirBlocks()) {
-                if (worldObj.isRemote) {
-                    EntitySmallFireball ball = new EntitySmallFireball(getWorld(), bp.getX() + 0.5, bp.getY() + 0.5, bp.getZ() + 0.5, 0, 0, 0);
-                    //                    worldObj.spawnEntityInWorld(ball);
-                    ball.setDead();
-                }
-            }
         tick = (tick + 1);
         //        System.out.println(tank.getCapacity());
     }
 
     @Override
     public boolean isMaster() {
-        return multiBlock.getMaster().equals(getPos());
+        return multiBlock.getMaster().equals(getPos()) || multiBlock.getMaster().equals(new BlockPos(0, 0, 0));
     }
 
     @Override
@@ -115,7 +111,7 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
         getMultiBlock().setActive(false);
     }
 
-    public boolean checkMultiblock() {
+    public int checkMultiblock() {
         if (isMaster()) {
             long time = System.currentTimeMillis();
 
@@ -175,7 +171,8 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
                 if (getWorld().getBlockState(bp).getBlock() instanceof BlockSoil || bp.equals(getPos())) {
                     bottomLayer.add(bp);
                 } else {
-                    return false;
+                    System.out.println("bottom was null");
+                    return 0;
                 }
 
 
@@ -185,14 +182,16 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
                     y++;
                 }
                 if (y == 1 || y == 256 || y < ySize) {
-                    return false;
+                    System.out.println("y is less");
+                    return 0;
                 }
                 ySize = y;
 
             }
             for (int y = 1; y < ySize; y++) {
                 if (!checkAirLayer(getWorld(), northEast.offset(EnumFacing.UP, y), southWest.offset(EnumFacing.UP, y))) {
-                    return false;
+                    System.out.println("air was not air");
+                    return 0;
                 }
 
             }
@@ -211,14 +210,18 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
                     sides.add(bp);
                 }
             }
-
+            int energyCapacity = 0;
             //TODO check all arrays here
             for (BlockPos bp : sides) {
                 if (!(worldObj.getTileEntity(bp) instanceof IFrame)) {
-                    return false;
+                    System.out.println("side was not a frame");
+                    return 0;
                 } else {
                     TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
                     tile.setMaster(pos);
+                    if (worldObj.getBlockState(bp).getBlock() instanceof BlockFrameBattery) {
+                        energyCapacity += ((BlockFrameBattery) worldObj.getBlockState(bp).getBlock()).getCapacity();
+                    }
                     if (!worldObj.isRemote)
                         PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 128D));
 
@@ -226,7 +229,8 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
             }
             for (BlockPos bp : bottomLayer) {
                 if (!(worldObj.getBlockState(bp).getBlock() instanceof BlockSoil) && !bp.equals(getPos())) {
-                    return false;
+                    System.out.println("soil was not soil");
+                    return 0;
                 } else {
                     if (!(worldObj.getBlockState(bp).getBlock() instanceof BlockSoilController)) {
                         TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
@@ -238,10 +242,14 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
             }
             for (BlockPos bp : topLayer) {
                 if (!(worldObj.getTileEntity(bp) instanceof IFrame)) {
-                    return false;
+                    System.out.println("top was not frame");
+                    return 0;
                 } else {
                     TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldObj.getTileEntity(bp);
                     tile.setMaster(pos);
+                    if (worldObj.getBlockState(bp).getBlock() instanceof BlockFrameBattery) {
+                        energyCapacity += ((BlockFrameBattery) worldObj.getBlockState(bp).getBlock()).getCapacity();
+                    }
                     if (!worldObj.isRemote)
                         PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
 
@@ -249,7 +257,8 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
             }
             for (BlockPos bp : airPos) {
                 if (!worldObj.isAirBlock(bp)) {
-                    return false;
+                    System.out.println("air is not an air block");
+                    return 0;
                 } else {
                 }
             }
@@ -259,15 +268,16 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
                 MultiBlock multiBlock = new MultiBlock(pos, bottomLayer, topLayer, airPos, sides, true);
                 setMultiBlock(multiBlock);
                 this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
-            } else {
+                this.energyStorage.setCapacity(energyCapacity);
+                this.setMaster(getPos());
+                time = (System.currentTimeMillis() - time);
+                AxisAlignedBB multiblock = new AxisAlignedBB(northEast, southWest);
+                FluxedCrystals.logger.log(Level.INFO, String.format("Completed a %sx%sx%s structure in: %s ms", (int) multiblock.maxX - (int) multiblock.minX + 1, (int) multiblock.maxY - (int) multiblock.minY + 1, (int) multiblock.maxZ - (int) multiblock.minZ + 1, time));
+                return energyCapacity;
             }
-            //        if(!worldObj.isRemote)
-            //            PacketHandler.INSTANCE.sendToAllAround(new MessageControllerSync(this), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
-            time = (System.currentTimeMillis() - time);
-            AxisAlignedBB multiblock = new AxisAlignedBB(northEast, southWest);
-            FluxedCrystals.logger.log(Level.INFO, String.format("Completed a %sx%sx%s structure in: %s ms", (int) multiblock.maxX - (int) multiblock.minX + 1, (int) multiblock.maxY - (int) multiblock.minY + 1, (int) multiblock.maxZ - (int) multiblock.minZ + 1, time));
         }
-        return false;
+        System.out.println("nothing was done");
+        return 0;
     }
 
     public boolean checkAirLayer(World world, BlockPos northEast, BlockPos southWest) {
@@ -314,4 +324,7 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
 
     }
 
+    public EnergyStorage getEnergyStorage() {
+        return energyStorage;
+    }
 }
