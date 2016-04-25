@@ -52,8 +52,8 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
         buf.writeInt(this.z);
 
         MultiBlock.writeToByteBuf(buf, multiBlock);
-        buf.writeInt(maxCapacity);
         buf.writeInt(current);
+        buf.writeInt(maxCapacity);
     }
 
 

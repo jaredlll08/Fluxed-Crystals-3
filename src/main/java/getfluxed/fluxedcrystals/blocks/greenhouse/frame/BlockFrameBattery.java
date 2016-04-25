@@ -1,4 +1,4 @@
-package getfluxed.fluxedcrystals.blocks.greenhouse.powerframes;
+package getfluxed.fluxedcrystals.blocks.greenhouse.frame;
 
 /**
  * Created by Jared on 4/17/2016.

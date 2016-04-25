@@ -6,8 +6,8 @@ import getfluxed.fluxedcrystals.api.multiblock.IFrame;
 import getfluxed.fluxedcrystals.api.multiblock.IGreenHouseComponent;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
-import getfluxed.fluxedcrystals.blocks.greenhouse.powerframes.BlockFrameBattery;
-import getfluxed.fluxedcrystals.blocks.greenhouse.soil.BlockSoil;
+import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrameBattery;
+import getfluxed.fluxedcrystals.blocks.greenhouse.frame.base.BlockBaseFrame;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageControllerSync;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageGHLoad;
@@ -65,19 +65,18 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
                 if (multiBlock.getMaster().equals(new BlockPos(0, 0, 0))) {
                     multiBlock.setMaster(getPos());
                 }
-                this.getEnergyStorage().setCapacity(checkMultiblock());
+
                 if (getMultiBlock().isActive()) {
                     this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
                 }
+                this.getEnergyStorage().setCapacity(checkMultiblock());
                 if (!worldObj.isRemote)
                     PacketHandler.INSTANCE.sendToAllAround(new MessageControllerSync(this), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
 
             }
-            System.out.println("side: " + getEnergyStorage().getEnergyStored() + ":" + getEnergyStorage().getMaxEnergyStored());
         }
 
         tick = (tick + 1);
-        //        System.out.println(tank.getCapacity());
     }
 
     @Override
@@ -115,26 +114,20 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
         if (isMaster()) {
             long time = System.currentTimeMillis();
 
-            LinkedList<BlockPos> airPos = new LinkedList<>();
-            LinkedList<BlockPos> bottomLayer = new LinkedList<>();
-            LinkedList<BlockPos> topLayer = new LinkedList<>();
-            LinkedList<BlockPos> sides = new LinkedList<>();
-            LinkedList<BlockPos> inner = new LinkedList<>();
-
-
             int northSize = 0;
             int southSize = 0;
             int eastSize = 0;
             int westSize = 0;
 
-            BlockPos southWest = pos;
-            BlockPos northEast = pos;
+
             for (EnumFacing fac : EnumFacing.HORIZONTALS) {
                 int count = 0;
-                while (getWorld().getBlockState(pos.offset(fac, ++count)).getBlock() instanceof BlockSoil) {
+                while (getWorld().getBlockState(pos.offset(fac, ++count)).getBlock() instanceof BlockBaseFrame) {
                 }
                 count--;
-
+                if(count == 0){
+                    return 0;
+                }
                 switch (fac) {
                     case NORTH:
                         if (northSize == 0 || northSize > count) {
@@ -160,15 +153,21 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
 
 
             }
-            northEast = northEast.offset(EnumFacing.EAST, eastSize + 1).offset(EnumFacing.NORTH, northSize + 1);
-            southWest = southWest.offset(EnumFacing.SOUTH, southSize + 1).offset(EnumFacing.WEST, westSize + 1);
+            LinkedList<BlockPos> airPos = new LinkedList<>();
+            LinkedList<BlockPos> bottomLayer = new LinkedList<>();
+            LinkedList<BlockPos> topLayer = new LinkedList<>();
+            LinkedList<BlockPos> sides = new LinkedList<>();
+            LinkedList<BlockPos> inner = new LinkedList<>();
+
+            BlockPos southWest = pos.offset(EnumFacing.SOUTH, southSize + 1).offset(EnumFacing.WEST, westSize + 1);
+            BlockPos northEast = pos.offset(EnumFacing.EAST, eastSize + 1).offset(EnumFacing.NORTH, northSize + 1);
 
             boolean completeStructure = true;
             int ySize = 0;
 
             //Checks gets the bottom layer
             for (BlockPos bp : BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1))) {
-                if (getWorld().getBlockState(bp).getBlock() instanceof BlockSoil || bp.equals(getPos())) {
+                if (getWorld().getBlockState(bp).getBlock() instanceof BlockBaseFrame || bp.equals(getPos())) {
                     bottomLayer.add(bp);
                 } else {
                     System.out.println("bottom was null");
@@ -228,7 +227,7 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
                 }
             }
             for (BlockPos bp : bottomLayer) {
-                if (!(worldObj.getBlockState(bp).getBlock() instanceof BlockSoil) && !bp.equals(getPos())) {
+                if (!(worldObj.getBlockState(bp).getBlock() instanceof BlockBaseFrame) && !bp.equals(getPos())) {
                     System.out.println("soil was not soil");
                     return 0;
                 } else {

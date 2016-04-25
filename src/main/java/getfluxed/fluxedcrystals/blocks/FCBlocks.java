@@ -2,22 +2,25 @@ package getfluxed.fluxedcrystals.blocks;
 
 import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
+import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrame;
+import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrameBattery;
+import getfluxed.fluxedcrystals.blocks.greenhouse.frame.base.BlockBaseFrame;
 import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockFluidIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockPowerIO;
-import getfluxed.fluxedcrystals.blocks.greenhouse.powerframes.BlockFrame;
-import getfluxed.fluxedcrystals.blocks.greenhouse.powerframes.BlockFrameBattery;
-import getfluxed.fluxedcrystals.blocks.greenhouse.soil.BlockSoil;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityFluidIO;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityPowerIO;
+import getfluxed.fluxedcrystals.tileentities.greenhouse.monitor.TileEntityPowerMonitor;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.io.File;
@@ -34,21 +37,26 @@ public class FCBlocks {
     public static Block ghController = new BlockSoilController();
     public static Block ghFrame = new BlockFrame();
     public static Block ghFrameGlass = new BlockFrame();
-    public static Block ghSoil = new BlockSoil();
+    public static Block ghBaseFrame = new BlockBaseFrame();
     public static Block ghFluidIO = new BlockFluidIO();
     public static Block ghPowerIO = new BlockPowerIO();
 
-
     public static Block ghBatteryBasic = new BlockFrameBattery(16000);
+    public static Block ghBatteryAdvanced = new BlockFrameBattery(32000);
+
+    public static Block ghPowerMonitor = new BlockPowerIO();
 
     public static void preInit() {
         registerBlock(ghController, "ghSoilController", TileEntitySoilController.class);
-        registerBlock(ghFrameGlass, "ghFrameGlass", TileEntityMultiBlockComponent.class);
-        registerBlock(ghFrame, "ghFrame", TileEntityMultiBlockComponent.class);
-        registerBlock(ghSoil, "ghSoil");
+        registerBlockMultiblock(ghFrameGlass, "ghFrameGlass");
+        registerBlockMultiblock(ghFrame, "ghFrame");
+        registerBlock(ghBaseFrame, "ghBaseFrame");
         registerBlock(ghFluidIO, "ghFluidIO", TileEntityFluidIO.class);
         registerBlock(ghPowerIO, "ghPowerIO", TileEntityPowerIO.class);
-        registerBlock(ghBatteryBasic, "ghBatteryBasic", TileEntityMultiBlockComponent.class);
+        registerBlockMultiblock(ghBatteryBasic, "ghBatteryBasic");
+        registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
+        registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
+
     }
 
 
@@ -76,6 +84,10 @@ public class FCBlocks {
         registerBlock(block, key, texture, tile, FluxedCrystals.tab);
     }
 
+    private static void registerBlockMultiblock(Block block, String key) {
+        registerBlock(block, key, key, TileEntityMultiBlockComponent.class, FluxedCrystals.tab);
+    }
+
     private static void registerBlock(Block block, String key, Class tile) {
         registerBlock(block, key, key, tile, FluxedCrystals.tab);
     }
@@ -90,9 +102,11 @@ public class FCBlocks {
         if (FluxedCrystals.isDevEnv)
             writeFile(key, texture);
         renderMap.put(texture, block);
-        GameRegistry.registerBlock(block, key);
-        if (tile != null)
+        GameRegistry.register(block, new ResourceLocation(Reference.modid + ":" + key));
+        GameRegistry.register(new ItemBlock(block), new ResourceLocation(Reference.modid + ":" + key));
+        if (tile != null) {
             GameRegistry.registerTileEntity(tile, key);
+        }
     }
 
     public static void writeFile(String key, String texture) {
@@ -100,11 +114,11 @@ public class FCBlocks {
             File baseBlockState = new File(System.getProperty("user.home") + "/getFluxed/" + key + ".json");
             File baseBlockModel = new File(System.getProperty("user.home") + "/getFluxed/" + key + ".json");
             File baseItem = new File(System.getProperty("user.home") + "/getFluxed/" + key + ".json");
-
             if (System.getProperty("user.home").endsWith("Jared")) {
-                baseBlockState = new File(System.getProperty("user.home") + "/Documents/Github/Fluxed-Crystals-3/src/main/resources/assets/fluxedcrystals/blockstates/" + key + ".json");
-                baseBlockModel = new File(System.getProperty("user.home") + "/Documents/Github/Fluxed-Crystals-3/src/main/resources/assets/fluxedcrystals/models/block/" + key + ".json");
-                baseItem = new File(System.getProperty("user.home") + "/Documents/Github/Fluxed-Crystals-3/src/main/resources/assets/fluxedcrystals/models/item/" + key + ".json");
+
+                baseBlockState = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/blockstates/" + key + ".json");
+                baseBlockModel = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/models/block/" + key + ".json");
+                baseItem = new File(new File(System.getProperty("user.dir")).getParentFile(),  "src/main/resources/assets/" + Reference.modid + "/models/item/" + key + ".json");
             }
             if (!baseBlockState.exists()) {
                 baseBlockState.createNewFile();

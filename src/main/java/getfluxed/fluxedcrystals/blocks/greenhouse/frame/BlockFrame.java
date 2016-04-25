@@ -1,4 +1,4 @@
-package getfluxed.fluxedcrystals.blocks.greenhouse.powerframes;
+package getfluxed.fluxedcrystals.blocks.greenhouse.frame;
 
 import getfluxed.fluxedcrystals.blocks.base.BlockMultiblockComponent;
 import net.minecraft.block.Block;
