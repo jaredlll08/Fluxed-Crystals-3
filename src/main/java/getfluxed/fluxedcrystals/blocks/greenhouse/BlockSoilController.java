@@ -16,25 +16,25 @@ import java.util.List;
 /**
  * Created by Jared on 3/19/2016.
  */
-public class BlockSoilController extends FCBlock implements ITileEntityProvider{
+public class BlockSoilController extends FCBlock implements ITileEntityProvider {
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced){
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add("Not safe to build with!");
     }
 
     @Override
-    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock){
+    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
         TileEntity te = worldIn.getTileEntity(pos);
-        if(te instanceof TileEntitySoilController){
+        if (te instanceof TileEntitySoilController) {
             ((TileEntitySoilController) te).checkMultiblock();
         }
     }
 
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta){
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
         return new TileEntitySoilController();
     }
 

@@ -13,6 +13,6 @@ public class ClientProxy implements IProxy {
     @Override
     public void registerRenderers() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPowerMonitor.class, new RenderPowerMonitor());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySoilController.class, new RenderController());
+       ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySoilController.class, new RenderController());
     }
 }

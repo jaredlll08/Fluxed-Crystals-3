@@ -129,25 +129,30 @@ public class MultiBlock{
     public static MultiBlock readFromByteBuf(ByteBuf buf){
         BlockPos master = readPosFromBB(buf);
         LinkedList<BlockPos> bottomLayer = new LinkedList<>();
-        for(int i = 0; i < buf.readInt(); i++){
+        int botSize = buf.readInt();
+        for(int i = 0; i < botSize; i++){
             bottomLayer.add(readPosFromBB(buf));
         }
         LinkedList<BlockPos> topLayer = new LinkedList<>();
-        for(int i = 0; i < buf.readInt(); i++){
+        int topSize = buf.readInt();
+        for(int i = 0; i < topSize; i++){
             topLayer.add(readPosFromBB(buf));
         }
         LinkedList<BlockPos> airBlocks = new LinkedList<>();
-        for(int i = 0; i < buf.readInt(); i++){
+        int airSize = buf.readInt();
+        for(int i = 0; i < airSize; i++){
             airBlocks.add(readPosFromBB(buf));
         }
 
         LinkedList<BlockPos> sides = new LinkedList<>();
-        for(int i = 0; i < buf.readInt(); i++){
+        int sidSize = buf.readInt();
+        for(int i = 0; i < sidSize; i++){
             sides.add(readPosFromBB(buf));
         }
         boolean active = buf.readBoolean();
         return new MultiBlock(master, bottomLayer, topLayer, airBlocks, sides, active);
     }
+
 
     public static void writeToByteBuf(ByteBuf buf, MultiBlock multiBlock){
         writePosToBB(buf, multiBlock.getMaster());

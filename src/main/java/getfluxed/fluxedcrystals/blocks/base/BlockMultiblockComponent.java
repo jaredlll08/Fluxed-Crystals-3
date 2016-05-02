@@ -3,6 +3,7 @@ package getfluxed.fluxedcrystals.blocks.base;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -11,9 +12,12 @@ import net.minecraft.world.World;
 /**
  * Created by Jared on 4/11/2016.
  */
-public class BlockMultiblockComponent extends FCBlock implements ITileEntityProvider {
+public class BlockMultiblockComponent extends Block implements ITileEntityProvider {
 
-
+    public BlockMultiblockComponent() {
+        super(Material.iron);
+        setHardness(1.5f);
+    }
     @Override
     public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
         super.onNeighborBlockChange(worldIn, pos, state, neighborBlock);

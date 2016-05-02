@@ -1,0 +1,36 @@
+    {
+        "data": [{
+            "name": "Test",
+            "resourceIn": "minecraft:bedrock",
+            "resourceOut": "minecraft:bedrock",
+            "colour": "0xFF0022",
+            "dustNeeded": 32,
+            "crushedCrystalPerBlock": 18,
+            "crushedCrystalNeededPerBlock": 16
+        },{
+            "name":"Iron",
+            "resourceIn": "minecraft:iron_ingot",
+            "resourceOut": "minecraft:iron_ingot",
+            "colour": "0xD6B781",
+            "dustNeeded": 32,
+            "crushedCrystalPerBlock": 18,
+            "crushedCrystalNeededPerBlock": 16
+        },{
+            "name":"Gold",
+            "resourceIn": "minecraft:gold_ingot",
+            "resourceOut": "minecraft:gold_ingot",
+            "colour": "0xB5A62C",
+            "dustNeeded": 32,
+            "crushedCrystalPerBlock": 18,
+            "crushedCrystalNeededPerBlock": 16
+        },{
+            "name":"Coal",
+            "resourceIn": "minecraft:coal",
+            "resourceOut": "minecraft:coal",
+            "colour": "0xC090A",
+            "dustNeeded": 32,
+            "crushedCrystalPerBlock": 18,
+            "crushedCrystalNeededPerBlock": 16
+        }
+        ]
+    }

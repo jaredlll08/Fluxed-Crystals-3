@@ -1,5 +1,13 @@
 {
     "variants": {
-        "normal": { "model": "fluxedcrystals:ghPowerMonitor" }
+		"facing=north": { "model": "fluxedcrystals:ghPowerMonitor"},
+        "facing=south": { "model": "fluxedcrystals:ghPowerMonitor"},
+        "facing=west":  { "model": "fluxedcrystals:ghPowerMonitor"},
+        "facing=east":  { "model": "fluxedcrystals:ghPowerMonitor"},
+		"facing=up": 	{ "model": "fluxedcrystals:ghPowerMonitor"},
+        "facing=down":  { "model": "fluxedcrystals:ghPowerMonitor"}
+		
+		
+        
     }
 }

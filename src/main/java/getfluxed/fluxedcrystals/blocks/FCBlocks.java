@@ -7,6 +7,7 @@ import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrameBattery;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.base.BlockBaseFrame;
 import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockFluidIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockPowerIO;
+import getfluxed.fluxedcrystals.blocks.greenhouse.monitor.BlockPowerMonitor;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
@@ -44,7 +45,7 @@ public class FCBlocks {
     public static Block ghBatteryBasic = new BlockFrameBattery(16000);
     public static Block ghBatteryAdvanced = new BlockFrameBattery(32000);
 
-    public static Block ghPowerMonitor = new BlockPowerIO();
+    public static Block ghPowerMonitor = new BlockPowerMonitor();
 
     public static void preInit() {
         registerBlock(ghController, "ghSoilController", TileEntitySoilController.class);

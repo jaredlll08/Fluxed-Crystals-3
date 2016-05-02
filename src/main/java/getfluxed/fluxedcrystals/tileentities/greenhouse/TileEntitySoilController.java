@@ -39,12 +39,16 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
     private int tick;
 
 
+
     public TileEntitySoilController() {
         multiBlock = new MultiBlock(getPos());
         tank = new FluidTank(0);
-        energyStorage = new EnergyStorage(0);
+        energyStorage = new EnergyStorage(0,256,256);
     }
-
+    @Override
+    public double getMaxRenderDistanceSquared() {
+        return 8192D;
+    }
     @Override
     public void update() {
         if (getWorld() != null && !firstTicked) {
@@ -59,7 +63,7 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
             firstTicked = true;
 
         }
-
+//        System.out.println(this.getEnergyStorage().getEnergyStored());
         if (tick % 40 == 0) {
             if (!getMultiBlock().isActive()) {
                 if (multiBlock.getMaster().equals(new BlockPos(0, 0, 0))) {
@@ -98,7 +102,8 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
 
     @Override
     public MultiBlock getMultiBlock() {
-        return multiBlock;
+
+        return multiBlock !=null ? multiBlock : new MultiBlock(getPos());
     }
 
     public void setMultiBlock(MultiBlock multiBlock) {
@@ -125,7 +130,7 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
                 while (getWorld().getBlockState(pos.offset(fac, ++count)).getBlock() instanceof BlockBaseFrame) {
                 }
                 count--;
-                if(count == 0){
+                if (count == 0) {
                     return 0;
                 }
                 switch (fac) {
@@ -295,6 +300,8 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
         setMultiBlock(MultiBlock.readFromNBT(compound.getCompoundTag("multiblock")));
         NBTTagCompound tankTag = compound.getCompoundTag("tank");
         this.tank.readFromNBT(tankTag);
+        NBTTagCompound energyTag = compound.getCompoundTag("energy");
+        this.energyStorage = energyStorage.readFromNBT(energyTag);
     }
 
     @Override
@@ -306,6 +313,12 @@ public class TileEntitySoilController extends TileEntity implements ITickable, I
         NBTTagCompound tankTag = new NBTTagCompound();
         tank.writeToNBT(tankTag);
         compound.setTag("tank", tankTag);
+
+
+        NBTTagCompound energyTag = new NBTTagCompound();
+        getEnergyStorage().writeToNBT(energyTag);
+        compound.setTag("energy", energyTag);
+
     }
 
     // we send all our info to the client on load
