@@ -5,6 +5,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,7 +20,26 @@ public class CreativeTabFC extends CreativeTabs {
 
     @Override
     public void displayAllRelevantItems(List<ItemStack> p_78018_1_) {
-        super.displayAllRelevantItems(p_78018_1_);
+        for (Item item : Item.itemRegistry)
+        {
+            if (item == null)
+            {
+                continue;
+            }
+            for (CreativeTabs tab : item.getCreativeTabs())
+            {
+                if (tab == this)
+                {
+                    item.getSubItems(item, this, p_78018_1_);
+                }
+            }
+        }
+
+        if (this.getRelevantEnchantmentTypes() != null)
+        {
+            this.addEnchantmentBooksToList(p_78018_1_, this.getRelevantEnchantmentTypes());
+        }
+        Collections.sort(p_78018_1_, (o1, o2) -> o1.getUnlocalizedName().compareTo(o2.getUnlocalizedName()));
     }
 
     @Override

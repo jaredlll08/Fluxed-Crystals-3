@@ -4,6 +4,8 @@ package getfluxed.fluxedcrystals.network;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageControllerSync;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageFluid;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageGHLoad;
+import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerator;
+import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGeneratorFluid;
 import getfluxed.fluxedcrystals.reference.Reference;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -17,6 +19,8 @@ public class PacketHandler {
         INSTANCE.registerMessage(MessageControllerSync.class, MessageControllerSync.class, ID++, Side.CLIENT);
         INSTANCE.registerMessage(MessageFluid.class, MessageFluid.class, ID++, Side.CLIENT);
         INSTANCE.registerMessage(MessageGHLoad.class, MessageGHLoad.class, ID++, Side.CLIENT);
+        INSTANCE.registerMessage(MessageGeneratorFluid.class, MessageGeneratorFluid.class, ID++, Side.CLIENT);
+        INSTANCE.registerMessage(MessageGenerator.class, MessageGenerator.class, ID++, Side.CLIENT);
 
 
     }

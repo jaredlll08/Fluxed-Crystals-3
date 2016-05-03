@@ -1,6 +1,12 @@
 package getfluxed.fluxedcrystals.blocks;
 
+import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
+import getfluxed.fluxedcrystals.tileentities.generators.TileEntityLavaGenerator;
+import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
 import getfluxed.fluxedcrystals.FluxedCrystals;
+import getfluxed.fluxedcrystals.blocks.generators.BlockCoalGenerator;
+import getfluxed.fluxedcrystals.blocks.generators.BlockLavaGenerator;
+import getfluxed.fluxedcrystals.blocks.generators.BlockTrashGenerator;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrame;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrameBattery;
@@ -41,11 +47,14 @@ public class FCBlocks {
     public static Block ghBaseFrame = new BlockBaseFrame();
     public static Block ghFluidIO = new BlockFluidIO();
     public static Block ghPowerIO = new BlockPowerIO();
-
     public static Block ghBatteryBasic = new BlockFrameBattery(16000);
     public static Block ghBatteryAdvanced = new BlockFrameBattery(32000);
-
     public static Block ghPowerMonitor = new BlockPowerMonitor();
+
+
+    public static Block basicCoalGenerator = new BlockCoalGenerator();
+    public static Block trashGenerator = new BlockTrashGenerator();
+    public static Block lavaGenerator = new BlockLavaGenerator();
 
     public static void preInit() {
         registerBlock(ghController, "ghSoilController", TileEntitySoilController.class);
@@ -58,8 +67,14 @@ public class FCBlocks {
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
 
+        registerGenerators();
     }
 
+    public static void registerGenerators(){
+        registerBlock(basicCoalGenerator, "coalGenBasic", TileEntityCoalGenerator.class);
+        registerBlock(trashGenerator, "trashGenerator", TileEntityTrashGenerator.class);
+        registerBlock(lavaGenerator, "lavaGenerator", TileEntityLavaGenerator.class);
+    }
 
     public static void init() {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
@@ -67,7 +82,6 @@ public class FCBlocks {
             renderItem.getItemModelMesher().register(Item.getItemFromBlock(ent.getValue()), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
         }
     }
-
 
     public static void postInit() {
     }
@@ -97,7 +111,6 @@ public class FCBlocks {
         registerBlock(block, key, key, tile, tab);
     }
 
-
     private static void registerBlock(Block block, String key, String texture, Class tile, CreativeTabs tab) {
         block.setUnlocalizedName(key).setCreativeTab(tab);
         if (FluxedCrystals.isDevEnv)
@@ -119,7 +132,7 @@ public class FCBlocks {
 
                 baseBlockState = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/blockstates/" + key + ".json");
                 baseBlockModel = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/models/block/" + key + ".json");
-                baseItem = new File(new File(System.getProperty("user.dir")).getParentFile(),  "src/main/resources/assets/" + Reference.modid + "/models/item/" + key + ".json");
+                baseItem = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/models/item/" + key + ".json");
             }
             if (!baseBlockState.exists()) {
                 baseBlockState.createNewFile();

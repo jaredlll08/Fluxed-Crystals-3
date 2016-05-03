@@ -1,5 +1,6 @@
 package getfluxed.fluxedcrystals;
 
+import getfluxed.fluxedcrystals.api.generators.GeneratorData;
 import getfluxed.fluxedcrystals.blocks.FCBlocks;
 import getfluxed.fluxedcrystals.config.Config;
 import getfluxed.fluxedcrystals.items.FCItems;
@@ -35,6 +36,8 @@ public class FluxedCrystals {
     public static IProxy proxy;
 
 
+    @Mod.Instance
+    public static FluxedCrystals instance;
     public static CreativeTabFC tab = new CreativeTabFC();
 
     @EventHandler
@@ -47,6 +50,8 @@ public class FluxedCrystals {
         FCItems.preInit();
         PacketHandler.preInit();
         proxy.registerRenderers();
+        proxy.registerEvents();
+
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed PreInit in: " + time + "ms");
@@ -62,6 +67,7 @@ public class FluxedCrystals {
 
         FCBlocks.init();
         FCItems.init();
+        proxy.registerGuis();
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed Init in: " + time + "ms");
@@ -83,6 +89,7 @@ public class FluxedCrystals {
         logger.log(Level.INFO, "Starting LoadComplete");
         long time = System.currentTimeMillis();
         registerJsons();
+        GeneratorData.init();
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed LoadComplete in: " + time + "ms");

@@ -3,14 +3,14 @@ package getfluxed.fluxedcrystals.items;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.api.registries.crystal.Crystal;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalDust;
+import getfluxed.fluxedcrystals.items.crystal.ItemCrystalSolution;
+import getfluxed.fluxedcrystals.items.crystal.ItemCrystalSolutionShell;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -27,11 +27,21 @@ import static getfluxed.fluxedcrystals.FluxedCrystals.tab;
 public class FCItems {
 
     public static Map<String, Item> renderMap = new HashMap<String, Item>();
+    public static Map<Item, int[]> colourMap = new HashMap<>();
+
 
     public static Item crystalDust = new ItemCrystalDust();
+    public static Item crystalSolution = new ItemCrystalSolution();
+    public static Item crystalSolutionShell = new ItemCrystalSolutionShell();
+
+
 
     public static void preInit() {
-        registerItem(crystalDust, "crystalDust", "crystalDust");
+        registerItem(crystalSolutionShell, "crystalSolutionShell", "crystalSolutionShell");
+        registerItemColour(crystalDust, "crystalDust", "crystalDust", new int[]{0});
+        registerItemColour(crystalSolution, "crystalSolution", "crystalSolution", new int[]{1});
+
+
     }
 
     public static void init() {
@@ -39,16 +49,18 @@ public class FCItems {
         for (Map.Entry<String, Item> ent : renderMap.entrySet()) {
             renderItem.getItemModelMesher().register(ent.getValue(), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
         }
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor() {
-            @Override
-            public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+        for (Map.Entry<Item, int[]> ent : colourMap.entrySet()) {
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler((stack, tintIndex) -> {
                 Crystal c = CrystalRegistry.getCrystal(NBTHelper.getString(stack, "crystalName"));
-                if(c !=null){
-                    return c.getColour();
+                for(int i : ent.getValue()) {
+                    if (tintIndex == i)
+                        if (c != null) {
+                            return c.getColour();
+                        }
                 }
                 return 0xFFFFFF;
-            }
-        }, crystalDust);
+            }, ent.getKey());
+        }
     }
 
     public static void registerItem(Item item, String name, String key) {
@@ -57,6 +69,15 @@ public class FCItems {
         item.setUnlocalizedName(key).setCreativeTab(tab);
         renderMap.put(key, item);
 
+        GameRegistry.register(item, new ResourceLocation(Reference.modid + ":" + key));
+    }
+
+    public static void registerItemColour(Item item, String name, String key, int[] layers) {
+        if (isDevEnv)
+            writeFile(key, key);
+        item.setUnlocalizedName(key).setCreativeTab(tab);
+        renderMap.put(key, item);
+        colourMap.put(item, layers);
         GameRegistry.register(item, new ResourceLocation(Reference.modid + ":" + key));
     }
 
