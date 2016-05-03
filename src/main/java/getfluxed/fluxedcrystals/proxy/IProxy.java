@@ -6,4 +6,6 @@ package getfluxed.fluxedcrystals.proxy;
 public interface IProxy {
 
         void registerRenderers();
+
+        void registerEvents();
 }

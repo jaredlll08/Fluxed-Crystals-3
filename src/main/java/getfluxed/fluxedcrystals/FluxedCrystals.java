@@ -47,6 +47,8 @@ public class FluxedCrystals {
         FCItems.preInit();
         PacketHandler.preInit();
         proxy.registerRenderers();
+        proxy.registerEvents();
+
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed PreInit in: " + time + "ms");

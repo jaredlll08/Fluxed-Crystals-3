@@ -41,10 +41,8 @@ public class FCBlocks {
     public static Block ghBaseFrame = new BlockBaseFrame();
     public static Block ghFluidIO = new BlockFluidIO();
     public static Block ghPowerIO = new BlockPowerIO();
-
     public static Block ghBatteryBasic = new BlockFrameBattery(16000);
     public static Block ghBatteryAdvanced = new BlockFrameBattery(32000);
-
     public static Block ghPowerMonitor = new BlockPowerMonitor();
 
     public static void preInit() {
@@ -57,9 +55,7 @@ public class FCBlocks {
         registerBlockMultiblock(ghBatteryBasic, "ghBatteryBasic");
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
-
     }
-
 
     public static void init() {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
@@ -67,7 +63,6 @@ public class FCBlocks {
             renderItem.getItemModelMesher().register(Item.getItemFromBlock(ent.getValue()), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
         }
     }
-
 
     public static void postInit() {
     }
@@ -97,7 +92,6 @@ public class FCBlocks {
         registerBlock(block, key, key, tile, tab);
     }
 
-
     private static void registerBlock(Block block, String key, String texture, Class tile, CreativeTabs tab) {
         block.setUnlocalizedName(key).setCreativeTab(tab);
         if (FluxedCrystals.isDevEnv)
@@ -119,7 +113,7 @@ public class FCBlocks {
 
                 baseBlockState = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/blockstates/" + key + ".json");
                 baseBlockModel = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/models/block/" + key + ".json");
-                baseItem = new File(new File(System.getProperty("user.dir")).getParentFile(),  "src/main/resources/assets/" + Reference.modid + "/models/item/" + key + ".json");
+                baseItem = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/models/item/" + key + ".json");
             }
             if (!baseBlockState.exists()) {
                 baseBlockState.createNewFile();

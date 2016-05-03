@@ -112,6 +112,36 @@ public class Crystal {
         this.crushedCrystalNeededPerBlock = crushedCrystalNeededPerBlock;
     }
 
+    public void updateColour() {
+        try {
+            if (isDynamicColour()) {
+                if (getResourceIn().isItemStack()) {
+                    if (isBlock(getResourceIn().getItemStack())) {
+                        String name = Block.blockRegistry.getNameForObject(Block.getBlockFromItem(getResourceIn().getItemStack().getItem())).toString();
+                        IResource res = FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/blocks/" + name.split(":")[1] + ".png"));
+                        if (res != null) {
+                            setColour(Config.getColour(res.getInputStream()));
+                        }
+
+                    } else {
+                        String name = Item.itemRegistry.getNameForObject(getResourceIn().getItemStack().getItem()).toString();
+                        IResource res = FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/items/" + name.split(":")[1] + ".png"));
+                        if (res != null) {
+                            setColour(Config.getColour(res.getInputStream()));
+                        }
+                    }
+                } else {
+                    if (getResourceIn().isFluidStack()) {
+                        String name = Block.blockRegistry.getNameForObject(getResourceIn().getFluidStack().getFluid().getBlock()).toString() + "_flow";
+                        setColour(Config.getColour(FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/blocks/" + name.split(":")[1] + ".png")).getInputStream()));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public class CrystalType {
         private String name = TextFormatting.RED + "INVALID";
         private String resourceIn = "minecraft:bedrock";
@@ -125,30 +155,7 @@ public class Crystal {
 
         public Crystal register() {
             Crystal c = new Crystal(this.name, this.resourceIn, this.resourceOut, this.colour, this.dynamicColour, this.dustNeeded, this.crushedCrystalPerBlock, this.crushedCrystalNeededPerBlock);
-            try {
-                if (this.dynamicColour) {
-                    if (c.getResourceIn().isItemStack()) {
-                        if (isBlock(c.getResourceIn().getItemStack())) {
-                            String name = Block.blockRegistry.getNameForObject(Block.getBlockFromItem(c.getResourceIn().getItemStack().getItem())).toString();
-                            IResource res =  FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/blocks/" + name.split(":")[1] + ".png"));
-                            if(res !=null){
-                                c.setColour(Config.getColour(res.getInputStream()));
-                            }
-
-                        } else {
-                            String name = Item.itemRegistry.getNameForObject(c.getResourceIn().getItemStack().getItem()).toString();
-                            c.setColour(Config.getColour(FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/items/" + name.split(":")[1] + ".png")).getInputStream()));
-                        }
-                    } else {
-                        if (c.getResourceIn().isFluidStack()) {
-                            String name = Block.blockRegistry.getNameForObject(c.getResourceIn().getFluidStack().getFluid().getBlock()).toString() + "_flow";
-                            c.setColour(Config.getColour(FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/blocks/" + name.split(":")[1] + ".png")).getInputStream()));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            c.updateColour();
             return c;
         }
     }

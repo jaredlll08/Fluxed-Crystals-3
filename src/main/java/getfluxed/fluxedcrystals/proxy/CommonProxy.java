@@ -8,4 +8,9 @@ public class CommonProxy implements IProxy {
     public void registerRenderers() {
 
     }
+
+    @Override
+    public void registerEvents() {
+
+    }
 }

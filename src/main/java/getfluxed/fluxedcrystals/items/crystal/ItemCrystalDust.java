@@ -31,7 +31,6 @@ public class ItemCrystalDust extends FCItem {
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
         Config.registerJsons();
-        //0x4EE2EC
         return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
     }
 
