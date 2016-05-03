@@ -1,8 +1,5 @@
 package getfluxed.fluxedcrystals.blocks;
 
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityLavaGenerator;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
 import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.blocks.generators.BlockCoalGenerator;
 import getfluxed.fluxedcrystals.blocks.generators.BlockLavaGenerator;
@@ -15,6 +12,9 @@ import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockFluidIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockPowerIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.monitor.BlockPowerMonitor;
 import getfluxed.fluxedcrystals.reference.Reference;
+import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
+import getfluxed.fluxedcrystals.tileentities.generators.TileEntityLavaGenerator;
+import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityFluidIO;
@@ -75,6 +75,7 @@ public class FCBlocks {
         registerBlock(trashGenerator, "trashGenerator", TileEntityTrashGenerator.class);
         registerBlock(lavaGenerator, "lavaGenerator", TileEntityLavaGenerator.class);
     }
+
 
     public static void init() {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();

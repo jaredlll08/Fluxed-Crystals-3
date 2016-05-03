@@ -31,4 +31,5 @@ public class ClientProxy implements IProxy {
     public void registerGuis() {
         new GUIHandler();
     }
+
 }
