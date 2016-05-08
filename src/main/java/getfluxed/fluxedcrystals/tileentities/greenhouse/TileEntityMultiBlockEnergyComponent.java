@@ -1,0 +1,154 @@
+package getfluxed.fluxedcrystals.tileentities.greenhouse;
+
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyHandler;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+
+import java.util.EnumSet;
+
+/**
+ * Created by Jared on 5/7/2016.
+ */
+public abstract class TileEntityMultiBlockEnergyComponent  extends TileEntityMultiBlockComponent implements IEnergyHandler, ITickable {
+
+    public EnergyStorage storage;
+    protected int capacity;
+
+    public TileEntityMultiBlockEnergyComponent (int cap) {
+        super();
+        init(cap);
+    }
+
+    public double getEnergyColor () {
+        double energy = storage.getEnergyStored();
+        double maxEnergy = storage.getMaxEnergyStored();
+        return energy / maxEnergy;
+    }
+
+    private void init (int cap) {
+        storage = new EnergyStorage(cap);
+    }
+
+    public abstract EnumSet<EnumFacing> getValidOutputs ();
+
+    public abstract EnumSet<EnumFacing> getValidInputs ();
+
+    @Override
+    public void update () {
+        pushEnergy();
+    }
+
+    protected void pushEnergy () {
+        for (EnumFacing dir : getValidOutputs()) {
+            TileEntity tile = worldObj.getTileEntity(getPos().offset(dir));
+            if (tile instanceof IEnergyHandler) {
+                IEnergyHandler ieh = (IEnergyHandler) tile;
+                storage.extractEnergy(ieh.receiveEnergy(dir, storage.extractEnergy(getOutputSpeed(), true), false), false);
+            }
+        }
+    }
+
+	/* I/O Handling */
+
+    @Override
+    public int extractEnergy (EnumFacing from, int maxExtract, boolean simulate) {
+        if (getValidOutputs().contains(from)) {
+            int ret = storage.extractEnergy(maxExtract, true);
+            if (!simulate) {
+                storage.extractEnergy(ret, false);
+            }
+            return ret;
+        }
+        return 0;
+    }
+
+    @Override
+    public int receiveEnergy (EnumFacing from, int maxReceive, boolean simulate) {
+        if (getValidInputs().contains(from)) {
+            int ret = storage.receiveEnergy(maxReceive, true);
+            if (!simulate) {
+                storage.receiveEnergy(ret, false);
+            }
+            return ret;
+        }
+        return 0;
+    }
+
+    @Override
+    public final boolean canConnectEnergy (EnumFacing from) {
+        return getValidInputs().contains(from) || getValidOutputs().contains(from);
+    }
+
+	/* IEnergyHandler basic impl */
+
+    @Override
+    public  int getEnergyStored (EnumFacing from) {
+        return getEnergyStored();
+    }
+
+    @Override
+    public  int getMaxEnergyStored (EnumFacing from) {
+        return getMaxStorage();
+    }
+
+	/* IWailaAdditionalInfo */
+
+	/* getters & setters */
+
+    public int getEnergyStored () {
+        return storage.getEnergyStored();
+    }
+
+    public void setEnergyStored (int energy) {
+        storage.setEnergyStored(energy);
+    }
+
+    public int getMaxStorage () {
+        return storage.getMaxEnergyStored();
+    }
+
+    public void setMaxStorage (int storage) {
+        this.storage.setCapacity(storage);
+    }
+
+    public int getOutputSpeed () {
+        return storage.getMaxExtract();
+    }
+
+    public void setOutputSpeed (int outputSpeed) {
+        this.storage.setMaxExtract(outputSpeed);
+    }
+
+    public int getMaxOutputSpeed () {
+        return getOutputSpeed();
+    }
+
+    public int getInputSpeed () {
+        return storage.getMaxReceive();
+    }
+
+    public void setInputSpeed (int inputSpeed) {
+        this.storage.setMaxReceive(inputSpeed);
+    }
+
+	/* Read/Write NBT */
+
+    @Override
+    public void writeToNBT (NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        NBTTagCompound energy = new NBTTagCompound();
+        storage.writeToNBT(energy);
+        nbt.setTag("energy", energy);
+    }
+
+    @Override
+    public void readFromNBT (NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        NBTTagCompound energy = nbt.getCompoundTag("energy");
+        storage = storage.readFromNBT(energy);
+
+    }
+}

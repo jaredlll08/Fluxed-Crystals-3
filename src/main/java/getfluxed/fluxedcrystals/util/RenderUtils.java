@@ -7,27 +7,29 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import org.lwjgl.opengl.GL11;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+
 public class RenderUtils {
 
 
 
     public static void drawLine(double x, double y, double x2, double y2, float red, float green, float blue, float lineWidth) {
         int count = FMLClientHandler.instance().getClient().thePlayer.ticksExisted;
-        float alpha = 0.3F + MathHelper.sin((float) (count + x)) * 0.3F + 0.3F;
+        float alpha = 0.3F + MathHelper.sin((float) (count+x)) * 0.3F + 0.3F;
         Tessellator tess = Tessellator.getInstance();
         VertexBuffer buff = tess.getBuffer();
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS | GL11.GL_LIGHTING_BIT);
         GL11.glLineWidth(lineWidth);
-        GL11.glDisable(3553);
+        GL11.glDisable(GL_TEXTURE_2D);
         GL11.glBlendFunc(770, 1);
         buff.begin(3, DefaultVertexFormats.POSITION_COLOR);
-        buff.pos(x, y, 0.0D).color(red, green, blue, alpha).endVertex();
-        buff.pos(x2, y2, 0.0D).color(red, green, blue, alpha).endVertex();
+        buff.pos(x, y, 0).color(red, green, blue, alpha).endVertex();
+        buff.pos(x2, y2, 0).color(red, green, blue, alpha).endVertex();
         tess.draw();
         GL11.glBlendFunc(770, 771);
         GL11.glDisable(32826);
-        GL11.glEnable(3553);
+        GL11.glEnable(GL_TEXTURE_2D);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopAttrib();
         GL11.glPopMatrix();
@@ -57,6 +59,42 @@ public class RenderUtils {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
     }
+    public static void drawLineNoFade(double x, double y, double x2, double y2, float red, float green, float blue, float lineWidth, float alpha) {
+        Tessellator tess = Tessellator.getInstance();
+        VertexBuffer buff = tess.getBuffer();
+        GL11.glPushMatrix();
+        GL11.glLineWidth(lineWidth);
+        GL11.glDisable(3553);
+        GL11.glBlendFunc(770, 771);
+        buff.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        buff.pos(x, y, 0).color(red, green, blue, alpha).endVertex();
+        buff.pos(x2, y2, 0).color(red,green, blue, alpha).endVertex();
+        tess.draw();
+        GL11.glBlendFunc(770, 771);
+        GL11.glDisable(32826);
+        GL11.glDisable(3042);
+        GL11.glEnable(3553);
+        GL11.glPopMatrix();
+    }
+    public static void drawLineNoFade(double x, double y, double z, double x2, double y2, double z2, float red, float green, float blue, float lineWidth, float alpha) {
+        Tessellator tess = Tessellator.getInstance();
+        VertexBuffer buff = tess.getBuffer();
+
+        GL11.glPushMatrix();
+        GL11.glLineWidth(lineWidth);
+        GL11.glDisable(3553);
+        GL11.glBlendFunc(770, 771);
+        buff.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        buff.pos(x, y, z).color(red, green, blue, alpha).endVertex();
+        buff.pos(x2, y2, z2).color(red,green, blue, alpha).endVertex();
+        tess.draw();
+
+        GL11.glBlendFunc(770, 771);
+        GL11.glDisable(32826);
+        GL11.glDisable(3042);
+        GL11.glEnable(3553);
+        GL11.glPopMatrix();
+    }
 
 	public static void drawLine(double x, double y, double x2, double y2, float red, float green, float blue, float lineWidth, float fadeSpeed) {
 		int count = FMLClientHandler.instance().getClient().thePlayer.ticksExisted;
@@ -68,7 +106,7 @@ public class RenderUtils {
         GL11.glPushMatrix();
         GL11.glLineWidth(lineWidth);
         GL11.glDisable(3553);
-        GL11.glBlendFunc(770, 1);
+        GL11.glBlendFunc(770, 771);
         buff.begin(3, DefaultVertexFormats.POSITION_COLOR);
         buff.pos(x, y, 0).color(red, green, blue, alpha).endVertex();
         buff.pos(x2, y2, 0).color(red,green, blue, alpha).endVertex();
@@ -102,12 +140,18 @@ public class RenderUtils {
 	}
 
     public static void drawRect(double x, double y, double width, double height, float red, float green, float blue, float lineWidth) {
-        drawLine(x, y, x + width, y, red, green, blue, lineWidth);
-        drawLine(x + width, y, x + width, y + width, red, green, blue, lineWidth);
-        drawLine(x + width, y + width, x, y + width, red, green, blue, lineWidth);
-        drawLine(x, y + width, x, y, red, green, blue, lineWidth);
+        drawLine(x, y, x + width, y, red, green, blue, lineWidth, 0);
+        drawLine(x + width, y, x + width, y + width, red, green, blue, lineWidth, 0);
+        drawLine(x + width, y + width, x, y + width, red, green, blue, lineWidth, 0);
+        drawLine(x, y + width, x, y, red, green, blue, lineWidth, 0);
     }
 
+    public static void drawRectNoFade(double x, double y, double width, double height, float red, float green, float blue, float lineWidth, float alpha) {
+        drawLineNoFade(x, y, x + width, y, red, green, blue, lineWidth, alpha);
+        drawLineNoFade(x + width, y, x + width, y + width, red, green, blue, lineWidth, alpha);
+        drawLineNoFade(x + width, y + width, x, y + width, red, green, blue, lineWidth, alpha);
+        drawLineNoFade(x, y + width, x, y, red, green, blue, lineWidth, alpha);
+    }
 //	public static void drawRect(double x, double y, double width, double height, float red, float green, float blue, float lineWidth, float fadeSpeed) {
 //		drawLine(x, y, x + width, y, red, green, blue, lineWidth, fadeSpeed);
 //		drawLine(x + width, y, x + width, y + width, red, green, blue, lineWidth, fadeSpeed);
@@ -120,6 +164,12 @@ public class RenderUtils {
         drawLine(x + width, y, z, x + width, y + width, z, red, green, blue, lineWidth);
         drawLine(x + width, y + width, z, x, y + width, z, red, green, blue, lineWidth);
         drawLine(x, y + width, z, x, y, z, red, green, blue, lineWidth);
+    }
+    public static void drawRectNoFade(double x, double y, double z, double width, double height, float red, float green, float blue, float lineWidth, float alpha) {
+        drawLineNoFade(x, y, z, x + width, y, z, red, green, blue, lineWidth, alpha);
+        drawLineNoFade(x + width, y, z, x + width, y + width, z, red, green, blue, lineWidth, alpha);
+        drawLineNoFade(x + width, y + width, z, x, y + width, z, red, green, blue, lineWidth, alpha);
+        drawLineNoFade(x, y + width, z, x, y, z, red, green, blue, lineWidth, alpha);
     }
 
     public static void drawSquare(double x, double y, double size, float red, float green, float blue, float lineWidth) {

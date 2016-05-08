@@ -4,6 +4,7 @@ package getfluxed.fluxedcrystals.network;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageControllerSync;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageFluid;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageGHLoad;
+import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageEnergyUpdate;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerator;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGeneratorFluid;
 import getfluxed.fluxedcrystals.reference.Reference;
@@ -21,6 +22,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(MessageGHLoad.class, MessageGHLoad.class, ID++, Side.CLIENT);
         INSTANCE.registerMessage(MessageGeneratorFluid.class, MessageGeneratorFluid.class, ID++, Side.CLIENT);
         INSTANCE.registerMessage(MessageGenerator.class, MessageGenerator.class, ID++, Side.CLIENT);
+        INSTANCE.registerMessage(MessageEnergyUpdate.class, MessageEnergyUpdate.class, ID++, Side.CLIENT);
 
 
     }

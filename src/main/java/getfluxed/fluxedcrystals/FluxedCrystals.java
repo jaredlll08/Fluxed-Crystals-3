@@ -51,20 +51,15 @@ public class FluxedCrystals {
         PacketHandler.preInit();
         proxy.registerRenderers();
         proxy.registerEvents();
-
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed PreInit in: " + time + "ms");
-//        CrystalRegistry.register(new Crystal("Test", new Resource(new ItemStack(Items.apple)), new Resource(new ItemStack(Items.arrow)), 0xFF0000, 32, 18, 16));
-//        CrystalRegistry.register(new Crystal("Another", new Resource(new ItemStack(Items.apple)), new Resource(new ItemStack(Items.arrow)), 0x00FF00, 32, 18, 16));
-//        CrystalRegistry.register(new Crystal("Boop", new Resource(new ItemStack(Items.apple)), new Resource(new ItemStack(Items.arrow)), 0x0000FF, 32, 18, 16));
     }
 
     @EventHandler
     public void init(FMLInitializationEvent e) {
         logger.log(Level.INFO, "Starting Init");
         long time = System.currentTimeMillis();
-
         FCBlocks.init();
         FCItems.init();
         proxy.registerGuis();

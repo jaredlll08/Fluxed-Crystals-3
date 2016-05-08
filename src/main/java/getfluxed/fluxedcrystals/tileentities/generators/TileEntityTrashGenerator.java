@@ -3,6 +3,8 @@ package getfluxed.fluxedcrystals.tileentities.generators;
 import getfluxed.fluxedcrystals.api.generators.Registry;
 import getfluxed.fluxedcrystals.api.generators.Registry.TrashGenerator;
 import getfluxed.fluxedcrystals.api.generators.generators.GeneratorBase;
+import getfluxed.fluxedcrystals.blocks.generators.BlockCoalGenerator;
+import getfluxed.fluxedcrystals.blocks.generators.BlockTrashGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -22,6 +24,15 @@ public class TileEntityTrashGenerator extends GeneratorBase {
         if (this.storage.getEnergyStored() < this.storage.getMaxEnergyStored()) {
             this.storage.receiveEnergy(10, false);
         }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (worldObj.getBlockState(getPos()).getValue(BlockCoalGenerator.isActive) && !isGenerating() && getStackInSlot(0)==null)
+            BlockTrashGenerator.setState(false, this.worldObj, this.pos);
+        else if(!worldObj.getBlockState(getPos()).getValue(BlockCoalGenerator.isActive) && isGenerating())
+            BlockTrashGenerator.setState(true, this.worldObj, this.pos);
     }
 
     @Override

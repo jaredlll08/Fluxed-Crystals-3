@@ -1,9 +1,12 @@
 package getfluxed.fluxedcrystals.tileentities.greenhouse.io;
 
 import cofh.api.energy.IEnergyHandler;
+import getfluxed.fluxedcrystals.network.PacketHandler;
+import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageEnergyUpdate;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.util.EnumSet;
 
@@ -14,7 +17,7 @@ public class TileEntityPowerIO extends TileEntityMultiBlockComponent implements 
 
 
     public EnumSet<EnumFacing> getValidOutputs() {
-        return EnumSet.noneOf(EnumFacing.class);
+        return EnumSet.allOf(EnumFacing.class);
     }
 
     public EnumSet<EnumFacing> getValidInputs() {
@@ -28,9 +31,12 @@ public class TileEntityPowerIO extends TileEntityMultiBlockComponent implements 
             if (getValidInputs().contains(facing)) {
                 int ret = tile.getEnergyStorage().receiveEnergy(maxReceive, true);
                 if (!simulate) {
-                    tile.getEnergyStorage().receiveEnergy(ret, false);
+                    tile.receiveEnergy(EnumFacing.UP, ret, false);
                 }
-                return ret;
+                if (!worldObj.isRemote) {
+                    PacketHandler.INSTANCE.sendToAllAround(new MessageEnergyUpdate(getMaster(), tile.getEnergyStored()), new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), getMaster().getX(), getMaster().getY(), getMaster().getZ(), 128D));
+                }
+                    return ret;
             }
         }
         return 0;
@@ -41,9 +47,9 @@ public class TileEntityPowerIO extends TileEntityMultiBlockComponent implements 
         if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
             TileEntitySoilController tile = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
             if (getValidOutputs().contains(facing)) {
-                int ret = tile.getEnergyStorage().extractEnergy(maxExtract, true);
+                int ret = tile.extractEnergy(EnumFacing.UP, maxExtract, true);
                 if (!simulate) {
-                    tile.getEnergyStorage().extractEnergy(ret, false);
+                    tile.extractEnergy(EnumFacing.UP, ret, false);
                 }
                 return ret;
             }
@@ -55,7 +61,7 @@ public class TileEntityPowerIO extends TileEntityMultiBlockComponent implements 
     public int getEnergyStored(EnumFacing facing) {
         if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
             TileEntitySoilController tile = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
-            return tile.getEnergyStorage().getEnergyStored();
+            return tile.getEnergyStored();
         }
         return 0;
     }
@@ -64,7 +70,7 @@ public class TileEntityPowerIO extends TileEntityMultiBlockComponent implements 
     public int getMaxEnergyStored(EnumFacing facing) {
         if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
             TileEntitySoilController tile = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
-            return tile.getEnergyStorage().getMaxEnergyStored();
+            return tile.getMaxStorage();
         }
         return 0;
     }

@@ -16,7 +16,11 @@ public abstract class TileEnergyBase extends TileEntity implements IEnergyHandle
 
 	public TileEnergyBase (int cap) {
 		super();
-		init(cap);
+		init(cap, cap);
+	}
+	public TileEnergyBase (int cap, int maxTransfer) {
+		super();
+		init(cap, maxTransfer);
 	}
 
 	public double getEnergyColor () {
@@ -25,8 +29,8 @@ public abstract class TileEnergyBase extends TileEntity implements IEnergyHandle
 		return energy / maxEnergy;
 	}
 
-	private void init (int cap) {
-		storage = new EnergyStorage(cap);
+	private void init (int cap, int maxTransfer) {
+		storage = new EnergyStorage(cap, maxTransfer);
 	}
 
 	public abstract EnumSet<EnumFacing> getValidOutputs ();
@@ -35,9 +39,7 @@ public abstract class TileEnergyBase extends TileEntity implements IEnergyHandle
 
 	@Override
 	public void update () {
-		if (!worldObj.isRemote) {
 			pushEnergy();
-		}
 	}
 
 	protected void pushEnergy () {
@@ -138,13 +140,22 @@ public abstract class TileEnergyBase extends TileEntity implements IEnergyHandle
 	@Override
 	public void writeToNBT (NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
-		storage.writeToNBT(nbt);
+        NBTTagCompound energy = new NBTTagCompound();
+        energy.setInteger("Energy", storage.getEnergyStored());
+        energy.setInteger("MaxEnergy", storage.getMaxEnergyStored());
+        System.out.println(getPos() + " max: "+ storage.getMaxEnergyStored());
+        System.out.println(getPos() + " current: "+ storage.getEnergyStored());
+
+        nbt.setTag("energy", energy);
 	}
 
 	@Override
 	public void readFromNBT (NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
-		storage = storage.readFromNBT(nbt);
-
+        NBTTagCompound energy = nbt.getCompoundTag("energy");
+        storage.setCapacity(energy.getInteger("MaxEnergy"));
+        storage.setEnergyStored(energy.getInteger("Energy"));
+        System.out.println(getPos() + " max: "+ storage.getMaxEnergyStored());
+        System.out.println(getPos() + " current: "+ storage.getEnergyStored());
 	}
 }

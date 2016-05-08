@@ -125,7 +125,6 @@ public class EnergyStorage implements IEnergyStorage {
 	public int receiveEnergy(int maxReceive, boolean simulate) {
 
 		int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
-
 		if (!simulate) {
 			energy += energyReceived;
 		}

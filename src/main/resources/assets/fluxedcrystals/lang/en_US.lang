@@ -1,3 +1,16 @@
 itemGroup.fc.tab.name=Fluxed-Crystals-3
 
 item.crystalDust.name=%s Dust
+item.crystalSolution.name=%s Solution
+
+tile.coalGenBasic.name=Coal Generator
+tile.ghBaseFrame.name=GreenHouse Base
+tile.ghBatteryAdvanced.name=Advanced GreenHouse Battery
+tile.ghBatteryBasic.name=Basic GreenHouse Battery
+tile.ghFluidIO.name=GreenHouse FluidIO
+tile.ghPowerIO.name=GreenHouse PowerIO
+tile.ghFrame.name=GreenHouse Frame
+tile.ghFrameGlass.name=GreenHouse Glass Frame
+tile.ghPowerMonitor.name=GreenHouse Power Monitor
+tile.ghSoilController.name=Greenhouse Controller
+tile.trashGenerator.name=Trash Generator

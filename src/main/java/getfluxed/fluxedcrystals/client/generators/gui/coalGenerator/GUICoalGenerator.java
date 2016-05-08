@@ -6,6 +6,7 @@ import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.util.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -33,52 +34,50 @@ public class GUICoalGenerator extends GuiContainer {
 
     public void updateScreen() {
         super.updateScreen();
-        drawGuiContainerForegroundLayer(0,0);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.pushAttrib();
         Minecraft.getMinecraft().renderEngine.bindTexture(texture);
-
+        int barHeight = (int) (((float) tile.generationTimer / tile.generationTimerDefault) * 13);
+        drawTexturedModalRect(80, 33, 176, 0, 16, 13 - barHeight);
+        int barWidth = (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 89);
+        drawTexturedModalRect(43, 50, 0, 166, barWidth, 18);
+        GlStateManager.popMatrix();
+        GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_BLEND);
-        int barHeight = (int) (((float) tile.generationTimer / tile.generationTimerDefault) * 13);
-        drawTexturedModalRect(80, 33, 176, 0, 16, 13 - barHeight);
-        int barWidth = (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 89);
-        drawTexturedModalRect(43, 50, 0, 166, barWidth, 18);
-
-
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             for (int x = 0; x < 9; x++) {
                 ItemStack stack = invPlayer.getStackInSlot(x);
                 if (Registry.BasicCoalGenerator.containsItemStack(stack)) {
-                    RenderUtils.drawRect(8 + 18 * x, 142, 16, 16, 0f, 0.8f, 0, 0.3f);
+                    RenderUtils.drawRectNoFade(8 + 18 * x, 142, 280, 16, 16, 0f, 0.8f, 0, 2f, 1);
                 } else if (stack != null)
-                    RenderUtils.drawRect(8 + 18 * x, 142, 16, 16, 0.8f, 0, 0, 1);
+                    RenderUtils.drawRectNoFade(8 + 18 * x, 142, 280, 16, 16, 0.8f, 0, 0, 2f, 1);
             }
             for (int y = 0; y < 3; y++) {
                 for (int x = 0; x < 9; x++) {
                     ItemStack stack = invPlayer.getStackInSlot(x + y * 9 + 9);
                     if (Registry.BasicCoalGenerator.containsItemStack(stack)) {
-                        RenderUtils.drawRect(8 + 18 * x, 84 + (y * 18), 16, 16, 0f, 0.8f, 0f, 1f);
+                        RenderUtils.drawRectNoFade(8 + 18 * x, 84 + (y * 18), 280, 16, 16, 0f, 0.8f, 0f, 2f, 1);
                     } else if (stack != null)
-                        RenderUtils.drawRect(8 + 18 * x, 84 + (y * 18), 16, 16, 0.8f, 0, 0, 1f);
+                        RenderUtils.drawRectNoFade(8 + 18 * x, 84 + (y * 18), 280, 16, 16, 0.8f, 0, 0, 2f, 1);
                 }
             }
         }
-
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_FOG);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDepthMask(true);
         GL11.glPopAttrib();
-
+        GL11.glPopMatrix();
     }
 
     @Override

@@ -30,15 +30,13 @@ public class Config {
     public static void load() {
         Configuration configuration = new Configuration(new File(Reference.configDirectory, String.format("%s.cfg", Reference.modid)));
         configuration.load();
-
-
         configuration.save();
     }
 
     public static void registerJsons() {
         CrystalRegistry.setEditing(true);
         CrystalRegistry.getCrystalMap().clear();
-        File jsons = new File(Reference.modid, "/jsons/");
+        File jsons = new File(new File(Reference.configDirectory, Reference.modid), "/jsons/");
         if (!jsons.exists()) {
             jsons.mkdirs();
         }

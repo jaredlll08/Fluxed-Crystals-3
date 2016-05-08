@@ -1,6 +1,8 @@
 {
-    "parent": "block/cube_all",
+    "parent": "block/orientable",
     "textures": {
-        "all": "fluxedcrystals:blocks/coalGenBasic"
+        "top": "fluxedcrystals:blocks/machineOther",
+        "front": "fluxedcrystals:blocks/coalGenBasic",
+        "side": "fluxedcrystals:blocks/machineSide"
     }
 }

@@ -1,5 +1,12 @@
 {
     "variants": {
-        "normal": { "model": "fluxedcrystals:trashGenerator" }
+		"active=false,facing=north": { "model": "fluxedcrystals:trashGenerator" },
+        "active=false,facing=south": { "model": "fluxedcrystals:trashGenerator", "y": 180 },
+        "active=false,facing=west":  { "model": "fluxedcrystals:trashGenerator", "y": 270 },
+        "active=false,facing=east":  { "model": "fluxedcrystals:trashGenerator", "y": 90 },
+		"active=true,facing=north": { "model": "fluxedcrystals:trashGeneratorActive" },
+        "active=true,facing=south": { "model": "fluxedcrystals:trashGeneratorActive", "y": 180 },
+        "active=true,facing=west":  { "model": "fluxedcrystals:trashGeneratorActive", "y": 270 },
+        "active=true,facing=east":  { "model": "fluxedcrystals:trashGeneratorActive", "y": 90 }
     }
 }

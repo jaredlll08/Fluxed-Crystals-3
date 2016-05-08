@@ -27,7 +27,6 @@ public class BlockFrame extends BlockMultiblockComponent {
         if (!blockState.equals(iblockstate)) {
             return true;
         }
-
         if (block instanceof BlockFrame) {
             return false;
         }

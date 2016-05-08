@@ -18,7 +18,8 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void stitch(TextureStitchEvent e) {
         for (Crystal c : CrystalRegistry.getCrystalMap().values()) {
-        c.updateColour();
+            c.updateColour();
         }
     }
+
 }

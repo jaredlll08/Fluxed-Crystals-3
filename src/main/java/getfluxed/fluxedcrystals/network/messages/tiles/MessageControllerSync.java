@@ -29,7 +29,7 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
         this.y = tile.getPos().getY();
         this.z = tile.getPos().getZ();
         this.multiBlock = tile.getMultiBlock();
-        this.current = tile.getEnergyStorage().getEnergyStored();
+        this.current = tile.getEnergyStorage().getMaxEnergyStored();
         this.maxCapacity = tile.getEnergyStorage().getMaxEnergyStored();
     }
 
@@ -66,10 +66,12 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
             TileEntitySoilController tile = (TileEntitySoilController) tileEntity;
             tile.setMultiBlock(message.multiBlock);
             tile.getEnergyStorage().setCapacity(message.maxCapacity);
-            tile.getEnergyStorage().setEnergyStored(message.current);
-
+            System.out.println(tile.getMaxStorage());
+            tile.getEnergyStorage().receiveEnergy(message.current, false);
+            System.out.println(tile.getEnergyStored());
             if (tile.tank != null)
                 tile.tank.setCapacity(message.multiBlock.getAirBlocks().size() * 16000);
+
         }
 
         return null;

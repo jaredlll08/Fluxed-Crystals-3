@@ -13,7 +13,6 @@ import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockPowerIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.monitor.BlockPowerMonitor;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityLavaGenerator;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
@@ -66,14 +65,12 @@ public class FCBlocks {
         registerBlockMultiblock(ghBatteryBasic, "ghBatteryBasic");
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
-
         registerGenerators();
     }
 
-    public static void registerGenerators(){
+    public static void registerGenerators() {
         registerBlock(basicCoalGenerator, "coalGenBasic", TileEntityCoalGenerator.class);
         registerBlock(trashGenerator, "trashGenerator", TileEntityTrashGenerator.class);
-        registerBlock(lavaGenerator, "lavaGenerator", TileEntityLavaGenerator.class);
     }
 
 

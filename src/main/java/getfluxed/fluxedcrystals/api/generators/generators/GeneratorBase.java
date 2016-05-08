@@ -8,6 +8,9 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +27,8 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
     public int generationTimer = -1;
     public int generationTimerDefault = -1;
     private boolean firstTicked = false;
+    private int firstTickedTime = 40;
+
 
     public GeneratorBase(int cap, int inventorySize) {
         super(cap);
@@ -32,16 +37,14 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
 
     }
 
+    public boolean isGenerating() {
+        return generationTimer > -1;
+    }
+
     @Override
     public void update() {
         super.update();
-        if (getWorld() != null && !firstTicked) {
-            System.out.println("en: " + getEnergyStored());
-            if (!worldObj.isRemote)
-                markDirty();
-            firstTicked = true;
-            System.out.println("ticked");
-        }
+
         if (generationTimerDefault < 0 && generationTimer < 0 && storage.getEnergyStored() < storage.getMaxEnergyStored()) {
             if (getStackInSlot(0) != null) {
 
@@ -67,6 +70,11 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
             generationTimer = -1;
             generationTimerDefault = -1;
 
+        }
+        if (getWorld() != null && !firstTicked && --firstTickedTime < 0) {
+            if (!worldObj.isRemote)
+                markDirty();
+            firstTicked = true;
         }
     }
 
@@ -217,9 +225,24 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
             if (!simulate) {
                 storage.receiveEnergy(ret, false);
             }
+
             return ret;
+
         }
         return 0;
+    }
+
+    @Override
+    public Packet getDescriptionPacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        writeToNBT(tag);
+        return new SPacketUpdateTileEntity(getPos(), 0, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        super.onDataPacket(net, pkt);
+        readFromNBT(pkt.getNbtCompound());
     }
 
 }
