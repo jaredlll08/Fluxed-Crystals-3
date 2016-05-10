@@ -27,10 +27,20 @@ public class TileEntityCoalGenerator extends GeneratorBase {
     @Override
     public void update() {
         super.update();
-        if (worldObj.getBlockState(getPos()).getValue(BlockCoalGenerator.isActive) && !isGenerating()&& getStackInSlot(0)==null)
-            BlockCoalGenerator.setState(false, this.worldObj, this.pos);
-        else if(!worldObj.getBlockState(getPos()).getValue(BlockCoalGenerator.isActive) && isGenerating())
-            BlockCoalGenerator.setState(true, this.worldObj, this.pos);
+        boolean active = true;
+        if(!isGenerating()){
+            active = false;
+        }
+        if(getStackInSlot(0)==null && !isGenerating()){
+            active = false;
+        }
+        if(getEnergyStored()==getMaxStorage()){
+            active = false;
+        }
+
+        if(worldObj.getBlockState(getPos()).getValue(BlockCoalGenerator.isActive) != active){
+            BlockCoalGenerator.setState(active, this.worldObj, this.pos);
+        }
     }
 
     public boolean canGenerateEnergy(ItemStack stack) {

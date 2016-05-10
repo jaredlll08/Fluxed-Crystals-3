@@ -36,7 +36,7 @@ public class Config {
     public static void registerJsons() {
         CrystalRegistry.setEditing(true);
         CrystalRegistry.getCrystalMap().clear();
-        File jsons = new File(new File(Reference.configDirectory, Reference.modid), "/jsons/");
+        File jsons = new File(Reference.configDirectory, "/jsons/");
         if (!jsons.exists()) {
             jsons.mkdirs();
         }

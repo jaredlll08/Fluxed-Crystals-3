@@ -1,6 +1,8 @@
 package getfluxed.fluxedcrystals.tileentities.generators;
 
 import getfluxed.fluxedcrystals.api.generators.generators.FluidGeneratorBase;
+import getfluxed.fluxedcrystals.blocks.generators.BlockCoalGenerator;
+import getfluxed.fluxedcrystals.blocks.generators.BlockLavaGenerator;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -9,12 +11,11 @@ import net.minecraftforge.fluids.FluidStack;
 public class TileEntityLavaGenerator extends FluidGeneratorBase {
 	private static int maxEnergy = 100000;
 	private static int capacity = 8000;
-	private static int capacityTank = 16000;
 
 	
 
 	public TileEntityLavaGenerator() {
-		super(capacityTank, capacity, maxEnergy);
+		super(capacity, maxEnergy);
 	}
 
 
@@ -28,8 +29,16 @@ public class TileEntityLavaGenerator extends FluidGeneratorBase {
 	}
 
 	@Override
+	public void update() {
+		super.update();
+		if (worldObj.getBlockState(getPos()).getValue(BlockCoalGenerator.isActive) && !isGenerating() && tank.getFluid()==null)
+			BlockLavaGenerator.setState(false, this.worldObj, this.pos);
+		else if(!worldObj.getBlockState(getPos()).getValue(BlockCoalGenerator.isActive) && isGenerating())
+            BlockLavaGenerator.setState(true, this.worldObj, this.pos);
+	}
+
+	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		System.out.println("Filled!");
 		return super.fill(resource, doFill);
 
 	}

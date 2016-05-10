@@ -1,20 +1,13 @@
     {
         "data": [{
-            "name": "Test",
-            "resourceIn": "minecraft:bedrock",
-            "resourceOut": "minecraft:bedrock",
-            "colour": "0xFF0022",
-            "dustNeeded": 32,
-            "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16
-        },{
             "name":"Iron",
             "resourceIn": "minecraft:iron_ingot",
             "resourceOut": "minecraft:iron_ingot",
             "colour": "0xD6B781",
             "dustNeeded": 32,
             "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16
+            "crushedCrystalNeededPerBlock": 16,
+			"dynamicColour": true
         },{
             "name":"Gold",
             "resourceIn": "minecraft:gold_ingot",
@@ -22,7 +15,8 @@
             "colour": "0xB5A62C",
             "dustNeeded": 32,
             "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16
+            "crushedCrystalNeededPerBlock": 16,
+			"dynamicColour": true
         },{
             "name":"Coal",
             "resourceIn": "minecraft:coal",
@@ -30,7 +24,35 @@
             "colour": "0xC090A",
             "dustNeeded": 32,
             "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16
+            "crushedCrystalNeededPerBlock": 16,
+			"dynamicColour": true
+        },{
+            "name":"Charcoal",
+            "resourceIn": "minecraft:coal;1",
+            "resourceOut": "minecraft:coal;1",
+            "colour": "0x34282C",
+            "dustNeeded": 32,
+            "crushedCrystalPerBlock": 18,
+            "crushedCrystalNeededPerBlock": 16,
+			"dynamicColour": true
+        },{
+            "name":"Emerald",
+            "resourceIn": "minecraft:emerald",
+            "resourceOut": "minecraft:emerald",
+            "colour": "0x5FFB17",
+            "dustNeeded": 32,
+            "crushedCrystalPerBlock": 18,
+            "crushedCrystalNeededPerBlock": 16,
+			"dynamicColour": true
+        },{
+            "name":"Diamond",
+            "resourceIn": "minecraft:diamond",
+            "resourceOut": "minecraft:diamond",
+            "colour": "0x4EE2EC",
+            "dustNeeded": 32,
+            "crushedCrystalPerBlock": 18,
+            "crushedCrystalNeededPerBlock": 16,
+			"dynamicColour": true
         }
         ]
     }

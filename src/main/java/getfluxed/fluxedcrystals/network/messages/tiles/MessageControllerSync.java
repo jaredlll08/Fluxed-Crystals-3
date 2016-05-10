@@ -66,9 +66,7 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
             TileEntitySoilController tile = (TileEntitySoilController) tileEntity;
             tile.setMultiBlock(message.multiBlock);
             tile.getEnergyStorage().setCapacity(message.maxCapacity);
-            System.out.println(tile.getMaxStorage());
             tile.getEnergyStorage().receiveEnergy(message.current, false);
-            System.out.println(tile.getEnergyStored());
             if (tile.tank != null)
                 tile.tank.setCapacity(message.multiBlock.getAirBlocks().size() * 16000);
 

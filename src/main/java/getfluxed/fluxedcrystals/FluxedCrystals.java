@@ -37,14 +37,14 @@ public class FluxedCrystals {
 
 
     @Mod.Instance
+
     public static FluxedCrystals instance;
     public static CreativeTabFC tab = new CreativeTabFC();
-
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         logger.log(Level.INFO, "Starting PreInit");
         long time = System.currentTimeMillis();
-        Reference.configDirectory = new File(e.getSuggestedConfigurationFile(), "/" + Reference.modid + "/");
+        Reference.configDirectory = new File(e.getSuggestedConfigurationFile().getParent(), "/" + Reference.modid + "/");
         Config.load();
         FCBlocks.preInit();
         FCItems.preInit();

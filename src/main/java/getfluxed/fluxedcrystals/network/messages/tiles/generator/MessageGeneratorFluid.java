@@ -25,7 +25,7 @@ public class MessageGeneratorFluid implements IMessage, IMessageHandler<MessageG
 	public MessageGeneratorFluid(FluidGeneratorBase tile) {
 		this.fluid = "";
 		if (tile.tank.getFluid() != null)
-			this.fluid = tile.tank.getFluid().getFluid().getName();
+			this.fluid = FluidRegistry.getFluidName(tile.tank.getFluid().getFluid());
 		this.amount = tile.tank.getFluidAmount();
 		this.x = tile.getPos().getX();
 		this.y = tile.getPos().getY();
@@ -69,7 +69,7 @@ public class MessageGeneratorFluid implements IMessage, IMessageHandler<MessageG
 		if (tileEntity instanceof FluidGeneratorBase) {
 			Fluid fluid;
 			FluidStack stack = null;
-			if (message.fluid.isEmpty()) {
+            if (!message.fluid.isEmpty()) {
 				fluid = FluidRegistry.getFluid(message.fluid);
 				stack = new FluidStack(fluid, message.amount);
 			}

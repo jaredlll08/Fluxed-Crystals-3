@@ -15,291 +15,281 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.util.EnumSet;
 
+
 public abstract class FluidGeneratorBase extends TileEnergyBase implements IFluidTank, IFluidHandler, ITickable {
 
-	protected FluidStack fluid;
-	private int capacity;
-	protected TileEntity tile;
-	public FluidTank tank;
-	public int prevAmount;
-	public FluidStack prevFluid;
-	public int initPer;
-	public int generationTimer = -1;
-	public int generationTimerDefault = -1;
-	public FluidGeneratorBase(int tankCapacity, int capacity, int energyStorage) {
-		this(null, tankCapacity, capacity, energyStorage);
-	}
+    protected TileEntity tile;
+    public FluidTank tank;
+    public int prevAmount;
+    public int initPer;
+    public int generationTimer = -1;
+    public int generationTimerDefault = -1;
 
-	public FluidGeneratorBase(FluidStack stack, int tankCapacity, int capacity, int energyStorage) {
-		super(energyStorage);
-		this.fluid = stack;
-		this.capacity = capacity;
-		tank = new FluidTank(tankCapacity);
-		prevAmount = 0;
-		initPer = 40;
-	}
+    public FluidGeneratorBase(int tankCapacity, int energyStorage) {
+        super(energyStorage);
+        tank = new FluidTank(tankCapacity);
+        prevAmount = 0;
+        initPer = 40;
+    }
 
-	public FluidGeneratorBase(Fluid fluid, int tankCapactity, int amount, int capacity, int energyStorage) {
-		this(new FluidStack(fluid, amount), tankCapactity, capacity, energyStorage);
-	}
+    public boolean isGenerating() {
+        return generationTimer > -1;
+    }
 
-	public FluidGeneratorBase readFluidFromNBT(NBTTagCompound nbt) {
-		if (!nbt.hasKey("Empty")) {
-			FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
-			setFluid(fluid);
-		} else {
-			setFluid(null);
-		}
-		return this;
-	}
+    public FluidGeneratorBase readFluidFromNBT(NBTTagCompound nbt) {
+        this.tank = this.tank.readFromNBT(nbt.getCompoundTag("tank"));
+        return this;
+    }
 
-	public NBTTagCompound writeFluidToNBT(NBTTagCompound nbt) {
-		if (fluid != null) {
-			fluid.writeToNBT(nbt);
-		} else {
-			nbt.setString("Empty", "");
-		}
-		return nbt;
-	}
+    public NBTTagCompound writeFluidToNBT(NBTTagCompound nbt) {
+        NBTTagCompound tank = new NBTTagCompound();
+        this.tank.writeToNBT(tank);
+        nbt.setTag("tank", tank);
+        return nbt;
+    }
 
-	@Override
-	public void update() {
-		super.update();
-		if (!worldObj.isRemote) {
-			if (tank.getFluidAmount() >= 0 && !(tank.getFluidAmount() == prevAmount)) {
-				prevAmount = tank.getFluidAmount();
-				markDirty();
-			}
-			if (initPer >= 0 && tank.getFluid() != null) {
-				initPer--;
-				if (initPer <= 0) {
-					markDirty();
-				}
-			}
-			if (generationTimerDefault < 0 && generationTimer < 0 && storage.getEnergyStored() < storage.getMaxEnergyStored()) {
-				if (getFluid() != null) {
+    @Override
+    public void update() {
+        super.update();
 
-					if (Registry.LavaGenerator.canUse(getFluid().getFluid())) {
-						generationTimer = 300;
-						generationTimerDefault = 300;
-						drain(250, true);
-					}
+        if (tank.getFluidAmount() >= 0 && !(tank.getFluidAmount() == prevAmount)) {
+            prevAmount = tank.getFluidAmount();
+            if (!worldObj.isRemote)
+                markDirty();
+        }
+        if (initPer >= 0 && tank.getFluid() != null) {
+            initPer--;
+            if (initPer <= 0) {
+                if (!worldObj.isRemote)
+                    markDirty();
+            }
+        }
+        if (generationTimerDefault < 0 && generationTimer < 0 && storage.getEnergyStored() < storage.getMaxEnergyStored()) {
+            if (getFluid() != null) {
 
-				}
-			}
-			if (generationTimerDefault >= 0 && getEnergyStored() < getMaxStorage()) {
-				generationTimer--;
-				generateEnergy(worldObj, getPos(), generationTimer);
-			}
-			if (generationTimer < 0 && generationTimerDefault >= 0) {
-				generationTimer = -1;
-				generationTimerDefault = -1;
-			}
-		}
-	}
-	public abstract void generateEnergy(World world, BlockPos pos, int timer);
-	public void setFluid(FluidStack fluid) {
-		this.fluid = fluid;
-	}
+                if (Registry.LavaGenerator.canUse(getFluid().getFluid())) {
+                    generationTimer = 300;
+                    generationTimerDefault = 300;
+                    drain(250, true);
+                }
 
-	public void setCapacity(int capacity) {
-		this.capacity = capacity;
-	}
+            }
+        }
+        if (generationTimerDefault >= 0 && getEnergyStored() < getMaxStorage()) {
+            generationTimer--;
+            generateEnergy(worldObj, getPos(), generationTimer);
+        }
+        if (generationTimer < 0 && generationTimerDefault >= 0) {
+            generationTimer = -1;
+            generationTimerDefault = -1;
+        }
+    }
 
-	@Override
-	public FluidStack getFluid() {
-		return tank.getFluid();
-	}
+    public abstract void generateEnergy(World world, BlockPos pos, int timer);
 
-	@Override
-	public int getFluidAmount() {
-		if (tank.getFluid() == null) {
-			return 0;
-		}
-		return tank.getFluidAmount();
-	}
+    public void setFluid(FluidStack fluid) {
+        this.tank.setFluid(fluid);
+    }
 
-	@Override
-	public int getCapacity() {
-		return tank.getCapacity();
-	}
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
 
-	@Override
-	public FluidTankInfo getInfo() {
-		return new FluidTankInfo(this);
-	}
+    @Override
+    public FluidStack getFluid() {
+        return tank.getFluid();
+    }
 
-	@Override
-	public int fill(FluidStack resource, boolean doFill) {
-		if (resource == null) {
-			return 0;
-		}
+    @Override
+    public int getFluidAmount() {
+        if (tank.getFluid() == null) {
+            return 0;
+        }
+        return tank.getFluidAmount();
+    }
 
-		if (!doFill) {
-			if (fluid == null) {
-				return Math.min(capacity, resource.amount);
-			}
+    @Override
+    public int getCapacity() {
+        return tank.getCapacity();
+    }
 
-			if (!fluid.isFluidEqual(resource)) {
-				return 0;
-			}
+    @Override
+    public FluidTankInfo getInfo() {
+        return new FluidTankInfo(this);
+    }
 
-			return Math.min(capacity - fluid.amount, resource.amount);
-		}
+    @Override
+    public int fill(FluidStack resource, boolean doFill) {
+        if (resource == null) {
+            return 0;
+        }
 
-		if (fluid == null) {
-			fluid = new FluidStack(resource, Math.min(capacity, resource.amount));
+        if (!doFill) {
+            if (tank.getFluid() == null) {
+                return Math.min(capacity, resource.amount);
+            }
 
-			if (tile != null) {
-				FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorld(), tile.getPos(), this, fluid.amount));
-			}
-			return fluid.amount;
-		}
+            if (!tank.getFluid().isFluidEqual(resource)) {
+                return 0;
+            }
 
-		if (!fluid.isFluidEqual(resource)) {
-			return 0;
-		}
-		int filled = capacity - fluid.amount;
+            return Math.min(capacity - tank.getFluid().amount, resource.amount);
+        }
 
-		if (resource.amount < filled) {
-			fluid.amount += resource.amount;
-			filled = resource.amount;
-		} else {
-			fluid.amount = capacity;
-		}
+        if (tank.getFluid() == null) {
+            tank.setFluid( new FluidStack(resource, Math.min(capacity, resource.amount)));
+            if (tile != null) {
+                FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(tank.getFluid(), tile.getWorld(), tile.getPos(), this, tank.getFluid().amount));
+            }
+            return tank.getFluid().amount;
+        }
 
-		if (tile != null) {
-			FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorld(), tile.getPos(), this, filled));
-		}
-		return filled;
-	}
+        if (!tank.getFluid().isFluidEqual(resource)) {
+            return 0;
+        }
+        int filled = capacity - tank.getFluid().amount;
 
-	@Override
-	public FluidStack drain(int maxDrain, boolean doDrain) {
-		if (fluid == null) {
-			return null;
-		}
+        if (resource.amount < filled) {
+            tank.getFluid().amount += resource.amount;
+            filled = resource.amount;
+        } else {
+            tank.getFluid().amount = capacity;
+        }
 
-		int drained = maxDrain;
-		if (fluid.amount < drained) {
-			drained = fluid.amount;
-		}
+        if (tile != null) {
+            FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(tank.getFluid(), tile.getWorld(), tile.getPos(), this, filled));
+        }
+        return filled;
+    }
 
-		FluidStack stack = new FluidStack(fluid, drained);
-		if (doDrain) {
-			fluid.amount -= drained;
-			if (fluid.amount <= 0) {
-				fluid = null;
-			}
+    @Override
+    public FluidStack drain(int maxDrain, boolean doDrain) {
+        if (tank.getFluid() == null) {
+            return null;
+        }
 
-			if (tile != null) {
-				FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(fluid, tile.getWorld(), tile.getPos(), this, drained));
-			}
-		}
-		return stack;
-	}
+        int drained = maxDrain;
+        if (tank.getFluid().amount < drained) {
+            drained = tank.getFluid().amount;
+        }
 
-	@Override
-	public EnumSet<EnumFacing> getValidOutputs() {
-		return EnumSet.allOf(EnumFacing.class);
-	}
+        FluidStack stack = new FluidStack(tank.getFluid(), drained);
+        if (doDrain) {
+            tank.getFluid().amount -= drained;
+            if (tank.getFluid().amount <= 0) {
+                tank.setFluid(null);
+            }
 
-	@Override
-	public EnumSet<EnumFacing> getValidInputs() {
-		return EnumSet.noneOf(EnumFacing.class);
-	}
+            if (tile != null) {
+                FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(tank.getFluid(), tile.getWorld(), tile.getPos(), this, drained));
+            }
+        }
+        return stack;
+    }
 
-	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if (resource == null) {
-			return 0;
-		}
+    @Override
+    public EnumSet<EnumFacing> getValidOutputs() {
+        return EnumSet.allOf(EnumFacing.class);
+    }
 
-		FluidStack resourceCopy = resource.copy();
-		int totalUsed = 0;
+    @Override
+    public EnumSet<EnumFacing> getValidInputs() {
+        return EnumSet.noneOf(EnumFacing.class);
+    }
 
-		FluidStack liquid = tank.getFluid();
-		if (liquid != null && liquid.amount > 0 && !liquid.isFluidEqual(resourceCopy)) {
-			return 0;
-		}
+    @Override
+    public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+        if (resource == null) {
+            return 0;
+        }
 
-		while (resourceCopy.amount > 0) {
-			int used = tank.fill(resourceCopy, doFill);
-			resourceCopy.amount -= used;
-			if (used > 0) {
-				markDirty();
-			}
+        FluidStack resourceCopy = resource.copy();
+        int totalUsed = 0;
 
-			totalUsed += used;
+        FluidStack liquid = tank.getFluid();
+        if (liquid != null && liquid.amount > 0 && !liquid.isFluidEqual(resourceCopy)) {
+            return 0;
+        }
 
-		}
+        while (resourceCopy.amount > 0) {
+            int used = tank.fill(resourceCopy, doFill);
+            resourceCopy.amount -= used;
+            if (used > 0) {
+                if (!worldObj.isRemote)
+                    markDirty();
+            }
 
-		return totalUsed;
-	}
+            totalUsed += used;
 
-	@Override
-	public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
-		markDirty();
-		FluidStack output = tank.drain(maxEmpty, doDrain);
+        }
 
-		return output;
-	}
+        return totalUsed;
+    }
 
-	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if (resource == null) {
-			return null;
-		}
-		if (!resource.isFluidEqual(tank.getFluid())) {
-			return null;
-		}
-		return drain(from, resource.amount, doDrain);
-	}
+    @Override
+    public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
+        if (!worldObj.isRemote)
+            markDirty();
+        FluidStack output = tank.drain(maxEmpty, doDrain);
 
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing direction) {
-		FluidTank compositeTank = new FluidTank(tank.getCapacity());
+        return output;
+    }
 
-		int capacity = tank.getCapacity();
+    @Override
+    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+        if (resource == null) {
+            return null;
+        }
+        if (!resource.isFluidEqual(tank.getFluid())) {
+            return null;
+        }
+        return drain(from, resource.amount, doDrain);
+    }
 
-		if (tank.getFluid() != null) {
-			compositeTank.setFluid(tank.getFluid().copy());
-		} else {
-			return new FluidTankInfo[] { compositeTank.getInfo() };
-		}
+    @Override
+    public FluidTankInfo[] getTankInfo(EnumFacing direction) {
+        FluidTank compositeTank = new FluidTank(tank.getCapacity());
 
-		FluidStack liquid = tank.getFluid();
-		if (liquid == null || liquid.amount == 0) {
+        int capacity = tank.getCapacity();
 
-		} else {
-			compositeTank.getFluid().amount += liquid.amount;
-		}
+        if (tank.getFluid() != null) {
+            compositeTank.setFluid(tank.getFluid().copy());
+        } else {
+            return new FluidTankInfo[]{compositeTank.getInfo()};
+        }
 
-		capacity += tank.getCapacity();
+        FluidStack liquid = tank.getFluid();
+        if (liquid == null || liquid.amount == 0) {
 
-		compositeTank.setCapacity(capacity);
-		return new FluidTankInfo[] { compositeTank.getInfo() };
-	}
+        } else {
+            compositeTank.getFluid().amount += liquid.amount;
+        }
 
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		Fluid tankFluid = getFluidType();
-		return tankFluid == null || tankFluid == fluid;
-	}
+        capacity += tank.getCapacity();
 
-	public Fluid getFluidType() {
-		return tank.getFluid() != null ? tank.getFluid().getFluid() : null;
-	}
+        compositeTank.setCapacity(capacity);
+        return new FluidTankInfo[]{compositeTank.getInfo()};
+    }
 
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		Fluid tankFluid = getFluidType();
-		return tankFluid != null && tankFluid == fluid;
-	}
+    @Override
+    public boolean canFill(EnumFacing from, Fluid fluid) {
+        Fluid tankFluid = getFluidType();
+        return tankFluid == null || tankFluid == tank.getFluid().getFluid();
+    }
 
-	@Override
-	public void markDirty() {
-		super.markDirty();
-		PacketHandler.INSTANCE.sendToAllAround(new MessageGeneratorFluid(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
-	}
+    public Fluid getFluidType() {
+        return tank.getFluid() != null ? tank.getFluid().getFluid() : null;
+    }
+
+    @Override
+    public boolean canDrain(EnumFacing from, Fluid fluid) {
+        Fluid tankFluid = getFluidType();
+        return tankFluid != null && tankFluid == tank.getFluid().getFluid();
+    }
+
+    @Override
+    public void markDirty() {
+        super.markDirty();
+        PacketHandler.INSTANCE.sendToAllAround(new MessageGeneratorFluid(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
+    }
 }

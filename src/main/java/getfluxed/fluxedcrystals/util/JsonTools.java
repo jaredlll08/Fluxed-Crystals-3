@@ -90,13 +90,12 @@ public class JsonTools {
             return base;
         }
     }
+
     public static Resource getResource(String str) {
         Resource res = null;
 
         if (!str.contains(":")) {
-            System.out.println("is Fluid");
             if (FluidRegistry.getFluid(str) != null) {
-                System.out.println("found fluid");
                 res = new Resource(new FluidStack(FluidRegistry.getFluid(str), 1));
             }
         } else {

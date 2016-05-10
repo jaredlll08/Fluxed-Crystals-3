@@ -1,5 +1,6 @@
 package getfluxed.fluxedcrystals.network.messages.tiles.generator;
 
+import getfluxed.fluxedcrystals.api.generators.generators.FluidGeneratorBase;
 import getfluxed.fluxedcrystals.api.generators.generators.GeneratorBase;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
@@ -29,8 +30,16 @@ public class MessageGenerator implements IMessage, IMessageHandler<MessageGenera
 		this.generationTimer = tile.generationTimer;
 		this.generationTimerDefault = tile.generationTimerDefault;
 		this.energy = tile.getEnergyStored();
-	}	
+	}
+	public MessageGenerator(FluidGeneratorBase tile) {
 
+		this.x = tile.getPos().getX();
+		this.y = tile.getPos().getY();
+		this.z = tile.getPos().getZ();
+		this.generationTimer = tile.generationTimer;
+		this.generationTimerDefault = tile.generationTimerDefault;
+		this.energy = tile.getEnergyStored();
+	}
 	@Override
 	public void fromBytes(ByteBuf buf) {
 
@@ -66,6 +75,10 @@ public class MessageGenerator implements IMessage, IMessageHandler<MessageGenera
 			((GeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;
 			((GeneratorBase) tileEntity).setEnergyStored(message.energy);
 			
+		}else if(tileEntity instanceof FluidGeneratorBase){
+			((FluidGeneratorBase) tileEntity).generationTimer = message.generationTimer;
+			((FluidGeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;
+			((FluidGeneratorBase) tileEntity).setEnergyStored(message.energy);
 		}
 
 		return null;

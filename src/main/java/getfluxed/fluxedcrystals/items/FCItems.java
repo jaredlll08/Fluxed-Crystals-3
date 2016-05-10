@@ -52,6 +52,10 @@ public class FCItems {
         for (Map.Entry<Item, int[]> ent : colourMap.entrySet()) {
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler((stack, tintIndex) -> {
                 Crystal c = CrystalRegistry.getCrystal(NBTHelper.getString(stack, "crystalName"));
+                if(c ==null){
+                    System.out.println(NBTHelper.getString(stack, "crystalName"));
+                    return 0xFFFFFF;
+                }
                 for(int i : ent.getValue()) {
                     if (tintIndex == i)
                         if (c != null) {

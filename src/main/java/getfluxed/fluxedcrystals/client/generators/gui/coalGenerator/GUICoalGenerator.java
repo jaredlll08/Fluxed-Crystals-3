@@ -45,7 +45,7 @@ public class GUICoalGenerator extends GuiContainer {
         drawTexturedModalRect(80, 33, 176, 0, 16, 13 - barHeight);
         int barWidth = (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 89);
         drawTexturedModalRect(43, 50, 0, 166, barWidth, 18);
-        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GL11.glDepthMask(false);

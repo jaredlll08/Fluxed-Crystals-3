@@ -41,6 +41,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
     public TileEntitySoilController() {
         super(0, 250);
+        getEnergyStorage().setMaxTransfer(250);
         multiBlock = new MultiBlock(getPos());
         tank = new FluidTank(0);
     }
