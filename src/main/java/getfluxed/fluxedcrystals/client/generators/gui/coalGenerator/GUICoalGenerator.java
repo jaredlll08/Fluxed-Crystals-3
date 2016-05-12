@@ -38,22 +38,26 @@ public class GUICoalGenerator extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
-        GlStateManager.color(1, 1, 1, 1);
+
         GlStateManager.pushAttrib();
+        GlStateManager.color(1, 1, 1, 1);
         Minecraft.getMinecraft().renderEngine.bindTexture(texture);
-        int barHeight = (int) (((float) tile.generationTimer / tile.generationTimerDefault) * 13);
-        drawTexturedModalRect(80, 33, 176, 0, 16, 13 - barHeight);
-        int barWidth = (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 89);
-        drawTexturedModalRect(43, 50, 0, 166, barWidth, 18);
+        int barHeight = (int) (((float) tile.generationTimer / tile.generationTimerDefault) * 11);
+        drawTexturedModalRect(80, 33, 176, 0, 16, 11 - barHeight);
+        int barWidth = (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 88);
+        drawTexturedModalRect(43, 50, 0, 166, barWidth, 19);
         GlStateManager.popAttrib();
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GL11.glDepthMask(false);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_FOG);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_BLEND);
+
+
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+            GL11.glPushMatrix();
+            GlStateManager.pushAttrib();
+            GL11.glDepthMask(false);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_FOG);
+            GL11.glDisable(GL11.GL_ALPHA_TEST);
+            GL11.glEnable(GL11.GL_BLEND);
+
             for (int x = 0; x < 9; x++) {
                 ItemStack stack = invPlayer.getStackInSlot(x);
                 if (Registry.BasicCoalGenerator.containsItemStack(stack)) {
@@ -70,14 +74,15 @@ public class GUICoalGenerator extends GuiContainer {
                         RenderUtils.drawRectNoFade(8 + 18 * x, 84 + (y * 18), 280, 16, 16, 0.8f, 0, 0, 2f, 1);
                 }
             }
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_FOG);
+            GL11.glEnable(GL11.GL_ALPHA_TEST);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glDepthMask(true);
+            GlStateManager.popAttrib();
+            GL11.glPopMatrix();
         }
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_FOG);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDepthMask(true);
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
+
     }
 
     @Override

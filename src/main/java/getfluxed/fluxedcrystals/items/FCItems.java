@@ -10,7 +10,9 @@ import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -35,7 +37,6 @@ public class FCItems {
     public static Item crystalSolutionShell = new ItemCrystalSolutionShell();
 
 
-
     public static void preInit() {
         registerItem(crystalSolutionShell, "crystalSolutionShell", "crystalSolutionShell");
         registerItemColour(crystalDust, "crystalDust", "crystalDust", new int[]{0});
@@ -50,19 +51,23 @@ public class FCItems {
             renderItem.getItemModelMesher().register(ent.getValue(), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
         }
         for (Map.Entry<Item, int[]> ent : colourMap.entrySet()) {
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler((stack, tintIndex) -> {
-                Crystal c = CrystalRegistry.getCrystal(NBTHelper.getString(stack, "crystalName"));
-                if(c ==null){
-                    System.out.println(NBTHelper.getString(stack, "crystalName"));
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor() {
+                @Override
+                public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+                    Crystal c = CrystalRegistry.getCrystal(NBTHelper.getString(stack, "crystalName"));
+                    if (c == null) {
+                        System.out.println(NBTHelper.getString(stack, "crystalName"));
+                        return 0xFFFFFF;
+                    }
+                    for (int i : ent.getValue()) {
+                        if (tintIndex == i)
+                            if (c != null) {
+                                return c.getColour();
+                            }
+                    }
                     return 0xFFFFFF;
                 }
-                for(int i : ent.getValue()) {
-                    if (tintIndex == i)
-                        if (c != null) {
-                            return c.getColour();
-                        }
-                }
-                return 0xFFFFFF;
+
             }, ent.getKey());
         }
     }

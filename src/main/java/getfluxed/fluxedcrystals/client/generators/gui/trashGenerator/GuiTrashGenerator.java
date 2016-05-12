@@ -29,9 +29,9 @@ public class GuiTrashGenerator extends GuiContainer {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mx, int my) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
-		int barHeight = (int) (((float) tile.generationTimer / tile.generationTimerDefault) * 13);
-		int barWidth= (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 87);
-		drawTexturedModalRect( 43,50, 0, 166, barWidth, 18);
+		int barHeight = (int) (((float) tile.generationTimer / tile.generationTimerDefault) * 11);
+		int barWidth= (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 88);
+		drawTexturedModalRect( 43,50, 0, 166, barWidth, 19);
 		drawTexturedModalRect(80, 33 + barHeight, 176, barHeight, 16, barHeight+16);
 	}
 

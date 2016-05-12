@@ -24,8 +24,8 @@ public class GeneratorData {
 
 	private static void registerBasicCoalGeneratorItems() {
 //		Registry.BasicCoalGenerator.basicCoalGenerator.add(new MutablePair<ItemStack, Integer>(new ItemStack(Items.coal), 600));
-		Registry.BasicCoalGenerator.addBasicCoalGeneratorItem(new ItemStack(Items.coal), 600);
-		Registry.BasicCoalGenerator.addBasicCoalGeneratorItem(new ItemStack(Items.coal, 1, 1), 600);
+		Registry.BasicCoalGenerator.addBasicCoalGeneratorItem(new ItemStack(Items.coal), 60);
+		Registry.BasicCoalGenerator.addBasicCoalGeneratorItem(new ItemStack(Items.coal, 1, 1), 60);
 		for (ItemStack stack : OreDictionary.getOres("blockCoal")) {
 			Registry.BasicCoalGenerator.addBasicCoalGeneratorItem(stack, 5400);
 		}

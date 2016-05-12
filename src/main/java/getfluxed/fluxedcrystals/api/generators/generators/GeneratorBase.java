@@ -44,37 +44,36 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
     @Override
     public void update() {
         super.update();
-
-        if (generationTimerDefault < 0 && generationTimer < 0 && storage.getEnergyStored() < storage.getMaxEnergyStored()) {
+        if (generationTimerDefault < 0 && storage.getEnergyStored() < storage.getMaxEnergyStored()) {
             if (getStackInSlot(0) != null) {
-
                 if (canGenerateEnergy(getStackInSlot(0))) {
                     generationTimer = getGenerationTime(getStackInSlot(0));
                     generationTimerDefault = getGenerationTime(getStackInSlot(0));
                     decrStackSize(0, 1);
                     if (!worldObj.isRemote) {
-                        markDirty();
+                        PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
                     }
                 }
-
             }
+        }
+        if (generationTimer < 0) {
+            generationTimerDefault = -1;
+            generationTimer = -1;
+            if (!worldObj.isRemote) {
+                PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
+            }
+
         }
         if (generationTimerDefault > 0 && getEnergyStored() < getMaxStorage()) {
             generationTimer--;
             generateEnergy(worldObj, getPos(), generationTimer);
             if (!worldObj.isRemote) {
-                markDirty();
+                PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
             }
         }
-        if (generationTimer <= 0 && generationTimerDefault >= 0) {
-            generationTimer = -1;
-            generationTimerDefault = -1;
 
-        }
-        if (getWorld() != null && !firstTicked && --firstTickedTime < 0) {
-            if (!worldObj.isRemote)
-                markDirty();
-            firstTicked = true;
+        if (!worldObj.isRemote) {
+            PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
         }
     }
 
