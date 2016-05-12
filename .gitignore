@@ -21,3 +21,4 @@
 *.eml
 /run/
 usernamecache.json
+*.stackdump
