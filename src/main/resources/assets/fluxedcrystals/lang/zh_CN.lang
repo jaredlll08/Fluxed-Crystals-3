@@ -1,0 +1,16 @@
+#itemGroup.fc.tab.name=Fluxed-Crystals-3 - No translation of mod name.
+
+item.crystalDust.name=%s粉
+item.crystalSolution.name=%s溶液
+
+tile.coalGenBasic.name=燃煤发电机
+tile.ghBaseFrame.name=温室地基
+tile.ghBatteryAdvanced.name=高级温室电池
+tile.ghBatteryBasic.name=基础温室电池
+tile.ghFluidIO.name=温室流体IO
+tile.ghPowerIO.name=温室能源IO
+tile.ghFrame.name=温室框架
+tile.ghFrameGlass.name=温室玻璃框架
+tile.ghPowerMonitor.name=温室能源监视器
+tile.ghSoilController.name=温室总控制器
+tile.trashGenerator.name=垃圾发电机
