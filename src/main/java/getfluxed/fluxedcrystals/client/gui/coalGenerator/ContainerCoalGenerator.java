@@ -1,17 +1,17 @@
-package getfluxed.fluxedcrystals.client.generators.gui.trashGenerator;
+package getfluxed.fluxedcrystals.client.gui.coalGenerator;
 
+import getfluxed.fluxedcrystals.client.gui.slot.SlotTileDep;
+import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import getfluxed.fluxedcrystals.client.generators.gui.slot.SlotTileDep;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
 
-public class ContainerTrashGenerator extends Container {
-	public ContainerTrashGenerator(InventoryPlayer invPlayer, TileEntityTrashGenerator manager) {
+public class ContainerCoalGenerator extends Container {
+	public ContainerCoalGenerator(InventoryPlayer invPlayer, TileEntityCoalGenerator tile) {
 
-		addSlotToContainer(new SlotTileDep(manager, 0, 80, 12));
+		addSlotToContainer(new SlotTileDep(tile, 0, 80, 11));
 
 		for (int x = 0; x < 9; x++) {
 			addSlotToContainer(new Slot(invPlayer, x, 8 + 18 * x, 142));

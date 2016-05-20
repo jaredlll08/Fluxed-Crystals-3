@@ -31,7 +31,6 @@ public abstract class TileEnergyBase extends TileEntity implements IEnergyHandle
 
     private void init(int cap, int maxTransfer) {
         storage = new EnergyStorage(cap);
-//        storage.setEnergyStored(0);
     }
 
     public abstract EnumSet<EnumFacing> getValidOutputs();
@@ -40,7 +39,9 @@ public abstract class TileEnergyBase extends TileEntity implements IEnergyHandle
 
     @Override
     public void update() {
-        pushEnergy();
+        if (!worldObj.isRemote) {
+            pushEnergy();
+        }
     }
 
     protected void pushEnergy() {

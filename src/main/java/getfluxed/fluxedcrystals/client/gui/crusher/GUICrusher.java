@@ -1,8 +1,8 @@
-package getfluxed.fluxedcrystals.client.generators.gui.coalGenerator;
+package getfluxed.fluxedcrystals.client.gui.crusher;
 
 import getfluxed.fluxedcrystals.api.generators.Registry;
 import getfluxed.fluxedcrystals.reference.Reference;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
+import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import getfluxed.fluxedcrystals.util.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -13,18 +13,18 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-public class GUICoalGenerator extends GuiContainer {
+public class GUICrusher extends GuiContainer {
 
-    private TileEntityCoalGenerator tile;
+    private TileEntityMachineCrusher tile;
     private InventoryPlayer invPlayer;
 
-    public GUICoalGenerator(InventoryPlayer invPlayer, TileEntityCoalGenerator tile2) {
-        super(new ContainerCoalGenerator(invPlayer, tile2));
+    public GUICrusher(InventoryPlayer invPlayer, TileEntityMachineCrusher tile2) {
+        super(new ContainerCrusher(invPlayer, tile2));
         this.invPlayer = invPlayer;
         this.tile = tile2;
     }
 
-    private static final ResourceLocation texture = new ResourceLocation(Reference.modid, "textures/gui/coalGenerator.png");
+    private static final ResourceLocation texture = new ResourceLocation(Reference.modid, "textures/gui/machineCrusher.png");
 
     public void initGui() {
         this.xSize = 176;
@@ -39,15 +39,18 @@ public class GUICoalGenerator extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
 
+        super.drawGuiContainerForegroundLayer(mx, my);
+        this.fontRendererObj.drawString(tile.getDisplayName().getUnformattedText(), 8, 6, 0xa0a0a0);
         GlStateManager.pushAttrib();
         GlStateManager.color(1, 1, 1, 1);
         Minecraft.getMinecraft().renderEngine.bindTexture(texture);
-        int barHeight = (int) (((float) tile.generationTimer / tile.generationTimerDefault) * 11);
-        drawTexturedModalRect(80, 33, 176, 0, 16, 11 - barHeight);
-        int barWidth = (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 88);
-        drawTexturedModalRect(43, 50, 0, 166, barWidth, 19);
-        GlStateManager.popAttrib();
+        int progressWidth = (int) (((float) tile.itemCycleTime / tile.needCycleTime) * 33);
+        drawTexturedModalRect(72, 36, 6, 168, progressWidth, 13);
 
+        int barWidth = (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 88);
+
+        drawTexturedModalRect(44, 59, 44, 166, barWidth, 19);
+        GlStateManager.popAttrib();
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             GL11.glPushMatrix();

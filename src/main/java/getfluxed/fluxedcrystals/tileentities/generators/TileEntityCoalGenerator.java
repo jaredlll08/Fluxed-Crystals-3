@@ -20,7 +20,6 @@ public class TileEntityCoalGenerator extends GeneratorBase {
     public void generateEnergy(World world, BlockPos pos, int timer) {
         if (this.storage.getEnergyStored() < this.storage.getMaxEnergyStored()) {
             this.storage.receiveEnergy(40, false);
-        } else {
         }
     }
 
@@ -28,17 +27,17 @@ public class TileEntityCoalGenerator extends GeneratorBase {
     public void update() {
         super.update();
         boolean active = true;
-        if(!isGenerating()){
+        if (!isGenerating()) {
             active = false;
         }
-        if(getStackInSlot(0)==null && !isGenerating()){
+        if (getStackInSlot(0) == null && !isGenerating()) {
             active = false;
         }
-        if(getEnergyStored()==getMaxStorage()){
+        if (getEnergyStored() == getMaxStorage()) {
             active = false;
         }
 
-        if(worldObj.getBlockState(getPos()).getValue(BlockCoalGenerator.isActive) != active){
+        if (worldObj.getBlockState(getPos()).getValue(BlockCoalGenerator.isActive) != active) {
             BlockCoalGenerator.setState(active, this.worldObj, this.pos);
         }
     }

@@ -17,7 +17,6 @@ public class TileEntityTrashGenerator extends GeneratorBase {
         super(20000, 1);
     }
 
-
     @Override
     public void generateEnergy(World world, BlockPos pos, int generationTimer) {
         if (this.storage.getEnergyStored() < this.storage.getMaxEnergyStored()) {
@@ -29,17 +28,17 @@ public class TileEntityTrashGenerator extends GeneratorBase {
     public void update() {
         super.update();
         boolean active = true;
-        if(!isGenerating()){
+        if (!isGenerating()) {
             active = false;
         }
-        if(getStackInSlot(0)==null && !isGenerating()){
+        if (getStackInSlot(0) == null && !isGenerating()) {
             active = false;
         }
-        if(getEnergyStored()==getMaxStorage()){
+        if (getEnergyStored() == getMaxStorage()) {
             active = false;
         }
 
-        if(worldObj.getBlockState(getPos()).getValue(BlockTrashGenerator.isActive) != active){
+        if (worldObj.getBlockState(getPos()).getValue(BlockTrashGenerator.isActive) != active) {
             BlockTrashGenerator.setState(active, this.worldObj, this.pos);
         }
 

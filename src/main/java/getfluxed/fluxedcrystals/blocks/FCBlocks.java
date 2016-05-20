@@ -11,6 +11,7 @@ import getfluxed.fluxedcrystals.blocks.greenhouse.frame.base.BlockBaseFrame;
 import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockFluidIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockPowerIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.monitor.BlockPowerMonitor;
+import getfluxed.fluxedcrystals.blocks.machines.BlockCrusher;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityLavaGenerator;
@@ -20,6 +21,7 @@ import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController
 import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityFluidIO;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityPowerIO;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.monitor.TileEntityPowerMonitor;
+import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
@@ -56,6 +58,8 @@ public class FCBlocks {
     public static Block trashGenerator = new BlockTrashGenerator();
     public static Block lavaGenerator = new BlockLavaGenerator();
 
+    public static Block machineCrusher = new BlockCrusher();
+
     public static void preInit() {
         registerBlock(ghController, "ghSoilController", TileEntitySoilController.class);
         registerBlockMultiblock(ghFrameGlass, "ghFrameGlass");
@@ -67,6 +71,7 @@ public class FCBlocks {
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
         registerGenerators();
+        registerMachines();
     }
 
     public static void registerGenerators() {
@@ -75,6 +80,11 @@ public class FCBlocks {
         registerBlock(lavaGenerator, "lavaGenerator", TileEntityLavaGenerator.class);
 
     }
+
+    public static void registerMachines() {
+        registerBlock(machineCrusher, "machineCrusher", TileEntityMachineCrusher.class);
+    }
+
 
 
     public static void init() {

@@ -1,12 +1,15 @@
-package getfluxed.fluxedcrystals.client.generators.gui;
+package getfluxed.fluxedcrystals.client.gui;
 
 import getfluxed.fluxedcrystals.FluxedCrystals;
-import getfluxed.fluxedcrystals.client.generators.gui.coalGenerator.ContainerCoalGenerator;
-import getfluxed.fluxedcrystals.client.generators.gui.coalGenerator.GUICoalGenerator;
-import getfluxed.fluxedcrystals.client.generators.gui.trashGenerator.ContainerTrashGenerator;
-import getfluxed.fluxedcrystals.client.generators.gui.trashGenerator.GuiTrashGenerator;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.crusher.ContainerCrusher;
+import getfluxed.fluxedcrystals.client.gui.crusher.GUICrusher;
+import getfluxed.fluxedcrystals.client.gui.trashGenerator.ContainerTrashGenerator;
+import getfluxed.fluxedcrystals.client.gui.trashGenerator.GuiTrashGenerator;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
+import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -36,6 +39,12 @@ public class GUIHandler implements IGuiHandler {
 				}
 				break;
 
+			case 2:
+				if (te != null && te instanceof TileEntityMachineCrusher) {
+					return new ContainerCrusher(player.inventory, (TileEntityMachineCrusher) te);
+				}
+				break;
+
 		}
 
 		return null;
@@ -55,6 +64,11 @@ public class GUIHandler implements IGuiHandler {
 					return new GuiTrashGenerator(player.inventory, (TileEntityTrashGenerator) te);
 				}
 				break;
+            case 2:
+                if (te != null && te instanceof TileEntityMachineCrusher) {
+                    return new GUICrusher(player.inventory, (TileEntityMachineCrusher) te);
+                }
+                break;
 		}
 		return null;
 	}

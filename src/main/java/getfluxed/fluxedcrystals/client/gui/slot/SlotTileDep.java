@@ -1,4 +1,4 @@
-package getfluxed.fluxedcrystals.client.generators.gui.slot;
+package getfluxed.fluxedcrystals.client.gui.slot;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -19,5 +19,5 @@ public class SlotTileDep extends Slot {
 	public boolean isItemValid(ItemStack stack) {
 		return inventory.isItemValidForSlot(this.slotNumber, stack);
 	}
-	
+
 }
