@@ -45,11 +45,6 @@ public class TileEntityTrashGenerator extends GeneratorBase {
     }
 
     @Override
-    public ItemStack removeStackFromSlot(int index) {
-        return null;
-    }
-
-    @Override
     public void openInventory(EntityPlayer player) {
 
     }

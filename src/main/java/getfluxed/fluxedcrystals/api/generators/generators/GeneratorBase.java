@@ -5,11 +5,11 @@ import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerato
 import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 public abstract class GeneratorBase extends TileEnergyBase implements ISidedInventory, ITickable {
@@ -34,7 +35,6 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
         super(cap);
         maxEnergy = cap;
         items = new ItemStack[inventorySize];
-
     }
 
     public boolean isGenerating() {
@@ -139,11 +139,12 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         writeInventoryToNBT(nbt);
         nbt.setInteger("generationTimer", generationTimer);
         nbt.setInteger("generationTimerDefault", generationTimerDefault);
+        return nbt;
     }
 
     @Override
@@ -177,10 +178,6 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
         }
 
         tags.setTag("Items", nbttaglist);
-    }
-
-    public void closeInventory() {
-
     }
 
     @Override
@@ -229,8 +226,9 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
         return 0;
     }
 
+    @Nullable
     @Override
-    public Packet getDescriptionPacket() {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
         return new SPacketUpdateTileEntity(getPos(), 0, tag);
@@ -240,6 +238,11 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         readFromNBT(pkt.getNbtCompound());
+    }
+
+    @Nullable
+    public ItemStack removeStackFromSlot(int index) {
+        return ItemStackHelper.getAndRemove(items, index);
     }
 
 }

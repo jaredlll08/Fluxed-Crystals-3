@@ -20,7 +20,7 @@ public class CreativeTabFC extends CreativeTabs {
 
     @Override
     public void displayAllRelevantItems(List<ItemStack> p_78018_1_) {
-        for (Item item : Item.itemRegistry)
+        for (Item item : Item.REGISTRY)
         {
             if (item == null)
             {

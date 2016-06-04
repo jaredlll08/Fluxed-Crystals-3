@@ -17,10 +17,11 @@ public class ConnectedTile extends TileEntity {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 		block.writeToNBT(tag);
 		masterBlock.writeToNBT(tag);
+		return tag;
 	}
 
 	@Override

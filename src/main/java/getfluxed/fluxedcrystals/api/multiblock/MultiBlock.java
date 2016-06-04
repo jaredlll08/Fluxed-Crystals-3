@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Jared on 3/31/2016.
  */
-public class MultiBlock{
+public class MultiBlock {
 
     private BlockPos master;
     private LinkedList<BlockPos> bottomLayer;
@@ -23,7 +23,7 @@ public class MultiBlock{
     private LinkedList<BlockPos> sides;
     private boolean active;
 
-    public MultiBlock(BlockPos master){
+    public MultiBlock(BlockPos master) {
         this.master = master;
         this.bottomLayer = null;
         this.topLayer = null;
@@ -41,83 +41,85 @@ public class MultiBlock{
         this.active = active;
     }
 
-    private static BlockPos readPosFromBB(ByteBuf buf){
+    private static BlockPos readPosFromBB(ByteBuf buf) {
         return new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
     }
 
-    private static void writePosToBB(ByteBuf buf, BlockPos pos){
+    private static void writePosToBB(ByteBuf buf, BlockPos pos) {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
     }
 
-    private static BlockPos readPosFromNBT(NBTTagCompound tag){
+    private static BlockPos readPosFromNBT(NBTTagCompound tag) {
         return new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z"));
     }
 
-    private static void writePosToNBT(NBTTagCompound tag, BlockPos pos){
+    private static void writePosToNBT(NBTTagCompound tag, BlockPos pos) {
         tag.setInteger("x", pos.getX());
         tag.setInteger("y", pos.getY());
         tag.setInteger("z", pos.getZ());
 
     }
 
-    public static MultiBlock readFromNBT(NBTTagCompound tag){
+    public static MultiBlock readFromNBT(NBTTagCompound tag) {
         BlockPos master = readPosFromNBT(tag.getCompoundTag("master"));
         LinkedList<BlockPos> bottomLayer = new LinkedList<>();
-        for(int i = 0; i < tag.getTagList("bottomLayer", Constants.NBT.TAG_COMPOUND).tagCount(); i++){
+        for (int i = 0; i < tag.getTagList("bottomLayer", Constants.NBT.TAG_COMPOUND).tagCount(); i++) {
             bottomLayer.add(readPosFromNBT(tag.getTagList("bottomLayer", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
         LinkedList<BlockPos> topLayer = new LinkedList<>();
-        for(int i = 0; i < tag.getTagList("topLayer", Constants.NBT.TAG_COMPOUND).tagCount(); i++){
+        for (int i = 0; i < tag.getTagList("topLayer", Constants.NBT.TAG_COMPOUND).tagCount(); i++) {
             bottomLayer.add(readPosFromNBT(tag.getTagList("topLayer", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
         LinkedList<BlockPos> airBlocks = new LinkedList<>();
-        for(int i = 0; i < tag.getTagList("airBlocks", Constants.NBT.TAG_COMPOUND).tagCount(); i++){
+        for (int i = 0; i < tag.getTagList("airBlocks", Constants.NBT.TAG_COMPOUND).tagCount(); i++) {
             airBlocks.add(readPosFromNBT(tag.getTagList("airBlocks", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
 
         LinkedList<BlockPos> sides = new LinkedList<>();
-        for(int i = 0; i < tag.getTagList("sides", Constants.NBT.TAG_COMPOUND).tagCount(); i++){
+        for (int i = 0; i < tag.getTagList("sides", Constants.NBT.TAG_COMPOUND).tagCount(); i++) {
             sides.add(readPosFromNBT(tag.getTagList("sides", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
         boolean active = tag.getBoolean("active");
         return new MultiBlock(master, bottomLayer, topLayer, airBlocks, sides, active);
     }
 
-    public static void writeToNBT(NBTTagCompound tag, MultiBlock multiBlock){
+    public static void writeToNBT(NBTTagCompound tag, MultiBlock multiBlock) {
         writePosToNBT(tag, multiBlock.getMaster());
-        if(multiBlock.isActive()){
+        if (multiBlock.isActive()) {
+            tag.setBoolean("written", true);
             NBTTagList bottomLayer = new NBTTagList();
-            for(BlockPos bp : multiBlock.getBottomLayer()){
+            for (BlockPos bp : multiBlock.getBottomLayer()) {
                 NBTTagCompound bpTag = new NBTTagCompound();
                 writePosToNBT(bpTag, bp);
                 bottomLayer.appendTag(bpTag);
             }
             tag.setTag("bottomLayer", bottomLayer);
             NBTTagList topLayer = new NBTTagList();
-            for(BlockPos bp : multiBlock.getTopLayer()){
+            for (BlockPos bp : multiBlock.getTopLayer()) {
                 NBTTagCompound bpTag = new NBTTagCompound();
                 writePosToNBT(bpTag, bp);
                 topLayer.appendTag(bpTag);
             }
             tag.setTag("topLayer", topLayer);
             NBTTagList airBlocks = new NBTTagList();
-            for(BlockPos bp : multiBlock.getAirBlocks()){
+            for (BlockPos bp : multiBlock.getAirBlocks()) {
                 NBTTagCompound bpTag = new NBTTagCompound();
                 writePosToNBT(bpTag, bp);
                 airBlocks.appendTag(bpTag);
             }
             tag.setTag("airBlocks", airBlocks);
             NBTTagList sides = new NBTTagList();
-            for(BlockPos bp : multiBlock.getSides()){
+            for (BlockPos bp : multiBlock.getSides()) {
                 NBTTagCompound bpTag = new NBTTagCompound();
                 writePosToNBT(bpTag, bp);
                 sides.appendTag(bpTag);
             }
             tag.setTag("sides", sides);
             tag.setBoolean("active", multiBlock.isActive());
-        }else{
+        } else {
+            tag.setBoolean("written", false);
             tag.setTag("bottomLayer", new NBTTagList());
             tag.setTag("topLayer", new NBTTagList());
             tag.setTag("airBlocks", new NBTTagList());
@@ -126,55 +128,62 @@ public class MultiBlock{
         }
     }
 
-    public static MultiBlock readFromByteBuf(ByteBuf buf){
+    public static MultiBlock readFromByteBuf(ByteBuf buf) {
         BlockPos master = readPosFromBB(buf);
         LinkedList<BlockPos> bottomLayer = new LinkedList<>();
-        int botSize = buf.readInt();
-        for(int i = 0; i < botSize; i++){
-            bottomLayer.add(readPosFromBB(buf));
-        }
         LinkedList<BlockPos> topLayer = new LinkedList<>();
-        int topSize = buf.readInt();
-        for(int i = 0; i < topSize; i++){
-            topLayer.add(readPosFromBB(buf));
-        }
-        LinkedList<BlockPos> airBlocks = new LinkedList<>();
-        int airSize = buf.readInt();
-        for(int i = 0; i < airSize; i++){
-            airBlocks.add(readPosFromBB(buf));
-        }
-
         LinkedList<BlockPos> sides = new LinkedList<>();
-        int sidSize = buf.readInt();
-        for(int i = 0; i < sidSize; i++){
-            sides.add(readPosFromBB(buf));
+        LinkedList<BlockPos> airBlocks = new LinkedList<>();
+        boolean active = false;
+        if (buf.readBoolean()) {
+
+            int botSize = buf.readInt();
+            for (int i = 0; i < botSize; i++) {
+                bottomLayer.add(readPosFromBB(buf));
+            }
+
+            int topSize = buf.readInt();
+            for (int i = 0; i < topSize; i++) {
+                topLayer.add(readPosFromBB(buf));
+            }
+
+            int airSize = buf.readInt();
+            for (int i = 0; i < airSize; i++) {
+                airBlocks.add(readPosFromBB(buf));
+            }
+
+
+            int sidSize = buf.readInt();
+            for (int i = 0; i < sidSize; i++) {
+                sides.add(readPosFromBB(buf));
+            }
+            active = buf.readBoolean();
         }
-        boolean active = buf.readBoolean();
         return new MultiBlock(master, bottomLayer, topLayer, airBlocks, sides, active);
     }
 
 
-    public static void writeToByteBuf(ByteBuf buf, MultiBlock multiBlock){
+    public static void writeToByteBuf(ByteBuf buf, MultiBlock multiBlock) {
         writePosToBB(buf, multiBlock.getMaster());
-        if(multiBlock.isActive()){
+        if (multiBlock.isActive()) {
             buf.writeInt(multiBlock.getBottomLayer().size());
-            for(BlockPos bp : multiBlock.getBottomLayer()){
+            for (BlockPos bp : multiBlock.getBottomLayer()) {
                 writePosToBB(buf, bp);
             }
             buf.writeInt(multiBlock.getTopLayer().size());
-            for(BlockPos bp : multiBlock.getTopLayer()){
+            for (BlockPos bp : multiBlock.getTopLayer()) {
                 writePosToBB(buf, bp);
             }
             buf.writeInt(multiBlock.getAirBlocks().size());
-            for(BlockPos bp : multiBlock.getAirBlocks()){
+            for (BlockPos bp : multiBlock.getAirBlocks()) {
                 writePosToBB(buf, bp);
             }
             buf.writeInt(multiBlock.getSides().size());
-            for(BlockPos bp : multiBlock.getSides()){
+            for (BlockPos bp : multiBlock.getSides()) {
                 writePosToBB(buf, bp);
             }
             buf.writeBoolean(multiBlock.isActive());
-        }else{
+        } else {
             buf.writeInt(0);
             buf.writeInt(0);
             buf.writeInt(0);

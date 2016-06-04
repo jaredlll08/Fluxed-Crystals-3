@@ -2,48 +2,61 @@ package getfluxed.fluxedcrystals.tileentities.greenhouse;
 
 import cofh.api.energy.EnergyStorage;
 import getfluxed.fluxedcrystals.FluxedCrystals;
+import getfluxed.fluxedcrystals.api.crystals.CrystalInfo;
 import getfluxed.fluxedcrystals.api.multiblock.IFrame;
 import getfluxed.fluxedcrystals.api.multiblock.IGreenHouseComponent;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrameBattery;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.base.BlockBaseFrame;
+import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockCrystalIO;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageControllerSync;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageGHLoad;
 import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Level;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.LinkedList;
 
 /**
  * Created by Jared on 3/19/2016.
  */
-public class TileEntitySoilController extends TileEnergyBase implements ITickable, IGreenHouseComponent {
+public class TileEntitySoilController extends TileEnergyBase implements ITickable, IGreenHouseComponent, ISidedInventory {
 
     public FluidTank tank;
     boolean firstTicked = false;
     private MultiBlock multiBlock;
     private int tick;
-
+    private ItemStack[] items;
+    private CrystalInfo crystalInfo;
 
     public TileEntitySoilController() {
         super(0, 250);
         getEnergyStorage().setMaxTransfer(250);
         multiBlock = new MultiBlock(getPos());
         tank = new FluidTank(0);
+        items = new ItemStack[0];
+        crystalInfo = CrystalInfo.NULL;
     }
 
     @Override
@@ -224,7 +237,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                 }
             }
             int energyCapacity = 0;
-            //TODO check all arrays here
+            boolean hasCrystalIO = false;
             for (BlockPos bp : sides) {
                 if (!(worldObj.getTileEntity(bp) instanceof IFrame)) {
                     return 0;
@@ -233,6 +246,8 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                     tile.setMaster(pos);
                     if (worldObj.getBlockState(bp).getBlock() instanceof BlockFrameBattery) {
                         energyCapacity += ((BlockFrameBattery) worldObj.getBlockState(bp).getBlock()).getCapacity();
+                    } else if (worldObj.getBlockState(bp).getBlock() instanceof BlockCrystalIO) {
+                        hasCrystalIO = true;
                     }
                     if (!worldObj.isRemote)
                         PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 128D));
@@ -259,6 +274,8 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                     tile.setMaster(pos);
                     if (worldObj.getBlockState(bp).getBlock() instanceof BlockFrameBattery) {
                         energyCapacity += ((BlockFrameBattery) worldObj.getBlockState(bp).getBlock()).getCapacity();
+                    } else if (worldObj.getBlockState(bp).getBlock() instanceof BlockCrystalIO) {
+                        hasCrystalIO = true;
                     }
                     if (!worldObj.isRemote)
                         PacketHandler.INSTANCE.sendToAllAround(new MessageGHLoad(tile, getMaster()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
@@ -278,6 +295,9 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                 setMultiBlock(multiBlock);
                 this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
                 setMaxStorage(energyCapacity);
+                if (hasCrystalIO) {
+                    items = new ItemStack[2];
+                }
                 this.setMaster(getPos());
                 time = (System.currentTimeMillis() - time);
                 AxisAlignedBB multiblock = new AxisAlignedBB(northEast, southWest);
@@ -304,10 +324,11 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         setMultiBlock(MultiBlock.readFromNBT(compound.getCompoundTag("multiblock")));
         NBTTagCompound tankTag = compound.getCompoundTag("tank");
         this.tank.readFromNBT(tankTag);
+        readInventoryFromNBT(compound);
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         NBTTagCompound multi = new NBTTagCompound();
         MultiBlock.writeToNBT(multi, getMultiBlock());
@@ -315,13 +336,42 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         NBTTagCompound tankTag = new NBTTagCompound();
         tank.writeToNBT(tankTag);
         compound.setTag("tank", tankTag);
+        writeInventoryToNBT(compound);
+        return compound;
+    }
+
+    public void readInventoryFromNBT(NBTTagCompound tags) {
+        NBTTagList nbttaglist = tags.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        for (int iter = 0; iter < nbttaglist.tagCount(); iter++) {
+            NBTTagCompound tagList = (NBTTagCompound) nbttaglist.getCompoundTagAt(iter);
+            byte slotID = tagList.getByte("Slot");
+            if (slotID >= 0 && slotID < items.length) {
+                items[slotID] = ItemStack.loadItemStackFromNBT(tagList);
+            }
+        }
+    }
+
+    public void writeInventoryToNBT(NBTTagCompound tags) {
+        NBTTagList nbttaglist = new NBTTagList();
+        for (int iter = 0; iter < items.length; iter++) {
+            if (items[iter] != null) {
+                NBTTagCompound tagList = new NBTTagCompound();
+                tagList.setByte("Slot", (byte) iter);
+                items[iter].writeToNBT(tagList);
+                nbttaglist.appendTag(tagList);
+            }
+        }
+
+        tags.setTag("Items", nbttaglist);
     }
 
     public EnergyStorage getEnergyStorage() {
         return storage;
     }
+
+    @Nullable
     @Override
-    public Packet getDescriptionPacket() {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
         return new SPacketUpdateTileEntity(getPos(), 0, tag);
@@ -334,5 +384,155 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     }
 
 
+    @Nullable
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        return ItemStackHelper.getAndRemove(items, index);
+    }
 
+    @Override
+    public void openInventory(EntityPlayer player) {
+
+    }
+
+    @Override
+    public void closeInventory(EntityPlayer player) {
+
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+        int itemLength = items.length;
+        items = new ItemStack[itemLength];
+    }
+
+    @Override
+    public String getName() {
+        return "Greenhouse";
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TextComponentString(getName());
+    }
+
+
+    @Override
+    public ItemStack decrStackSize(int i, int count) {
+        ItemStack itemstack = getStackInSlot(i);
+
+        if (itemstack != null) {
+            if (itemstack.stackSize <= count) {
+                setInventorySlotContents(i, null);
+            } else {
+                itemstack = itemstack.splitStack(count);
+
+            }
+        }
+
+        return itemstack;
+    }
+
+    @Override
+    public int getSizeInventory() {
+        return items.length;
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int par1) {
+
+        return items[par1];
+    }
+
+    @Override
+    public void setInventorySlotContents(int i, ItemStack itemstack) {
+        items[i] = itemstack;
+
+        if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()) {
+            itemstack.stackSize = getInventoryStackLimit();
+        }
+    }
+
+    public ItemStack addInventorySlotContents(int i, ItemStack itemstack) {
+        if (items[i] != null) {
+
+            if (items[i].isItemEqual(itemstack)) {
+                items[i].stackSize += itemstack.stackSize;
+            }
+            if (items[i].stackSize > getInventoryStackLimit()) {
+                items[i].stackSize = getInventoryStackLimit();
+            }
+        } else {
+            setInventorySlotContents(i, itemstack);
+        }
+        return null;
+    }
+
+
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer player) {
+        return player.getDistanceSq(getPos().getX() + 0.5f, getPos().getY() + 0.5f, getPos().getZ() + 0.5f) <= 64;
+    }
+
+    @Override
+    public int[] getSlotsForFace(EnumFacing side) {
+        return new int[0];
+    }
+
+    @Override
+    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+        return false;
+    }
+
+    @Override
+    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+        return false;
+    }
+
+    public ItemStack[] getItems() {
+        return items;
+    }
+
+
+    public void setItems(ItemStack[] items) {
+        this.items = items;
+    }
+
+    public CrystalInfo getCrystalInfo() {
+        return crystalInfo;
+    }
+
+    public void setCrystalInfo(CrystalInfo crystalInfo) {
+        this.crystalInfo = crystalInfo;
+    }
 }

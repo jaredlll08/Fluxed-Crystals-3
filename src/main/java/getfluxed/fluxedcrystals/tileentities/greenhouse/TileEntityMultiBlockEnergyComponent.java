@@ -12,36 +12,36 @@ import java.util.EnumSet;
 /**
  * Created by Jared on 5/7/2016.
  */
-public abstract class TileEntityMultiBlockEnergyComponent  extends TileEntityMultiBlockComponent implements IEnergyHandler, ITickable {
+public abstract class TileEntityMultiBlockEnergyComponent extends TileEntityMultiBlockComponent implements IEnergyHandler, ITickable {
 
     public EnergyStorage storage;
     protected int capacity;
 
-    public TileEntityMultiBlockEnergyComponent (int cap) {
+    public TileEntityMultiBlockEnergyComponent(int cap) {
         super();
         init(cap);
     }
 
-    public double getEnergyColor () {
+    public double getEnergyColor() {
         double energy = storage.getEnergyStored();
         double maxEnergy = storage.getMaxEnergyStored();
         return energy / maxEnergy;
     }
 
-    private void init (int cap) {
+    private void init(int cap) {
         storage = new EnergyStorage(cap);
     }
 
-    public abstract EnumSet<EnumFacing> getValidOutputs ();
+    public abstract EnumSet<EnumFacing> getValidOutputs();
 
-    public abstract EnumSet<EnumFacing> getValidInputs ();
+    public abstract EnumSet<EnumFacing> getValidInputs();
 
     @Override
-    public void update () {
+    public void update() {
         pushEnergy();
     }
 
-    protected void pushEnergy () {
+    protected void pushEnergy() {
         for (EnumFacing dir : getValidOutputs()) {
             TileEntity tile = worldObj.getTileEntity(getPos().offset(dir));
             if (tile instanceof IEnergyHandler) {
@@ -54,7 +54,7 @@ public abstract class TileEntityMultiBlockEnergyComponent  extends TileEntityMul
 	/* I/O Handling */
 
     @Override
-    public int extractEnergy (EnumFacing from, int maxExtract, boolean simulate) {
+    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
         if (getValidOutputs().contains(from)) {
             int ret = storage.extractEnergy(maxExtract, true);
             if (!simulate) {
@@ -66,7 +66,7 @@ public abstract class TileEntityMultiBlockEnergyComponent  extends TileEntityMul
     }
 
     @Override
-    public int receiveEnergy (EnumFacing from, int maxReceive, boolean simulate) {
+    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         if (getValidInputs().contains(from)) {
             int ret = storage.receiveEnergy(maxReceive, true);
             if (!simulate) {
@@ -78,19 +78,19 @@ public abstract class TileEntityMultiBlockEnergyComponent  extends TileEntityMul
     }
 
     @Override
-    public final boolean canConnectEnergy (EnumFacing from) {
+    public final boolean canConnectEnergy(EnumFacing from) {
         return getValidInputs().contains(from) || getValidOutputs().contains(from);
     }
 
 	/* IEnergyHandler basic impl */
 
     @Override
-    public  int getEnergyStored (EnumFacing from) {
+    public int getEnergyStored(EnumFacing from) {
         return getEnergyStored();
     }
 
     @Override
-    public  int getMaxEnergyStored (EnumFacing from) {
+    public int getMaxEnergyStored(EnumFacing from) {
         return getMaxStorage();
     }
 
@@ -98,54 +98,55 @@ public abstract class TileEntityMultiBlockEnergyComponent  extends TileEntityMul
 
 	/* getters & setters */
 
-    public int getEnergyStored () {
+    public int getEnergyStored() {
         return storage.getEnergyStored();
     }
 
-    public void setEnergyStored (int energy) {
+    public void setEnergyStored(int energy) {
         storage.setEnergyStored(energy);
     }
 
-    public int getMaxStorage () {
+    public int getMaxStorage() {
         return storage.getMaxEnergyStored();
     }
 
-    public void setMaxStorage (int storage) {
+    public void setMaxStorage(int storage) {
         this.storage.setCapacity(storage);
     }
 
-    public int getOutputSpeed () {
+    public int getOutputSpeed() {
         return storage.getMaxExtract();
     }
 
-    public void setOutputSpeed (int outputSpeed) {
+    public void setOutputSpeed(int outputSpeed) {
         this.storage.setMaxExtract(outputSpeed);
     }
 
-    public int getMaxOutputSpeed () {
+    public int getMaxOutputSpeed() {
         return getOutputSpeed();
     }
 
-    public int getInputSpeed () {
+    public int getInputSpeed() {
         return storage.getMaxReceive();
     }
 
-    public void setInputSpeed (int inputSpeed) {
+    public void setInputSpeed(int inputSpeed) {
         this.storage.setMaxReceive(inputSpeed);
     }
 
 	/* Read/Write NBT */
 
     @Override
-    public void writeToNBT (NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         NBTTagCompound energy = new NBTTagCompound();
         storage.writeToNBT(energy);
         nbt.setTag("energy", energy);
+        return nbt;
     }
 
     @Override
-    public void readFromNBT (NBTTagCompound nbt) {
+    public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         NBTTagCompound energy = nbt.getCompoundTag("energy");
         storage = storage.readFromNBT(energy);

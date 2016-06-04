@@ -85,7 +85,6 @@ public class Registry {
 			}
 			return 0;
 		}
-
 		public static boolean containsItemStack(ItemStack stack) {
 			for (MutablePair<ItemStack, Integer> pair : basicCoalGenerator) {
 				if (stack != null && pair.left.isItemEqual(stack)) {
@@ -109,6 +108,8 @@ public class Registry {
 			}
 			basicCoalGenerator.remove(toRemove);
 		}
+
+
 
 		public static List<ItemStack> getItemStacks() {
 			List<ItemStack> list = new ArrayList<ItemStack>();

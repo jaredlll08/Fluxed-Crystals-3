@@ -2,6 +2,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles.machines;
 
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -75,21 +76,27 @@ public class MessageCrusher implements IMessage, IMessageHandler<MessageCrusher,
     @Override
     public IMessage onMessage(MessageCrusher message, MessageContext ctx) {
 
-        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.x, message.y, message.z));
+        Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
 
-        if (tileEntity instanceof TileEntityMachineCrusher) {
-
-            ((TileEntityMachineCrusher) tileEntity).state = message.state;
-            ((TileEntityMachineCrusher) tileEntity).needCycleTime = message.needCycleTime;
-            ((TileEntityMachineCrusher) tileEntity).itemCycleTime = message.itemCycleTime;
-            ((TileEntityMachineCrusher) tileEntity).deviceCycleTime = message.deviceCycleTime;
-            ((TileEntityMachineCrusher) tileEntity).setEnergyStored(message.energy);
-
-
-        }
 
         return null;
 
+    }
+
+    private void handle(MessageCrusher message, MessageContext ctx) {
+        if (FMLClientHandler.instance().getClient().theWorld != null) {
+            TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.x, message.y, message.z));
+            if (tileEntity instanceof TileEntityMachineCrusher) {
+                ((TileEntityMachineCrusher) tileEntity).state = message.state;
+                ((TileEntityMachineCrusher) tileEntity).needCycleTime = message.needCycleTime;
+                ((TileEntityMachineCrusher) tileEntity).itemCycleTime = message.itemCycleTime;
+                ((TileEntityMachineCrusher) tileEntity).deviceCycleTime = message.deviceCycleTime;
+                ((TileEntityMachineCrusher) tileEntity).setEnergyStored(message.energy);
+
+
+            }
+
+        }
     }
 
 }

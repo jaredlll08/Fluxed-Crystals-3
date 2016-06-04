@@ -2,6 +2,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles;
 
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
@@ -56,20 +57,26 @@ public class MessageFluid implements IMessage, IMessageHandler<MessageFluid, IMe
 
     @Override
     public IMessage onMessage(MessageFluid message, MessageContext ctx) {
-
-        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(message.pos);
-
-        if (tileEntity instanceof TileEntitySoilController) {
-            Fluid fluid = null;
-            FluidStack stack = null;
-            if (!message.fluid.isEmpty()) {
-                fluid = FluidRegistry.getFluid(message.fluid);
-                stack = new FluidStack(fluid, message.amount);
-            }
-            ((TileEntitySoilController) tileEntity).tank.setFluid(stack);
-
-        }
-
+        Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
         return null;
     }
+
+    private void handle(MessageFluid message, MessageContext ctx) {
+        if (FMLClientHandler.instance().getClient().theWorld != null) {
+            TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(message.pos);
+
+            if (tileEntity instanceof TileEntitySoilController) {
+                Fluid fluid = null;
+                FluidStack stack = null;
+                if (!message.fluid.isEmpty()) {
+                    fluid = FluidRegistry.getFluid(message.fluid);
+                    stack = new FluidStack(fluid, message.amount);
+                }
+                ((TileEntitySoilController) tileEntity).tank.setFluid(stack);
+
+            }
+        }
+    }
+
+
 }

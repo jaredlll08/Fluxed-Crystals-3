@@ -16,7 +16,7 @@ import java.util.Random;
 public class ConnectedBlock extends Block {
 
 	public ConnectedBlock() {
-		super(Material.air);
+		super(Material.AIR);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class ConnectedBlock extends Block {
         if (!this.canBlockStay(worldIn, pos))
         {
             this.dropBlockAsItem(worldIn, pos, state, 0);
-            worldIn.setBlockState(pos, Blocks.air.getDefaultState(), 3);
+            worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         }
     }
 

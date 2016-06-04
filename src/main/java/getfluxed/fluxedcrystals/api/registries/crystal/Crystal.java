@@ -117,14 +117,14 @@ public class Crystal {
             if (isDynamicColour()) {
                 if (getResourceIn().isItemStack()) {
                     if (isBlock(getResourceIn().getItemStack())) {
-                        String name = Block.blockRegistry.getNameForObject(Block.getBlockFromItem(getResourceIn().getItemStack().getItem())).toString();
+                        String name = Block.REGISTRY.getNameForObject(Block.getBlockFromItem(getResourceIn().getItemStack().getItem())).toString();
                         IResource res = FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/blocks/" + name.split(":")[1] + ".png"));
                         if (res != null) {
                             setColour(Config.getColour(res.getInputStream()));
                         }
 
                     } else {
-                        String name = Item.itemRegistry.getNameForObject(getResourceIn().getItemStack().getItem()).toString();
+                        String name = Item.REGISTRY.getNameForObject(getResourceIn().getItemStack().getItem()).toString();
                         IResource res = FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/items/" + name.split(":")[1] + ".png"));
                         if (res != null) {
                             setColour(Config.getColour(res.getInputStream()));
@@ -132,7 +132,7 @@ public class Crystal {
                     }
                 } else {
                     if (getResourceIn().isFluidStack()) {
-                        String name = Block.blockRegistry.getNameForObject(getResourceIn().getFluidStack().getFluid().getBlock()).toString() + "_flow";
+                        String name = Block.REGISTRY.getNameForObject(getResourceIn().getFluidStack().getFluid().getBlock()).toString() + "_flow";
                         setColour(Config.getColour(FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/blocks/" + name.split(":")[1] + ".png")).getInputStream()));
                     }
                 }

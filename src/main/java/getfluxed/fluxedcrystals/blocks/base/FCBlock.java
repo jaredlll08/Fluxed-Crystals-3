@@ -10,7 +10,7 @@ public class FCBlock extends Block{
 
 
     public FCBlock() {
-        super(Material.iron);
+        super(Material.IRON);
         setHardness(1.5f);
     }
 }

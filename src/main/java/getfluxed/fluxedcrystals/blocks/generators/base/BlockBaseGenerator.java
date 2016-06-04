@@ -6,7 +6,7 @@ import net.minecraft.block.material.Material;
 public abstract class BlockBaseGenerator extends BlockContainer {
 
     protected BlockBaseGenerator() {
-        super(Material.iron);
+        super(Material.IRON);
     }
 
 }

@@ -64,10 +64,12 @@ public class Config {
             e1.printStackTrace();
         }
     }
+
     public static boolean isBlock(ItemStack stack) {
-        ResourceLocation name = Block.blockRegistry.getNameForObject(Block.getBlockFromItem(stack.getItem()));
-        return name != null && !name.toString().equals("minecraft:air") && Block.blockRegistry.containsKey(name);
+        ResourceLocation name = Block.REGISTRY.getNameForObject(Block.getBlockFromItem(stack.getItem()));
+        return name != null && !name.toString().equals("minecraft:air") && Block.REGISTRY.containsKey(name);
     }
+
     public static void registerCrystals(Collection<? extends Crystal.CrystalType> types) {
         for (Crystal.CrystalType type : types) {
             CrystalRegistry.register(type.register());
@@ -80,7 +82,6 @@ public class Config {
 
         if (!iter.hasNext()) {
             System.out.println("Cannot load the specified stream " + stream);
-            System.exit(1);
         }
         ImageReader imageReader = (ImageReader) iter.next();
         imageReader.setInput(is);
@@ -107,7 +108,7 @@ public class Config {
             }
         }
         String colourHex = getMostCommonColour(m);
-        return Integer.decode("0x"+colourHex);
+        return Integer.decode("0x" + colourHex);
     }
 
 

@@ -1,6 +1,6 @@
 package getfluxed.fluxedcrystals.client.gui.crusher;
 
-import getfluxed.fluxedcrystals.api.generators.Registry;
+import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import getfluxed.fluxedcrystals.util.RenderUtils;
@@ -63,7 +63,7 @@ public class GUICrusher extends GuiContainer {
 
             for (int x = 0; x < 9; x++) {
                 ItemStack stack = invPlayer.getStackInSlot(x);
-                if (Registry.BasicCoalGenerator.containsItemStack(stack)) {
+                if (RecipeRegistry.isCrusherInput(stack)) {
                     RenderUtils.drawRectNoFade(8 + 18 * x, 142, 280, 16, 16, 0f, 0.8f, 0, 2f, 1);
                 } else if (stack != null)
                     RenderUtils.drawRectNoFade(8 + 18 * x, 142, 280, 16, 16, 0.8f, 0, 0, 2f, 1);
@@ -71,7 +71,7 @@ public class GUICrusher extends GuiContainer {
             for (int y = 0; y < 3; y++) {
                 for (int x = 0; x < 9; x++) {
                     ItemStack stack = invPlayer.getStackInSlot(x + y * 9 + 9);
-                    if (Registry.BasicCoalGenerator.containsItemStack(stack)) {
+                    if (RecipeRegistry.isCrusherInput(stack)) {
                         RenderUtils.drawRectNoFade(8 + 18 * x, 84 + (y * 18), 280, 16, 16, 0f, 0.8f, 0f, 2f, 1);
                     } else if (stack != null)
                         RenderUtils.drawRectNoFade(8 + 18 * x, 84 + (y * 18), 280, 16, 16, 0.8f, 0, 0, 2f, 1);

@@ -2,6 +2,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles;
 
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -60,15 +61,17 @@ public class MessageGHLoad implements IMessage, IMessageHandler<MessageGHLoad, I
 
     @Override
     public IMessage onMessage(MessageGHLoad message, MessageContext ctx) {
+        Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+        return null;
+    }
+
+    private void handle(MessageGHLoad message, MessageContext ctx) {
         TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.x, message.y, message.z));
         if (tileEntity instanceof TileEntityMultiBlockComponent) {
-
             TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) tileEntity;
             tile.setMaster(message.master);
 
         }
-
-        return null;
     }
 
 }

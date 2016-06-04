@@ -34,7 +34,7 @@ public class BlockLavaGenerator extends BlockContainer {
     public static final PropertyBool isActive = PropertyBool.create("active");
 
     public BlockLavaGenerator() {
-        super(Material.rock);
+        super(Material.ROCK);
     }
     public static void setState(boolean active, World worldIn, BlockPos pos) {
         IBlockState iblockstate = worldIn.getBlockState(pos);

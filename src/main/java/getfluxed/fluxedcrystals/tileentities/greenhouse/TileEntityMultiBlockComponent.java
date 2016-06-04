@@ -49,13 +49,14 @@ public class TileEntityMultiBlockComponent extends TileEntity implements IGreenH
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         if (masterPos != null) {
             NBTTagCompound tag = new NBTTagCompound();
             writePosToNBT(tag, getMaster());
             compound.setTag("masterTag", tag);
         }
+        return compound;
     }
 
     @Override

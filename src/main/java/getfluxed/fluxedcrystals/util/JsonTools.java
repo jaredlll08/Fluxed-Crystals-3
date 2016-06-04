@@ -27,8 +27,8 @@ public class JsonTools {
             ItemStack stack;
             String[] info = string.split(";");
             Object temp;
-            int damage = Short.MAX_VALUE;
-            temp = Item.itemRegistry.getObject(new ResourceLocation(info[0]));
+            int damage = 0;
+            temp = Item.REGISTRY.getObject(new ResourceLocation(info[0]));
             if (info.length > 1) {
                 damage = Integer.parseInt(info[1]);
             }
@@ -78,7 +78,7 @@ public class JsonTools {
         if (stack == null) {
             return null;
         } else {
-            String base = Item.itemRegistry.getNameForObject(stack.getItem()).toString();
+            String base = Item.REGISTRY.getNameForObject(stack.getItem()).toString();
             if (damage) {
                 base = base + ";" + stack.getItemDamage();
             }

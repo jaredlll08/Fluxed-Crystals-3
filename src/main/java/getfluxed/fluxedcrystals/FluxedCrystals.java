@@ -1,17 +1,14 @@
 package getfluxed.fluxedcrystals;
 
-import getfluxed.fluxedcrystals.api.generators.GeneratorData;
-import getfluxed.fluxedcrystals.api.recipes.machines.RecipeCrusher;
-import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.blocks.FCBlocks;
 import getfluxed.fluxedcrystals.config.Config;
+import getfluxed.fluxedcrystals.data.GeneratorData;
+import getfluxed.fluxedcrystals.data.RecipeData;
 import getfluxed.fluxedcrystals.items.FCItems;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.proxy.IProxy;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.util.CreativeTabFC;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -77,8 +74,6 @@ public class FluxedCrystals {
     public void postInit(FMLPostInitializationEvent e) {
         logger.log(Level.INFO, "Starting PostInit");
         long time = System.currentTimeMillis();
-
-        RecipeRegistry.registerCrusherrRecipe("Iron", new RecipeCrusher(new ItemStack(Items.diamond), new ItemStack(Items.apple), 2, 4));
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed PostInit in: " + time + "ms");
@@ -92,6 +87,7 @@ public class FluxedCrystals {
         long time = System.currentTimeMillis();
         registerJsons();
         GeneratorData.init();
+        RecipeData.init();
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed LoadComplete in: " + time + "ms");

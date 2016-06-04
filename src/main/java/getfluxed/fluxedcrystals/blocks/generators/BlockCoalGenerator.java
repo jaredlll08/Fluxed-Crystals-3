@@ -31,7 +31,7 @@ public class BlockCoalGenerator extends BlockContainer {
 
 
     public BlockCoalGenerator() {
-        super(Material.rock);
+        super(Material.IRON);
     }
 
     public static void setState(boolean active, World worldIn, BlockPos pos) {

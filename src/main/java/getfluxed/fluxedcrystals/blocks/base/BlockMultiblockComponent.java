@@ -7,6 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
@@ -15,13 +16,14 @@ import net.minecraft.world.World;
 public class BlockMultiblockComponent extends Block implements ITileEntityProvider {
 
     public BlockMultiblockComponent() {
-        super(Material.iron);
+        super(Material.IRON);
         setHardness(1.5f);
     }
+
     @Override
-    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-        super.onNeighborBlockChange(worldIn, pos, state, neighborBlock);
-        TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) worldIn.getTileEntity(pos);
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        super.onNeighborChange(world, pos, neighbor);
+        TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent) world.getTileEntity(pos);
         if (tile.getMaster() != null) {
 
             //TODO remove this

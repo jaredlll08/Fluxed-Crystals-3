@@ -30,7 +30,7 @@ public class BlockTrashGenerator extends BlockContainer {
 	public static final PropertyBool isActive = PropertyBool.create("active");
 
 	public BlockTrashGenerator() {
-		super(Material.rock);
+		super(Material.IRON);
 	}
 
 	public static void setState(boolean active, World worldIn, BlockPos pos) {

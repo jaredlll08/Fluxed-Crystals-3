@@ -140,13 +140,14 @@ public abstract class TileEnergyBase extends TileEntity implements IEnergyHandle
 	/* Read/Write NBT */
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         NBTTagCompound energy = new NBTTagCompound();
         energy.setInteger("Energy", storage.getEnergyStored());
         energy.setInteger("MaxEnergy", storage.getMaxEnergyStored());
 
         nbt.setTag("energy", energy);
+        return nbt;
     }
 
     @Override

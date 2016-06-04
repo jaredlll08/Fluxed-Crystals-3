@@ -1,8 +1,11 @@
 package getfluxed.fluxedcrystals.network.messages.tiles;
 
+import getfluxed.fluxedcrystals.api.crystals.CrystalInfo;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -18,6 +21,8 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
     private MultiBlock multiBlock;
     private int current;
     private int maxCapacity;
+    private boolean hasCrystalIO;
+    private CrystalInfo crystalInfo;
 
     public MessageControllerSync() {
 
@@ -31,6 +36,8 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
         this.multiBlock = tile.getMultiBlock();
         this.current = tile.getEnergyStorage().getMaxEnergyStored();
         this.maxCapacity = tile.getEnergyStorage().getMaxEnergyStored();
+        this.hasCrystalIO = tile.getItems().length != 0;
+        this.crystalInfo = tile.getCrystalInfo();
     }
 
     @Override
@@ -39,9 +46,12 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
         this.x = buf.readInt();
         this.y = buf.readInt();
         this.z = buf.readInt();
-        this.multiBlock = MultiBlock.readFromByteBuf(buf);
+
         this.current = buf.readInt();
         this.maxCapacity = buf.readInt();
+        this.hasCrystalIO = buf.readBoolean();
+        this.crystalInfo = CrystalInfo.readFromByteBuf(buf);
+        this.multiBlock = MultiBlock.readFromByteBuf(buf);
     }
 
     @Override
@@ -51,27 +61,43 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
         buf.writeInt(this.y);
         buf.writeInt(this.z);
 
-        MultiBlock.writeToByteBuf(buf, multiBlock);
+
         buf.writeInt(current);
         buf.writeInt(maxCapacity);
-
+        buf.writeBoolean(hasCrystalIO);
+        crystalInfo.writeToByteBuf(buf);
+        MultiBlock.writeToByteBuf(buf, multiBlock);
     }
 
 
     @Override
     public IMessage onMessage(MessageControllerSync message, MessageContext ctx) {
-        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.x, message.y, message.z));
-
-        if (tileEntity instanceof TileEntitySoilController) {
-            TileEntitySoilController tile = (TileEntitySoilController) tileEntity;
-            tile.setMultiBlock(message.multiBlock);
-            tile.getEnergyStorage().setCapacity(message.maxCapacity);
-            tile.getEnergyStorage().receiveEnergy(message.current, false);
-            if (tile.tank != null)
-                tile.tank.setCapacity(message.multiBlock.getAirBlocks().size() * 16000);
-
-        }
-
+        Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
         return null;
+    }
+
+    private void handle(MessageControllerSync message, MessageContext ctx) {
+        if (FMLClientHandler.instance().getClient().theWorld != null) {
+            TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.x, message.y, message.z));
+
+            if (tileEntity instanceof TileEntitySoilController) {
+                TileEntitySoilController tile = (TileEntitySoilController) tileEntity;
+                tile.setMultiBlock(message.multiBlock);
+                tile.getEnergyStorage().setCapacity(message.maxCapacity);
+                tile.getEnergyStorage().receiveEnergy(message.current, false);
+                if (tile.tank != null)
+                    tile.tank.setCapacity(message.multiBlock.getAirBlocks().size() * 16000);
+                if (message.hasCrystalIO) {
+                    if (tile.getItems().length != 2) {
+                        tile.setItems(new ItemStack[2]);
+                    }
+                } else {
+                    if (tile.getItems().length == 2) {
+                        tile.setItems(new ItemStack[0]);
+                    }
+                }
+                tile.setCrystalInfo(message.crystalInfo);
+            }
+        }
     }
 }

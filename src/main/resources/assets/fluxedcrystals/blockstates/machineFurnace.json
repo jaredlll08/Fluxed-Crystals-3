@@ -1,0 +1,12 @@
+{
+    "variants": {
+		"active=false,facing=north": { "model": "fluxedcrystals:machineFurnace" },
+        "active=false,facing=south": { "model": "fluxedcrystals:machineFurnace", "y": 180 },
+        "active=false,facing=west":  { "model": "fluxedcrystals:machineFurnace", "y": 270 },
+        "active=false,facing=east":  { "model": "fluxedcrystals:machineFurnace", "y": 90 },
+		"active=true,facing=north": { "model": "fluxedcrystals:machineFurnaceActive" },
+        "active=true,facing=south": { "model": "fluxedcrystals:machineFurnaceActive", "y": 180 },
+        "active=true,facing=west":  { "model": "fluxedcrystals:machineFurnaceActive", "y": 270 },
+        "active=true,facing=east":  { "model": "fluxedcrystals:machineFurnaceActive", "y": 90 }
+    }
+}

@@ -8,20 +8,26 @@ import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrame;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrameBattery;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.base.BlockBaseFrame;
+import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockCrystalIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockFluidIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockPowerIO;
 import getfluxed.fluxedcrystals.blocks.greenhouse.monitor.BlockPowerMonitor;
 import getfluxed.fluxedcrystals.blocks.machines.BlockCrusher;
+import getfluxed.fluxedcrystals.blocks.machines.BlockFluxfurnace;
+import getfluxed.fluxedcrystals.blocks.machines.BlockSawmill;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityLavaGenerator;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
+import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityCrystalIO;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityFluidIO;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityPowerIO;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.monitor.TileEntityPowerMonitor;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
+import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineFurnace;
+import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineSawmill;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
@@ -49,6 +55,7 @@ public class FCBlocks {
     public static Block ghBaseFrame = new BlockBaseFrame();
     public static Block ghFluidIO = new BlockFluidIO();
     public static Block ghPowerIO = new BlockPowerIO();
+    public static Block ghCrystalIO = new BlockCrystalIO();
     public static Block ghBatteryBasic = new BlockFrameBattery(16000);
     public static Block ghBatteryAdvanced = new BlockFrameBattery(32000);
     public static Block ghPowerMonitor = new BlockPowerMonitor();
@@ -59,6 +66,9 @@ public class FCBlocks {
     public static Block lavaGenerator = new BlockLavaGenerator();
 
     public static Block machineCrusher = new BlockCrusher();
+    public static Block machineFurnace = new BlockFluxfurnace();
+    public static Block machineSawmill = new BlockSawmill();
+
 
     public static void preInit() {
         registerBlock(ghController, "ghSoilController", TileEntitySoilController.class);
@@ -67,6 +77,7 @@ public class FCBlocks {
         registerBlock(ghBaseFrame, "ghBaseFrame");
         registerBlock(ghFluidIO, "ghFluidIO", TileEntityFluidIO.class);
         registerBlock(ghPowerIO, "ghPowerIO", TileEntityPowerIO.class);
+        registerBlock(ghCrystalIO, "ghCrystalIO", TileEntityCrystalIO.class);
         registerBlockMultiblock(ghBatteryBasic, "ghBatteryBasic");
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
@@ -83,8 +94,11 @@ public class FCBlocks {
 
     public static void registerMachines() {
         registerBlock(machineCrusher, "machineCrusher", TileEntityMachineCrusher.class);
-    }
+        registerBlock(machineFurnace, "machineFurnace", TileEntityMachineFurnace.class);
+        registerBlock(machineSawmill, "machineSawmill", TileEntityMachineSawmill.class);
 
+
+    }
 
 
     public static void init() {

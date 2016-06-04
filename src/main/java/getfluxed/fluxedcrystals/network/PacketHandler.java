@@ -8,6 +8,9 @@ import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageEnergyUp
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerator;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGeneratorFluid;
 import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageCrusher;
+import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageFurnace;
+import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageMachineBase;
+import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageSawmill;
 import getfluxed.fluxedcrystals.reference.Reference;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,6 +28,9 @@ public class PacketHandler {
         INSTANCE.registerMessage(MessageGenerator.class, MessageGenerator.class, ID++, Side.CLIENT);
         INSTANCE.registerMessage(MessageEnergyUpdate.class, MessageEnergyUpdate.class, ID++, Side.CLIENT);
         INSTANCE.registerMessage(MessageCrusher.class, MessageCrusher.class, ID++, Side.CLIENT);
+        INSTANCE.registerMessage(MessageFurnace.class, MessageFurnace.class, ID++, Side.CLIENT);
+        INSTANCE.registerMessage(MessageSawmill.class, MessageSawmill.class, ID++, Side.CLIENT);
+        INSTANCE.registerMessage(MessageMachineBase.class, MessageMachineBase.class, ID++, Side.CLIENT);
 
 
 

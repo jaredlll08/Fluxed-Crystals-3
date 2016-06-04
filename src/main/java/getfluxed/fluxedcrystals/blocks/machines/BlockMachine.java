@@ -1,5 +1,8 @@
 package getfluxed.fluxedcrystals.blocks.machines;
 
+import getfluxed.fluxedcrystals.network.PacketHandler;
+import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageMachineBase;
+import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineBase;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -8,10 +11,14 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,7 +31,7 @@ public abstract class BlockMachine extends BlockContainer {
     public static final PropertyBool isActive = PropertyBool.create("active");
 
     protected BlockMachine() {
-        super(Material.iron);
+        super(Material.IRON);
     }
 
     public EnumBlockRenderType getRenderType(IBlockState state) {
@@ -77,4 +84,27 @@ public abstract class BlockMachine extends BlockContainer {
         return i;
     }
 
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+
+        if (tileentity instanceof IInventory) {
+            InventoryHelper.dropInventoryItems(worldIn, pos, (IInventory) tileentity);
+            worldIn.updateComparatorOutputLevel(pos, this);
+        }
+
+        super.breakBlock(worldIn, pos, state);
+    }
+
+    public void setState(boolean active, World worldIn, BlockPos pos) {
+        IBlockState iblockstate = worldIn.getBlockState(pos);
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+        worldIn.setBlockState(pos, getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)).withProperty(isActive, active), 3);
+        worldIn.setBlockState(pos, getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)).withProperty(isActive, active), 3);
+
+        if (tileentity != null) {
+            tileentity.validate();
+            worldIn.setTileEntity(pos, tileentity);
+            PacketHandler.INSTANCE.sendToAllAround(new MessageMachineBase((TileEntityMachineBase) tileentity), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), (double) tileentity.getPos().getX(), (double) tileentity.getPos().getY(), (double) tileentity.getPos().getZ(), 128d));
+        }
+    }
 }

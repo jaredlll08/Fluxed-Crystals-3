@@ -3,6 +3,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles.generator;
 import getfluxed.fluxedcrystals.api.generators.generators.FluidGeneratorBase;
 import getfluxed.fluxedcrystals.api.generators.generators.GeneratorBase;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -12,77 +13,81 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageGenerator implements IMessage, IMessageHandler<MessageGenerator, IMessage> {
 
-	private int x;
-	private int y;
-	private int z;
-	private int generationTimer;
-	private int generationTimerDefault;
-	private int energy;
-	public MessageGenerator() {
+    private int x;
+    private int y;
+    private int z;
+    private int generationTimer;
+    private int generationTimerDefault;
+    private int energy;
 
-	}
+    public MessageGenerator() {
 
-	public MessageGenerator(GeneratorBase tile) {
+    }
 
-		this.x = tile.getPos().getX();
-		this.y = tile.getPos().getY();
-		this.z = tile.getPos().getZ();
-		this.generationTimer = tile.generationTimer;
-		this.generationTimerDefault = tile.generationTimerDefault;
-		this.energy = tile.getEnergyStored();
-	}
-	public MessageGenerator(FluidGeneratorBase tile) {
+    public MessageGenerator(GeneratorBase tile) {
 
-		this.x = tile.getPos().getX();
-		this.y = tile.getPos().getY();
-		this.z = tile.getPos().getZ();
-		this.generationTimer = tile.generationTimer;
-		this.generationTimerDefault = tile.generationTimerDefault;
-		this.energy = tile.getEnergyStored();
-	}
-	@Override
-	public void fromBytes(ByteBuf buf) {
+        this.x = tile.getPos().getX();
+        this.y = tile.getPos().getY();
+        this.z = tile.getPos().getZ();
+        this.generationTimer = tile.generationTimer;
+        this.generationTimerDefault = tile.generationTimerDefault;
+        this.energy = tile.getEnergyStored();
+    }
 
-		this.x = buf.readInt();
-		this.y = buf.readInt();
-		this.z = buf.readInt();
+    public MessageGenerator(FluidGeneratorBase tile) {
 
-		this.generationTimer = buf.readInt();
-		this.generationTimerDefault = buf.readInt();
-		this.energy = buf.readInt();
-	}
+        this.x = tile.getPos().getX();
+        this.y = tile.getPos().getY();
+        this.z = tile.getPos().getZ();
+        this.generationTimer = tile.generationTimer;
+        this.generationTimerDefault = tile.generationTimerDefault;
+        this.energy = tile.getEnergyStored();
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
+    @Override
+    public void fromBytes(ByteBuf buf) {
 
-		buf.writeInt(this.x);
-		buf.writeInt(this.y);
-		buf.writeInt(this.z);
+        this.x = buf.readInt();
+        this.y = buf.readInt();
+        this.z = buf.readInt();
 
-		buf.writeInt(generationTimer);
-		buf.writeInt(generationTimerDefault);
-		buf.writeInt(energy);
-	}
+        this.generationTimer = buf.readInt();
+        this.generationTimerDefault = buf.readInt();
+        this.energy = buf.readInt();
+    }
 
-	@Override
-	public IMessage onMessage(MessageGenerator message, MessageContext ctx) {
+    @Override
+    public void toBytes(ByteBuf buf) {
 
-		TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.x, message.y, message.z));
+        buf.writeInt(this.x);
+        buf.writeInt(this.y);
+        buf.writeInt(this.z);
 
-		if (tileEntity instanceof GeneratorBase) {
+        buf.writeInt(generationTimer);
+        buf.writeInt(generationTimerDefault);
+        buf.writeInt(energy);
+    }
 
-			((GeneratorBase) tileEntity).generationTimer = message.generationTimer;
-			((GeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;
-			((GeneratorBase) tileEntity).setEnergyStored(message.energy);
-			
-		}else if(tileEntity instanceof FluidGeneratorBase){
-			((FluidGeneratorBase) tileEntity).generationTimer = message.generationTimer;
-			((FluidGeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;
-			((FluidGeneratorBase) tileEntity).setEnergyStored(message.energy);
-		}
+    @Override
+    public IMessage onMessage(MessageGenerator message, MessageContext ctx) {
+        Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+        return null;
 
-		return null;
+    }
 
-	}
+    private void handle(MessageGenerator message, MessageContext ctx) {
+        if (FMLClientHandler.instance().getClient().theWorld != null) {
+            TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.x, message.y, message.z));
+            if (tileEntity instanceof GeneratorBase) {
+                ((GeneratorBase) tileEntity).generationTimer = message.generationTimer;
+                ((GeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;
+                ((GeneratorBase) tileEntity).setEnergyStored(message.energy);
+            } else if (tileEntity instanceof FluidGeneratorBase) {
+                ((FluidGeneratorBase) tileEntity).generationTimer = message.generationTimer;
+                ((FluidGeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;
+                ((FluidGeneratorBase) tileEntity).setEnergyStored(message.energy);
+            }
+        }
+    }
 
 }

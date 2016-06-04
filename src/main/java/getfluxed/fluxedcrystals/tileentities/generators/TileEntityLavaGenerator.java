@@ -44,9 +44,10 @@ public class TileEntityLavaGenerator extends FluidGeneratorBase {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		writeFluidToNBT(nbt);
+		return nbt;
 	}
 
 	@Override

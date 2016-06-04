@@ -6,11 +6,12 @@ import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComp
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by Jared on 4/15/2016.
@@ -130,8 +131,10 @@ public class TileEntityFluidIO extends TileEntityMultiBlockComponent implements 
     }
 
     // we send all our info to the client on load
+
+    @Nullable
     @Override
-    public Packet getDescriptionPacket() {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
         return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
