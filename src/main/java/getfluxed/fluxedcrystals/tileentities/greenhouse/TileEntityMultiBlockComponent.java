@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
  * Created by Jared on 3/19/2016.
  */
 public class TileEntityMultiBlockComponent extends TileEntity implements IGreenHouseComponent, IFrame {
-    private BlockPos masterPos;
+    private BlockPos masterPos = new BlockPos(0, 0, 0);
 
 
     @Override

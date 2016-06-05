@@ -120,5 +120,35 @@ public class CrystalInfo {
                 '}';
     }
 
-    public static CrystalInfo NULL = new CrystalInfo("null", new AxisAlignedBB(0, 0, 0, 0, 0, 0), 0, 0, 0);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CrystalInfo)) return false;
+
+        CrystalInfo that = (CrystalInfo) o;
+
+        if (Double.compare(that.getGrowthTime(), getGrowthTime()) != 0) return false;
+        if (getMinOut() != that.getMinOut()) return false;
+        if (getMaxOut() != that.getMaxOut()) return false;
+        if (!getName().equals(that.getName())) return false;
+        return getSize().equals(that.getSize());
+
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = getName().hashCode();
+        result = 31 * result + getSize().hashCode();
+        temp = Double.doubleToLongBits(getGrowthTime());
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + getMinOut();
+        result = 31 * result + getMaxOut();
+        return result;
+    }
+
+    public static CrystalInfo NULL = new CrystalInfo("__NULL__", new AxisAlignedBB(0, 0, 0, 0, 0, 0), 0, 0, 0);
 }

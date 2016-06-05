@@ -49,6 +49,9 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     private int tick;
     private ItemStack[] items;
     private CrystalInfo crystalInfo;
+    private boolean growing;
+    private double currentGrowth = 0;
+
 
     public TileEntitySoilController() {
         super(0, 250);
@@ -321,10 +324,14 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        System.out.println(compound);
         setMultiBlock(MultiBlock.readFromNBT(compound.getCompoundTag("multiblock")));
         NBTTagCompound tankTag = compound.getCompoundTag("tank");
         this.tank.readFromNBT(tankTag);
         readInventoryFromNBT(compound);
+        setCrystalInfo(CrystalInfo.readFromNBT(compound.getCompoundTag("crystalTag")));
+        setGrowing(compound.getBoolean("growing"));
+        setCurrentGrowth(compound.getDouble("currentGrowth"));
     }
 
     @Override
@@ -337,6 +344,13 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         tank.writeToNBT(tankTag);
         compound.setTag("tank", tankTag);
         writeInventoryToNBT(compound);
+        NBTTagCompound crystalTag = new NBTTagCompound();
+        getCrystalInfo().writeToNBT(crystalTag);
+        compound.setTag("crystalTag", crystalTag);
+
+        compound.setBoolean("growing", isGrowing());
+        compound.setDouble("currentGrowth", getCurrentGrowth());
+        System.out.println(compound);
         return compound;
     }
 
@@ -465,12 +479,17 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
     @Override
     public ItemStack getStackInSlot(int par1) {
-
+        if (par1 > getSizeInventory()) {
+            return null;
+        }
         return items[par1];
     }
 
     @Override
     public void setInventorySlotContents(int i, ItemStack itemstack) {
+        if (i > getSizeInventory()) {
+            return;
+        }
         items[i] = itemstack;
 
         if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()) {
@@ -479,6 +498,9 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     }
 
     public ItemStack addInventorySlotContents(int i, ItemStack itemstack) {
+        if (i > getSizeInventory()) {
+            return null;
+        }
         if (items[i] != null) {
 
             if (items[i].isItemEqual(itemstack)) {
@@ -534,5 +556,21 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
     public void setCrystalInfo(CrystalInfo crystalInfo) {
         this.crystalInfo = crystalInfo;
+    }
+
+    public double getCurrentGrowth() {
+        return currentGrowth;
+    }
+
+    public void setCurrentGrowth(double currentGrowth) {
+        this.currentGrowth = currentGrowth;
+    }
+
+    public boolean isGrowing() {
+        return growing;
+    }
+
+    public void setGrowing(boolean growing) {
+        this.growing = growing;
     }
 }

@@ -19,26 +19,30 @@ import javax.annotation.Nullable;
  * Created by Jared on 6/4/2016.
  */
 public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implements ITickable, ISidedInventory {
-    private boolean growing;
-    private double currentGrowth = 0;
+
 
     @Override
     public void update() {
         if (getMultiBlock() != null && getMultiBlock().isActive()) {
+
             TileEntitySoilController master = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
-            if (!growing && getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ICrystalInfoProvider) {
+            if (!master.isGrowing() && master.getCrystalInfo().equals(CrystalInfo.NULL) && getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ICrystalInfoProvider) {
+                System.out.println("active");
                 CrystalInfo info = ((ICrystalInfoProvider) getStackInSlot(0).getItem()).getCrystalInfo(getStackInSlot(0));
                 master.setCrystalInfo(info);
                 decrStackSize(0, 1);
-                growing = true;
-            } else if (!master.getCrystalInfo().equals(CrystalInfo.NULL)) {
-                if (currentGrowth++ >= master.getCrystalInfo().getGrowthTime()) {
+                master.setCurrentGrowth(0);
+                master.setGrowing(true);
+            } else if (!master.getCrystalInfo().equals(CrystalInfo.NULL) && !master.getCrystalInfo().getName().equals(CrystalInfo.NULL.getName()) && !master.getCrystalInfo().getName().isEmpty()) {
+                master.setCurrentGrowth(master.getCurrentGrowth() + 1);
+                if (master.getCurrentGrowth() >= master.getCrystalInfo().getGrowthTime()) {
+                    System.out.println(master.getCrystalInfo());
+                    System.out.println(CrystalRegistry.getCrystal(master.getCrystalInfo().getName()));
+                    System.out.println(CrystalRegistry.getCrystal(master.getCrystalInfo().getName()).getResourceOut().getItemStack());
                     addInventorySlotContents(1, CrystalRegistry.getCrystal(master.getCrystalInfo().getName()).getResourceOut().getItemStack());
-                    currentGrowth = 0;
-                    growing = false;
+                    master.setCurrentGrowth(0);
+                    master.setGrowing(false);
                     master.setCrystalInfo(CrystalInfo.NULL);
-                } else {
-                    currentGrowth++;
                 }
             }
 
@@ -46,121 +50,138 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
     }
 
     public ItemStack addInventorySlotContents(int i, ItemStack itemstack) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).addInventorySlotContents(i, itemstack);
+        return getMasterTile() == null ? null : getMasterTile().addInventorySlotContents(i, itemstack);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        this.growing = compound.getBoolean("growing");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setBoolean("growing", growing);
         return compound;
     }
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).getSlotsForFace(side);
+        return getMasterTile() == null ? new int[]{} : getMasterTile().getSlotsForFace(side);
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).canInsertItem(index, itemStackIn, direction);
+        return getMasterTile() == null ? false : getMasterTile().canInsertItem(index, itemStackIn, direction);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).canExtractItem(index, stack, direction);
+        return getMasterTile() == null ? false : getMasterTile().canExtractItem(index, stack, direction);
     }
 
     @Override
     public int getSizeInventory() {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).getSizeInventory();
+        return getMasterTile() == null ? 0 : getMasterTile().getSizeInventory();
     }
 
     @Nullable
     @Override
     public ItemStack getStackInSlot(int index) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).getStackInSlot(index);
+        return getMasterTile() == null ? null : getMasterTile().getStackInSlot(index);
     }
 
     @Nullable
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).decrStackSize(index, count);
+        return getMasterTile() == null ? null : getMasterTile().decrStackSize(index, count);
     }
 
     @Nullable
     @Override
     public ItemStack removeStackFromSlot(int index) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).removeStackFromSlot(index);
+        return getMasterTile() == null ? null : getMasterTile().removeStackFromSlot(index);
     }
 
     @Override
     public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
-        ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).setInventorySlotContents(index, stack);
+        if (getMasterTile() != null) {
+            getMasterTile().setInventorySlotContents(index, stack);
+        }
     }
 
     @Override
     public int getInventoryStackLimit() {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).getInventoryStackLimit();
+        return getMasterTile() == null ? 0 : getMasterTile().getInventoryStackLimit();
     }
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).isUseableByPlayer(player);
+        return getMasterTile() == null ? false : getMasterTile().isUseableByPlayer(player);
     }
 
     @Override
     public void openInventory(EntityPlayer player) {
-        ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).openInventory(player);
+        if (getMasterTile() != null) {
+            getMasterTile().openInventory(player);
+        }
     }
 
     @Override
     public void closeInventory(EntityPlayer player) {
-        ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).closeInventory(player);
+        if (getMasterTile() != null) {
+            getMasterTile().closeInventory(player);
+        }
     }
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).isItemValidForSlot(index, stack);
+        return getMasterTile() == null ? false : getMasterTile().isItemValidForSlot(index, stack);
     }
 
     @Override
     public int getField(int id) {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).getField(id);
+        return getMasterTile() == null ? 0 : getMasterTile().getField(id);
     }
 
     @Override
     public void setField(int id, int value) {
-        ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).setField(id, value);
+        if (getMasterTile() != null) {
+            getMasterTile().setField(id, value);
+        }
     }
 
     @Override
     public int getFieldCount() {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).getFieldCount();
+        return getMasterTile() == null ? 0 : getMasterTile().getFieldCount();
     }
 
     @Override
     public void clear() {
-        ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).clear();
+        if (getMasterTile() != null) {
+            getMasterTile().clear();
+        }
     }
 
     @Override
     public String getName() {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).getName();
+        return getMasterTile() == null ? null : getMasterTile().getName();
     }
 
     @Override
     public boolean hasCustomName() {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).hasCustomName();
+        return getMasterTile() == null ? false : getMasterTile().hasCustomName();
     }
 
     @Override
     public ITextComponent getDisplayName() {
-        return ((TileEntitySoilController) worldObj.getTileEntity(getMaster())).getDisplayName();
+        return getMasterTile() == null ? null : getMasterTile().getDisplayName();
+    }
+
+    public TileEntitySoilController getMasterTile() {
+        if (worldObj.getTileEntity(getMaster()) != null) {
+            if (worldObj.getTileEntity(getMaster()) instanceof TileEntitySoilController) {
+                return ((TileEntitySoilController) worldObj.getTileEntity(getMaster()));
+            }
+        }
+        return null;
     }
 }

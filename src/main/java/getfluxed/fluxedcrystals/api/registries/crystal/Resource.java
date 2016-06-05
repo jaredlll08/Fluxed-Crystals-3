@@ -26,7 +26,7 @@ public class Resource<T> {
         return stack instanceof FluidStack;
     }
     public ItemStack getItemStack(){
-        return (ItemStack)stack;
+        return ((ItemStack)stack).copy();
     }
     public FluidStack getFluidStack(){
         return (FluidStack)stack;
