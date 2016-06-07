@@ -45,7 +45,6 @@ public class GUICoalGenerator extends GuiContainer {
 
         Minecraft.getMinecraft().renderEngine.bindTexture(texture);
         int barHeight = (int) (((float) tile.generationTimer / tile.generationTimerDefault) * 16);
-        System.out.println(barHeight);
         drawTexturedModalRect(82, 38 + barHeight, 176, barHeight, 16, barHeight + 16);
         int barWidth = (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 88);
         drawTexturedModalRect(44, 59, 44, 166, barWidth, 19);
