@@ -13,8 +13,14 @@ public class GUISawmill extends GuiBase {
 
     private TileEntityMachineSawmill tile;
 
+    @Override
+    public ResourceLocation getTexture() {
+        return new ResourceLocation(Reference.modid, "textures/gui/machineSawmill.png");
+
+    }
+
     public GUISawmill(InventoryPlayer invPlayer, TileEntityMachineSawmill tile2) {
-        super(new ContainerSawmill(invPlayer, tile2), tile2, invPlayer.player, texture, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerSawmill(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
         this.tile = tile2;
         this.title = true;
         this.outlines = true;

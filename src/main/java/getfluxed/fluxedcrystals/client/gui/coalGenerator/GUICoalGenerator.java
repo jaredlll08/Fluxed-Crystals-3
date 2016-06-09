@@ -20,14 +20,17 @@ public class GUICoalGenerator extends GuiBase {
 
     private TileEntityCoalGenerator tile;
 
+    @Override
+    public ResourceLocation getTexture() {
+        return new ResourceLocation(Reference.modid, "textures/gui/coalGenerator.png");
+    }
+
     public GUICoalGenerator(InventoryPlayer invPlayer, TileEntityCoalGenerator tile2) {
-        super(new ContainerCoalGenerator(invPlayer, tile2), tile2, invPlayer.player, texture, "");
+        super(new ContainerCoalGenerator(invPlayer, tile2), tile2, invPlayer.player, "");
         this.tile = tile2;
 
         this.outlines = true;
     }
-
-    private static final ResourceLocation texture = new ResourceLocation(Reference.modid, "textures/gui/coalGenerator.png");
 
     @Override
     public boolean shouldOutline(ItemStack stack) {

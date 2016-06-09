@@ -19,15 +19,18 @@ public class GUICrystalIO extends GuiBase {
 
     private TileEntityCrystalIO tile;
 
+    @Override
+    public ResourceLocation getTexture() {
+        return new ResourceLocation(Reference.modid, "textures/gui/ioCrystal.png");
+    }
+
     public GUICrystalIO(InventoryPlayer invPlayer, TileEntityCrystalIO tile2) {
-        super(new ContainerCrystalIO(invPlayer, tile2), tile2, invPlayer.player, texture, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerCrystalIO(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
         this.tile = tile2;
 
         this.title = true;
         this.outlines = true;
     }
-
-    private static final ResourceLocation texture = new ResourceLocation(Reference.modid, "textures/gui/ioCrystal.png");
 
     @Override
     public boolean shouldOutline(ItemStack stack) {

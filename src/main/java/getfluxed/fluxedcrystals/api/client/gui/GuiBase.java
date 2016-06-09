@@ -24,7 +24,6 @@ public class GuiBase extends GuiContainer {
     TileEntity tile;
     //Not used yet
     //ResourceLocation overlays;
-    ResourceLocation texture;
     EntityPlayer player;
     String name;
 
@@ -33,11 +32,10 @@ public class GuiBase extends GuiContainer {
     //Should outline items
     public boolean outlines;
 
-    public GuiBase(Container container, TileEntity tile, EntityPlayer player, ResourceLocation texture, String name) {
+    public GuiBase(Container container, TileEntity tile, EntityPlayer player, String name) {
         super(container);
         this.container = container;
         this.tile = tile;
-        this.texture = texture;
         this.name = name;
         this.player = player;
     }
@@ -57,7 +55,7 @@ public class GuiBase extends GuiContainer {
         GlStateManager.pushAttrib();
         GlStateManager.color(1, 1, 1, 1);
 
-        Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+        Minecraft.getMinecraft().renderEngine.bindTexture(getTexture());
         GlStateManager.popAttrib();
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && outlines)
@@ -101,6 +99,11 @@ public class GuiBase extends GuiContainer {
         GL11.glPopMatrix();
     }
 
+    //Override this
+    public ResourceLocation getTexture() {
+        return null;
+    }
+
     //Override for outlines
     public boolean shouldOutline(ItemStack stack) {
         return false;
@@ -137,7 +140,7 @@ public class GuiBase extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.pushAttrib();
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+        Minecraft.getMinecraft().renderEngine.bindTexture(getTexture());
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         GlStateManager.popAttrib();
     }

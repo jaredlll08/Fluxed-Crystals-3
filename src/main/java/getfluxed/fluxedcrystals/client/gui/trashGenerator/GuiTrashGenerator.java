@@ -15,12 +15,15 @@ public class GuiTrashGenerator extends GuiBase {
 
     private TileEntityTrashGenerator tile;
 
-    public GuiTrashGenerator(InventoryPlayer invPlayer, TileEntityTrashGenerator tile2) {
-        super(new ContainerTrashGenerator(invPlayer, tile2), tile2, invPlayer.player, texture, "");
-        this.tile = tile2;
+    @Override
+    public ResourceLocation getTexture() {
+        return new ResourceLocation(Reference.modid, "textures/gui/trashGenerator.png");
     }
 
-    private static final ResourceLocation texture = new ResourceLocation(Reference.modid, "textures/gui/trashGenerator.png");
+    public GuiTrashGenerator(InventoryPlayer invPlayer, TileEntityTrashGenerator tile2) {
+        super(new ContainerTrashGenerator(invPlayer, tile2), tile2, invPlayer.player, "");
+        this.tile = tile2;
+    }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {

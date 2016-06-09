@@ -20,14 +20,17 @@ public class GUICrusher extends GuiBase {
     private TileEntityMachineCrusher tile;
 
     public GUICrusher(InventoryPlayer invPlayer, TileEntityMachineCrusher tile2) {
-        super(new ContainerCrusher(invPlayer, tile2), tile2, invPlayer.player, texture, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerCrusher(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
         this.tile = tile2;
 
         this.title = true;
         this.outlines = true;
     }
 
-    private static final ResourceLocation texture = new ResourceLocation(Reference.modid, "textures/gui/machineCrusher.png");
+    @Override
+    public ResourceLocation getTexture() {
+        return new ResourceLocation(Reference.modid, "textures/gui/machineCrusher.png");
+    }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {

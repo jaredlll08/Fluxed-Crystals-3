@@ -13,14 +13,17 @@ public class GUIFurnace extends GuiBase {
 
     private TileEntityMachineFurnace tile;
 
+    @Override
+    public ResourceLocation getTexture() {
+        return new ResourceLocation(Reference.modid, "textures/gui/machineFurnace.png");
+    }
+
     public GUIFurnace(InventoryPlayer invPlayer, TileEntityMachineFurnace tile2) {
-        super(new ContainerFurnace(invPlayer, tile2), tile2, invPlayer.player, texture, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerFurnace(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
         this.tile = tile2;
         this.title = true;
         this.outlines = true;
     }
-
-    private static final ResourceLocation texture = new ResourceLocation(Reference.modid, "textures/gui/machineFurnace.png");
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
