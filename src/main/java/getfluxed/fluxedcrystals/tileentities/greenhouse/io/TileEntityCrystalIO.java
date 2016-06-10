@@ -1,8 +1,14 @@
 package getfluxed.fluxedcrystals.tileentities.greenhouse.io;
 
+import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.crystals.CrystalInfo;
 import getfluxed.fluxedcrystals.api.crystals.ICrystalInfoProvider;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.crystalio.ContainerCrystalIO;
+import getfluxed.fluxedcrystals.client.gui.crystalio.GUICrystalIO;
+import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,14 +17,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
 /**
  * Created by Jared on 6/4/2016.
  */
-public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implements ITickable, ISidedInventory {
+public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implements ITickable, ISidedInventory, IOpenableGUI {
 
 
     @Override
@@ -183,5 +191,15 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
             }
         }
         return null;
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
+        return new GUICrystalIO(player.inventory, (TileEntityCrystalIO) world.getTileEntity(pos));
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
+        return new ContainerCrystalIO(player.inventory, (TileEntityCrystalIO) world.getTileEntity(pos));
     }
 }

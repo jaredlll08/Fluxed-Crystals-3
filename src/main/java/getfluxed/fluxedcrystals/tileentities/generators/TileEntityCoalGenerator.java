@@ -1,16 +1,20 @@
 package getfluxed.fluxedcrystals.tileentities.generators;
 
+import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.generators.Registry;
 import getfluxed.fluxedcrystals.api.generators.generators.GeneratorBase;
 import getfluxed.fluxedcrystals.blocks.generators.BlockCoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
-public class TileEntityCoalGenerator extends GeneratorBase {
+public class TileEntityCoalGenerator extends GeneratorBase implements IOpenableGUI {
 
     public TileEntityCoalGenerator() {
         super(50000, 1);
@@ -115,5 +119,15 @@ public class TileEntityCoalGenerator extends GeneratorBase {
     @Override
     public ITextComponent getDisplayName() {
         return null;
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
+        return new GUICoalGenerator(player.inventory, (TileEntityCoalGenerator) world.getTileEntity(pos));
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
+        return new ContainerCoalGenerator(player.inventory, (TileEntityCoalGenerator) world.getTileEntity(pos));
     }
 }

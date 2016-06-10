@@ -1,25 +1,10 @@
 package getfluxed.fluxedcrystals.client.gui;
 
 import getfluxed.fluxedcrystals.FluxedCrystals;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
-import getfluxed.fluxedcrystals.client.gui.crusher.ContainerCrusher;
-import getfluxed.fluxedcrystals.client.gui.crusher.GUICrusher;
-import getfluxed.fluxedcrystals.client.gui.crystalio.ContainerCrystalIO;
-import getfluxed.fluxedcrystals.client.gui.crystalio.GUICrystalIO;
-import getfluxed.fluxedcrystals.client.gui.furnace.ContainerFurnace;
-import getfluxed.fluxedcrystals.client.gui.furnace.GUIFurnace;
-import getfluxed.fluxedcrystals.client.gui.sawmill.ContainerSawmill;
-import getfluxed.fluxedcrystals.client.gui.sawmill.GUISawmill;
-import getfluxed.fluxedcrystals.client.gui.trashGenerator.ContainerTrashGenerator;
-import getfluxed.fluxedcrystals.client.gui.trashGenerator.GuiTrashGenerator;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
-import getfluxed.fluxedcrystals.tileentities.greenhouse.io.TileEntityCrystalIO;
-import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
-import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineFurnace;
-import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineSawmill;
+import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -34,82 +19,41 @@ public class GUIHandler implements IGuiHandler {
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
-        switch (ID) {
-
-            case 0:
-                if (te != null && te instanceof TileEntityCoalGenerator) {
-                    return new ContainerCoalGenerator(player.inventory, (TileEntityCoalGenerator) te);
-                }
-                break;
-            case 1:
-                if (te != null && te instanceof TileEntityTrashGenerator) {
-                    return new ContainerTrashGenerator(player.inventory, (TileEntityTrashGenerator) te);
-                }
-                break;
-
-            case 2:
-                if (te != null && te instanceof TileEntityMachineCrusher) {
-                    return new ContainerCrusher(player.inventory, (TileEntityMachineCrusher) te);
-                }
-                break;
-            case 3:
-                if (te != null && te instanceof TileEntityMachineFurnace) {
-                    return new ContainerFurnace(player.inventory, (TileEntityMachineFurnace) te);
-                }
-                break;
-            case 4:
-                if (te != null && te instanceof TileEntityMachineSawmill) {
-                    return new ContainerSawmill(player.inventory, (TileEntityMachineSawmill) te);
-                }
-                break;
-            case 5:
-                if (te != null && te instanceof TileEntityCrystalIO) {
-                    return new ContainerCrystalIO(player.inventory, (TileEntityCrystalIO) te);
-                }
-                break;
-
-        }
-
-        return null;
+        BlockPos blockPos = new BlockPos(x, y, z);
+        IOpenableGUI openableGUI = this.getOpenableGUI(ID, player, world, blockPos);
+        return openableGUI != null ? openableGUI.getServerGuiElement(ID, player, world, blockPos) : null;
     }
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
-        switch (ID) {
-            case 0:
-                if (te != null && te instanceof TileEntityCoalGenerator) {
-                    return new GUICoalGenerator(player.inventory, (TileEntityCoalGenerator) te);
+        BlockPos blockPos = new BlockPos(x, y, z);
+        IOpenableGUI openableGUI = this.getOpenableGUI(ID, player, world, blockPos);
+        return openableGUI != null ? openableGUI.getClientGuiElement(ID, player, world, blockPos) : null;
+    }
+
+    private IOpenableGUI getOpenableGUI(int id, EntityPlayer player, World world, BlockPos blockPos) {
+        IOpenableGUI openableGUI = null;
+        Entity entity = world.getEntityByID(id);
+        if(entity instanceof IOpenableGUI) {
+            openableGUI = (IOpenableGUI)entity;
+        } else {
+            TileEntity tileEntity = world.getTileEntity(blockPos);
+            if(tileEntity instanceof IOpenableGUI) {
+                openableGUI = (IOpenableGUI)tileEntity;
+            } else {
+                ItemStack heldItemMainhand =  player.getHeldItemMainhand();
+                if(heldItemMainhand != null && heldItemMainhand.getItem() instanceof IOpenableGUI) {
+                    openableGUI = (IOpenableGUI)heldItemMainhand.getItem();
+                } else {
+                    ItemStack heldItemOffhand = player.getHeldItemOffhand();
+                    if(heldItemOffhand != null && heldItemOffhand.getItem() instanceof IOpenableGUI) {
+                        openableGUI = (IOpenableGUI)heldItemOffhand.getItem();
+                    }
                 }
-                break;
-            case 1:
-                if (te != null && te instanceof TileEntityTrashGenerator) {
-                    return new GuiTrashGenerator(player.inventory, (TileEntityTrashGenerator) te);
-                }
-                break;
-            case 2:
-                if (te != null && te instanceof TileEntityMachineCrusher) {
-                    return new GUICrusher(player.inventory, (TileEntityMachineCrusher) te);
-                }
-                break;
-            case 3:
-                if (te != null && te instanceof TileEntityMachineFurnace) {
-                    return new GUIFurnace(player.inventory, (TileEntityMachineFurnace) te);
-                }
-                break;
-            case 4:
-                if (te != null && te instanceof TileEntityMachineSawmill) {
-                    return new GUISawmill(player.inventory, (TileEntityMachineSawmill) te);
-                }
-                break;
-            case 5:
-                if (te != null && te instanceof TileEntityCrystalIO) {
-                    return new GUICrystalIO(player.inventory, (TileEntityCrystalIO) te);
-                }
-                break;
+            }
         }
-        return null;
+
+        return openableGUI;
     }
 
 }

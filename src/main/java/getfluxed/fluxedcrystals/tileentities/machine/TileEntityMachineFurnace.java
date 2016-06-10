@@ -1,11 +1,17 @@
 package getfluxed.fluxedcrystals.tileentities.machine;
 
+import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeFurnace;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.blocks.machines.BlockFluxfurnace;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.furnace.ContainerFurnace;
+import getfluxed.fluxedcrystals.client.gui.furnace.GUIFurnace;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageFurnace;
 import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
+import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -16,8 +22,10 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
@@ -27,7 +35,7 @@ import java.util.EnumSet;
 /**
  * Created by Jared on 5/25/2016.
  */
-public class TileEntityMachineFurnace extends TileEnergyBase implements ITickable, ISidedInventory {
+public class TileEntityMachineFurnace extends TileEnergyBase implements ITickable, ISidedInventory,IOpenableGUI {
 
     private static int[] slotsAll = {0, 1};
     public ItemStack[] items;
@@ -473,5 +481,15 @@ public class TileEntityMachineFurnace extends TileEnergyBase implements ITickabl
         NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
         return new SPacketUpdateTileEntity(getPos(), 0, tag);
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
+        return new GUIFurnace(player.inventory, (TileEntityMachineFurnace) world.getTileEntity(pos));
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
+        return new ContainerFurnace(player.inventory, (TileEntityMachineFurnace) world.getTileEntity(pos));
     }
 }

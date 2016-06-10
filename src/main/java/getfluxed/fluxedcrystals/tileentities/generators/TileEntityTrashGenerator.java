@@ -1,9 +1,14 @@
 package getfluxed.fluxedcrystals.tileentities.generators;
 
+import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.generators.Registry;
 import getfluxed.fluxedcrystals.api.generators.Registry.TrashGenerator;
 import getfluxed.fluxedcrystals.api.generators.generators.GeneratorBase;
 import getfluxed.fluxedcrystals.blocks.generators.BlockTrashGenerator;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
+import getfluxed.fluxedcrystals.client.gui.trashGenerator.ContainerTrashGenerator;
+import getfluxed.fluxedcrystals.client.gui.trashGenerator.GuiTrashGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -11,7 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
-public class TileEntityTrashGenerator extends GeneratorBase {
+public class TileEntityTrashGenerator extends GeneratorBase implements IOpenableGUI {
 
     public TileEntityTrashGenerator() {
         super(20000, 1);
@@ -118,5 +123,15 @@ public class TileEntityTrashGenerator extends GeneratorBase {
     @Override
     public ITextComponent getDisplayName() {
         return null;
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
+        return new GuiTrashGenerator(player.inventory, (TileEntityTrashGenerator) world.getTileEntity(pos));
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
+        return new ContainerTrashGenerator(player.inventory, (TileEntityTrashGenerator) world.getTileEntity(pos));
     }
 }
