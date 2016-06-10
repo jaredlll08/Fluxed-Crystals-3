@@ -1,3 +1,7 @@
+/**
+ * Freely taken from BoilerPlate by BrassGoggledCoders
+ * https://github.com/BrassGoggledCoders/Boilerplate
+ */
 package getfluxed.fluxedcrystals.client.gui;
 
 import getfluxed.fluxedcrystals.FluxedCrystals;
