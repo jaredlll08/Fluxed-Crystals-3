@@ -1,7 +1,7 @@
 package getfluxed.fluxedcrystals.items.crystal;
 
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
-import getfluxed.fluxedcrystals.api.registries.crystal.Crystal;
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.config.Config;
 import getfluxed.fluxedcrystals.items.base.FCItem;
 import getfluxed.fluxedcrystals.util.NBTHelper;

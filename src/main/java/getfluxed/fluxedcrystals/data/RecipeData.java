@@ -5,7 +5,7 @@ import getfluxed.fluxedcrystals.api.recipes.machines.RecipeFurnace;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeSawmill;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
-import getfluxed.fluxedcrystals.api.registries.crystal.Crystal;
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.items.FCItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;

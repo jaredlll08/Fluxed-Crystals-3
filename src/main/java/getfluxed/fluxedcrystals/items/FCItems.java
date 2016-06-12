@@ -1,7 +1,7 @@
 package getfluxed.fluxedcrystals.items;
 
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
-import getfluxed.fluxedcrystals.api.registries.crystal.Crystal;
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalDust;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalSolution;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalSolutionShell;

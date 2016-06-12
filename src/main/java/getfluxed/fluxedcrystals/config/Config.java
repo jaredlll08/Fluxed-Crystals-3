@@ -2,7 +2,7 @@ package getfluxed.fluxedcrystals.config;
 
 import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
-import getfluxed.fluxedcrystals.api.registries.crystal.Crystal;
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.reference.Reference;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;

@@ -1,14 +1,13 @@
 package getfluxed.fluxedcrystals.tileentities.greenhouse.io;
 
 import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
-import getfluxed.fluxedcrystals.api.crystals.CrystalInfo;
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.api.crystals.ICrystalInfoProvider;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
 import getfluxed.fluxedcrystals.client.gui.crystalio.ContainerCrystalIO;
 import getfluxed.fluxedcrystals.client.gui.crystalio.GUICrystalIO;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
+import getfluxed.fluxedcrystals.network.PacketHandler;
+import getfluxed.fluxedcrystals.network.messages.tiles.greenhouse.io.MessageCrystalIO;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +19,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
 
@@ -32,26 +32,34 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
     @Override
     public void update() {
         if (getMultiBlock() != null && getMultiBlock().isActive()) {
-
+            boolean sendUpdate = false;
             TileEntitySoilController master = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
-            if (!master.isGrowing() && master.getCrystalInfo().equals(CrystalInfo.NULL) && getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ICrystalInfoProvider) {
-                System.out.println("active");
-                CrystalInfo info = ((ICrystalInfoProvider) getStackInSlot(0).getItem()).getCrystalInfo(getStackInSlot(0));
+
+            if (!master.isGrowing() && master.getCrystalInfo().equals(Crystal.NULL) && getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ICrystalInfoProvider) {
+                Crystal info = ((ICrystalInfoProvider) getStackInSlot(0).getItem()).getCrystal(getStackInSlot(0));
                 master.setCrystalInfo(info);
                 decrStackSize(0, 1);
                 master.setCurrentGrowth(0);
                 master.setGrowing(true);
-            } else if (!master.getCrystalInfo().equals(CrystalInfo.NULL) && !master.getCrystalInfo().getName().equals(CrystalInfo.NULL.getName()) && !master.getCrystalInfo().getName().isEmpty()) {
+                sendUpdate = true;
+            } else if (!master.getCrystalInfo().equals(Crystal.NULL) && !master.getCrystalInfo().getName().equals(Crystal.NULL.getName())) {
                 master.setCurrentGrowth(master.getCurrentGrowth() + 1);
-                if (master.getCurrentGrowth() >= master.getCrystalInfo().getGrowthTime()) {
-                    System.out.println(master.getCrystalInfo());
-                    System.out.println(CrystalRegistry.getCrystal(master.getCrystalInfo().getName()));
-                    System.out.println(CrystalRegistry.getCrystal(master.getCrystalInfo().getName()).getResourceOut().getItemStack());
+                System.out.println(((master.getCrystalInfo().getGrowthTimePerBlock() * master.getMultiBlock().getAirBlocks().size())));
+                if (master.getCurrentGrowth() >= (master.getCrystalInfo().getGrowthTimePerBlock()*master.getMultiBlock().getAirBlocks().size())) {
                     addInventorySlotContents(1, CrystalRegistry.getCrystal(master.getCrystalInfo().getName()).getResourceOut().getItemStack());
                     master.setCurrentGrowth(0);
                     master.setGrowing(false);
-                    master.setCrystalInfo(CrystalInfo.NULL);
+                    master.setCrystalInfo(Crystal.NULL);
                 }
+                sendUpdate = true;
+            }
+            if(master.isGrowing() && master.getCrystalInfo().equals(Crystal.NULL)){
+                master.setGrowing(false);
+                master.setCurrentGrowth(0);
+                sendUpdate = true;
+            }
+            if (sendUpdate) {
+                PacketHandler.INSTANCE.sendToAllAround(new MessageCrystalIO(getMasterTile()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
             }
 
         }

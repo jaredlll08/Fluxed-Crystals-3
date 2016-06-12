@@ -5,8 +5,9 @@
             "resourceOut": "minecraft:iron_ingot",
             "colour": "0xD6B781",
             "dustNeeded": 32,
-            "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16,
+			"growthTimePerBlock":512,
+            "crushedCrystalPerBlockMin": 4,
+            "crushedCrystalPerBlockMax": 6,
 			"dynamicColour": true
         },{
             "name":"Gold",
@@ -14,8 +15,9 @@
             "resourceOut": "minecraft:gold_ingot",
             "colour": "0xB5A62C",
             "dustNeeded": 32,
-            "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16,
+			"growthTimePerBlock":512,
+            "crushedCrystalPerBlockMin": 4,
+            "crushedCrystalPerBlockMax": 6,
 			"dynamicColour": true
         },{
             "name":"Coal",
@@ -23,8 +25,9 @@
             "resourceOut": "minecraft:coal",
             "colour": "0xC090A",
             "dustNeeded": 32,
-            "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16,
+			"growthTimePerBlock":384,
+            "crushedCrystalPerBlockMin": 6,
+            "crushedCrystalPerBlockMax": 10,
 			"dynamicColour": true
         },{
             "name":"Charcoal",
@@ -32,8 +35,9 @@
             "resourceOut": "minecraft:coal;1",
             "colour": "0x34282C",
             "dustNeeded": 32,
-            "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16,
+			"growthTimePerBlock":384,
+            "crushedCrystalPerBlockMin": 6,
+            "crushedCrystalPerBlockMax": 10,
 			"dynamicColour": true
         },{
             "name":"Emerald",
@@ -41,8 +45,9 @@
             "resourceOut": "minecraft:emerald",
             "colour": "0x5FFB17",
             "dustNeeded": 32,
-            "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16,
+			"growthTimePerBlock":1024,
+            "crushedCrystalPerBlockMin": 2,
+            "crushedCrystalPerBlockMax": 6,
 			"dynamicColour": true
         },{
             "name":"Diamond",
@@ -50,8 +55,9 @@
             "resourceOut": "minecraft:diamond",
             "colour": "0x4EE2EC",
             "dustNeeded": 32,
-            "crushedCrystalPerBlock": 18,
-            "crushedCrystalNeededPerBlock": 16,
+			"growthTimePerBlock":384,
+            "crushedCrystalPerBlockMin": 2,
+            "crushedCrystalPerBlockMax": 6,
 			"dynamicColour": true
         }
         ]

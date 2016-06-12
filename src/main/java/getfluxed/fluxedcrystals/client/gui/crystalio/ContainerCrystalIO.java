@@ -9,8 +9,8 @@ import net.minecraft.inventory.Slot;
 public class ContainerCrystalIO extends ContainerBase {
     public ContainerCrystalIO(InventoryPlayer invPlayer, TileEntityCrystalIO tile) {
 
-        addSlotToContainer(new SlotTileDep(tile, 0, 44, 35));
-        addSlotToContainer(new SlotTileDep(tile, 1, 116, 35));
+        addSlotToContainer(new SlotTileDep(tile, 0, 8, 8));
+        addSlotToContainer(new SlotTileDep(tile, 1, 152, 8));
         for (int x = 0; x < 9; x++) {
             addSlotToContainer(new Slot(invPlayer, x, 8 + 18 * x, 142));
         }

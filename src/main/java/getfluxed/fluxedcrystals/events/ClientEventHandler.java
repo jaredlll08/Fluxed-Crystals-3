@@ -1,7 +1,7 @@
 package getfluxed.fluxedcrystals.events;
 
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
-import getfluxed.fluxedcrystals.api.registries.crystal.Crystal;
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

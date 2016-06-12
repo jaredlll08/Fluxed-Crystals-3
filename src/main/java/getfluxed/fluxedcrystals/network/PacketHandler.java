@@ -7,6 +7,7 @@ import getfluxed.fluxedcrystals.network.messages.tiles.MessageGHLoad;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageEnergyUpdate;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerator;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGeneratorFluid;
+import getfluxed.fluxedcrystals.network.messages.tiles.greenhouse.io.MessageCrystalIO;
 import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageCrusher;
 import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageFurnace;
 import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageMachineBase;
@@ -31,7 +32,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(MessageFurnace.class, MessageFurnace.class, ID++, Side.CLIENT);
         INSTANCE.registerMessage(MessageSawmill.class, MessageSawmill.class, ID++, Side.CLIENT);
         INSTANCE.registerMessage(MessageMachineBase.class, MessageMachineBase.class, ID++, Side.CLIENT);
-
+        INSTANCE.registerMessage(MessageCrystalIO.class, MessageCrystalIO.class, ID++, Side.CLIENT);
 
 
     }

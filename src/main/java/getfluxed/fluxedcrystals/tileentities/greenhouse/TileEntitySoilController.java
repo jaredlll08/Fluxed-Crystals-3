@@ -2,10 +2,12 @@ package getfluxed.fluxedcrystals.tileentities.greenhouse;
 
 import cofh.api.energy.EnergyStorage;
 import getfluxed.fluxedcrystals.FluxedCrystals;
-import getfluxed.fluxedcrystals.api.crystals.CrystalInfo;
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
+import getfluxed.fluxedcrystals.api.crystals.ICrystalInfoProvider;
 import getfluxed.fluxedcrystals.api.multiblock.IFrame;
 import getfluxed.fluxedcrystals.api.multiblock.IGreenHouseComponent;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
+import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrameBattery;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.base.BlockBaseFrame;
@@ -48,7 +50,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     private MultiBlock multiBlock;
     private int tick;
     private ItemStack[] items;
-    private CrystalInfo crystalInfo;
+    private Crystal crystalInfo;
     private boolean growing;
     private double currentGrowth = 0;
 
@@ -59,7 +61,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         multiBlock = new MultiBlock(getPos());
         tank = new FluidTank(0);
         items = new ItemStack[0];
-        crystalInfo = CrystalInfo.NULL;
+        crystalInfo = Crystal.NULL;
     }
 
     @Override
@@ -130,7 +132,6 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
     @Override
     public MultiBlock getMultiBlock() {
-
         return multiBlock != null ? multiBlock : new MultiBlock(getPos());
     }
 
@@ -300,6 +301,10 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                 setMaxStorage(energyCapacity);
                 if (hasCrystalIO) {
                     items = new ItemStack[2];
+                } else {
+                    crystalInfo = Crystal.NULL;
+                    growing = false;
+                    setCurrentGrowth(0);
                 }
                 this.setMaster(getPos());
                 time = (System.currentTimeMillis() - time);
@@ -329,7 +334,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         NBTTagCompound tankTag = compound.getCompoundTag("tank");
         this.tank.readFromNBT(tankTag);
         readInventoryFromNBT(compound);
-        setCrystalInfo(CrystalInfo.readFromNBT(compound.getCompoundTag("crystalTag")));
+        setCrystalInfo(Crystal.readFromNBT(compound.getCompoundTag("crystalTag")));
         setGrowing(compound.getBoolean("growing"));
         setCurrentGrowth(compound.getDouble("currentGrowth"));
     }
@@ -416,7 +421,12 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
+        switch (index) {
+            case 0:
+                return stack.getItem() instanceof ICrystalInfoProvider;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -503,12 +513,13 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         }
         if (items[i] != null) {
 
-            if (items[i].isItemEqual(itemstack)) {
+            if (items[i].isItemEqual(itemstack) && RecipeRegistry.compareStacks(items[i], itemstack)) {
                 items[i].stackSize += itemstack.stackSize;
+                if (items[i].stackSize > getInventoryStackLimit()) {
+                    items[i].stackSize = getInventoryStackLimit();
+                }
             }
-            if (items[i].stackSize > getInventoryStackLimit()) {
-                items[i].stackSize = getInventoryStackLimit();
-            }
+
         } else {
             setInventorySlotContents(i, itemstack);
         }
@@ -550,12 +561,12 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         this.items = items;
     }
 
-    public CrystalInfo getCrystalInfo() {
+    public Crystal getCrystalInfo() {
         return crystalInfo;
     }
 
-    public void setCrystalInfo(CrystalInfo crystalInfo) {
-        this.crystalInfo = crystalInfo;
+    public void setCrystalInfo(Crystal crystal) {
+        this.crystalInfo = crystal;
     }
 
     public double getCurrentGrowth() {
@@ -572,5 +583,10 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
     public void setGrowing(boolean growing) {
         this.growing = growing;
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
     }
 }

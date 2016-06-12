@@ -7,5 +7,5 @@ import net.minecraft.item.ItemStack;
  */
 public interface ICrystalInfoProvider {
 
-    CrystalInfo getCrystalInfo(ItemStack stack);
+    Crystal getCrystal(ItemStack stack);
 }

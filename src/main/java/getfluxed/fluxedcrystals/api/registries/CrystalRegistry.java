@@ -1,6 +1,6 @@
 package getfluxed.fluxedcrystals.api.registries;
 
-import getfluxed.fluxedcrystals.api.registries.crystal.Crystal;
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
 
 import java.util.TreeMap;
 

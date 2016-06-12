@@ -62,7 +62,7 @@ public class GuiBase extends GuiContainer {
             drawOutlines();
     }
 
-    private void drawOutlines() {
+    protected void drawOutlines() {
         GL11.glPushMatrix();
         GlStateManager.pushAttrib();
         GL11.glDepthMask(false);

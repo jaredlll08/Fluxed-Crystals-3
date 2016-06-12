@@ -1,6 +1,7 @@
 package getfluxed.fluxedcrystals.proxy;
 
 import getfluxed.fluxedcrystals.client.generators.render.RenderLavaGenerator;
+import getfluxed.fluxedcrystals.client.greenhouse.ModelCube;
 import getfluxed.fluxedcrystals.client.greenhouse.RenderController;
 import getfluxed.fluxedcrystals.client.greenhouse.monitor.RenderPowerMonitor;
 import getfluxed.fluxedcrystals.client.gui.GUIHandler;
@@ -20,7 +21,7 @@ public class ClientProxy extends CommonProxy {
     public void registerRenderers() {
         super.registerRenderers();
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPowerMonitor.class, new RenderPowerMonitor());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySoilController.class, new RenderController());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySoilController.class, new RenderController(new ModelCube()));
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLavaGenerator.class, new RenderLavaGenerator());
 
     }

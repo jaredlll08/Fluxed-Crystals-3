@@ -1,6 +1,6 @@
 package getfluxed.fluxedcrystals.network.messages.tiles;
 
-import getfluxed.fluxedcrystals.api.crystals.CrystalInfo;
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import io.netty.buffer.ByteBuf;
@@ -22,7 +22,7 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
     private int current;
     private int maxCapacity;
     private boolean hasCrystalIO;
-    private CrystalInfo crystalInfo;
+    private Crystal crystalInfo;
 
     public MessageControllerSync() {
 
@@ -50,7 +50,7 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
         this.current = buf.readInt();
         this.maxCapacity = buf.readInt();
         this.hasCrystalIO = buf.readBoolean();
-        this.crystalInfo = CrystalInfo.readFromByteBuf(buf);
+        this.crystalInfo = Crystal.readFromByteBuf(buf);
         this.multiBlock = MultiBlock.readFromByteBuf(buf);
     }
 
