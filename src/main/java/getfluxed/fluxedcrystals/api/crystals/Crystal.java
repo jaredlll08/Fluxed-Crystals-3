@@ -34,7 +34,7 @@ public class Crystal {
     private int crushedCrystalPerBlockMin;
     private int crushedCrystalPerBlockMax;
 
-    public static Crystal NULL = new Crystal("null", "minecraft:bedrock", "minecraft:bedrock", "0xFFFFFF", false, 0, 0, 0, 0);
+    public static Crystal NULL = new Crystal("null", "minecraft:bedrock", "minecraft:bedrock", "0xFFFFFF", false, 1, 1, 1, 1);
 
     public Crystal(String name, Resource resourceIn, Resource resourceOut, int colour, boolean dynamicColour, int dustNeeded, double growthTimePerBlock, int crushedCrystalPerBlockMin, int crushedCrystalPerBlockMax) {
         this.name = name;

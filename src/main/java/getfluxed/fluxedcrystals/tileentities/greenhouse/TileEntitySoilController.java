@@ -1,6 +1,7 @@
 package getfluxed.fluxedcrystals.tileentities.greenhouse;
 
 import cofh.api.energy.EnergyStorage;
+import com.google.common.base.Stopwatch;
 import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.api.crystals.ICrystalInfoProvider;
@@ -39,6 +40,7 @@ import org.apache.logging.log4j.Level;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jared on 3/19/2016.
@@ -49,7 +51,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     boolean firstTicked = false;
     private MultiBlock multiBlock;
     private int tick;
-    private ItemStack[] items;
+    private ItemStack[] items = new ItemStack[2];
     private Crystal crystalInfo;
     private boolean growing;
     private double currentGrowth = 0;
@@ -60,7 +62,6 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         getEnergyStorage().setMaxTransfer(250);
         multiBlock = new MultiBlock(getPos());
         tank = new FluidTank(0);
-        items = new ItemStack[0];
         crystalInfo = Crystal.NULL;
     }
 
@@ -146,7 +147,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
     public int checkMultiblock() {
         if (isMaster()) {
-            long time = System.currentTimeMillis();
+            Stopwatch watch = Stopwatch.createStarted();
 
             int northSize = 0;
             int southSize = 0;
@@ -156,7 +157,11 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
             for (EnumFacing fac : EnumFacing.HORIZONTALS) {
                 int count = 0;
+                sides:
                 while (getWorld().getBlockState(pos.offset(fac, ++count)).getBlock() instanceof BlockBaseFrame) {
+                    if (watch.elapsed(TimeUnit.MILLISECONDS) > 2000) {
+                        break sides;
+                    }
                 }
                 count--;
                 if (count == 0) {
@@ -207,11 +212,14 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                     return 0;
                 }
 
-
                 //Counts the height of the structure (excluding base platform)
                 int y = 1;
+                air:
                 while ((getWorld().isAirBlock(bp.offset(EnumFacing.UP, y)) || y == 0) && y < 256) {
                     y++;
+                    if (watch.elapsed(TimeUnit.MILLISECONDS) > 2000) {
+                        break air;
+                    }
                 }
                 if (y == 1 || y == 256 || y < ySize) {
                     return 0;
@@ -300,14 +308,13 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                 this.tank.setCapacity(multiBlock.getAirBlocks().size() * 16000);
                 setMaxStorage(energyCapacity);
                 if (hasCrystalIO) {
-                    items = new ItemStack[2];
                 } else {
                     crystalInfo = Crystal.NULL;
                     growing = false;
                     setCurrentGrowth(0);
                 }
                 this.setMaster(getPos());
-                time = (System.currentTimeMillis() - time);
+                long time = watch.elapsed(TimeUnit.MILLISECONDS);
                 AxisAlignedBB multiblock = new AxisAlignedBB(northEast, southWest);
                 FluxedCrystals.logger.log(Level.INFO, String.format("Completed a %sx%sx%s structure in: %s ms", (int) multiblock.maxX - (int) multiblock.minX + 1, (int) multiblock.maxY - (int) multiblock.minY + 1, (int) multiblock.maxZ - (int) multiblock.minZ + 1, time));
                 return energyCapacity;
@@ -329,19 +336,22 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        System.out.println(compound);
+        System.out.println("start read:" + compound);
         setMultiBlock(MultiBlock.readFromNBT(compound.getCompoundTag("multiblock")));
         NBTTagCompound tankTag = compound.getCompoundTag("tank");
         this.tank.readFromNBT(tankTag);
+
         readInventoryFromNBT(compound);
         setCrystalInfo(Crystal.readFromNBT(compound.getCompoundTag("crystalTag")));
         setGrowing(compound.getBoolean("growing"));
         setCurrentGrowth(compound.getDouble("currentGrowth"));
+        System.out.println("end read: " + compound);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
+        System.out.println("start write: " + compound);
         NBTTagCompound multi = new NBTTagCompound();
         MultiBlock.writeToNBT(multi, getMultiBlock());
         compound.setTag("multiblock", multi);
@@ -352,10 +362,9 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         NBTTagCompound crystalTag = new NBTTagCompound();
         getCrystalInfo().writeToNBT(crystalTag);
         compound.setTag("crystalTag", crystalTag);
-
         compound.setBoolean("growing", isGrowing());
         compound.setDouble("currentGrowth", getCurrentGrowth());
-        System.out.println(compound);
+        System.out.println("end write: " + compound);
         return compound;
     }
 

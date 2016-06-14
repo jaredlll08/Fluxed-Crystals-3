@@ -44,9 +44,11 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                 sendUpdate = true;
             } else if (!master.getCrystalInfo().equals(Crystal.NULL) && !master.getCrystalInfo().getName().equals(Crystal.NULL.getName())) {
                 master.setCurrentGrowth(master.getCurrentGrowth() + 1);
-                System.out.println(((master.getCrystalInfo().getGrowthTimePerBlock() * master.getMultiBlock().getAirBlocks().size())));
                 if (master.getCurrentGrowth() >= (master.getCrystalInfo().getGrowthTimePerBlock()*master.getMultiBlock().getAirBlocks().size())) {
-                    addInventorySlotContents(1, CrystalRegistry.getCrystal(master.getCrystalInfo().getName()).getResourceOut().getItemStack());
+                    ItemStack retStack = CrystalRegistry.getCrystal(master.getCrystalInfo().getName()).getResourceOut().getItemStack();
+                    retStack.stackSize = getWorld().rand.nextInt(master.getCrystalInfo().getCrushedCrystalPerBlockMax()) + getMasterTile().getCrystalInfo().getCrushedCrystalPerBlockMin();
+                    System.out.println(retStack.stackSize);
+                    addInventorySlotContents(1, retStack);
                     master.setCurrentGrowth(0);
                     master.setGrowing(false);
                     master.setCrystalInfo(Crystal.NULL);
