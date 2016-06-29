@@ -40,12 +40,23 @@ minecraft {
 
 repositories {
     maven {
+        name "Tesla"
+        url 'http://maven.epoxide.xyz'
+    }
+    maven {
+        name 'Mobius'
+        url 'http://mobiusstrip.eu/maven'
+    }
+    maven {
+        name 'JEI'
         url "http://dvs1.progwml6.com/files/maven"
     }
 }
 
 dependencies {
-   // deobfCompile "mezz.jei:jei_1.9:3.0.3.166"
+    compile "net.darkhax.tesla:Tesla:1.9.4-1.1.0.24"
+    //compile "mcp.mobius.waila:Waila:1.7.0-B3_1.9.4"
+    deobfCompile "mezz.jei:jei_1.9.4:3.4.0.204"
 }
 
 processResources
