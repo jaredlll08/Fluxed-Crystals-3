@@ -1,7 +1,8 @@
 package getfluxed.fluxedcrystals.items;
 
-import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.api.crystals.Crystal;
+import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
+import getfluxed.fluxedcrystals.items.crystal.ItemCrushedCrystal;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalDust;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalSolution;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalSolutionShell;
@@ -9,6 +10,7 @@ import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
@@ -35,12 +37,14 @@ public class FCItems {
     public static Item crystalDust = new ItemCrystalDust();
     public static Item crystalSolution = new ItemCrystalSolution();
     public static Item crystalSolutionShell = new ItemCrystalSolutionShell();
+    public static Item crystalCrushed = new ItemCrushedCrystal();
 
 
     public static void preInit() {
         registerItem(crystalSolutionShell, "crystalSolutionShell", "crystalSolutionShell");
         registerItemColour(crystalDust, "crystalDust", "crystalDust", new int[]{0});
         registerItemColour(crystalSolution, "crystalSolution", "crystalSolution", new int[]{1});
+        registerItemColour(crystalCrushed, "crystalCrushedShardRough", "crystalCrushedShardRough", new String[]{"crystalCrushedShardRough", "crystalCrushedShardSmooth", "crystalCrushedChunkRough", "crystalCrushedChunkSmooth" }, new int[]{0});
 
 
     }
@@ -48,9 +52,24 @@ public class FCItems {
     public static void init() {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         for (Map.Entry<String, Item> ent : renderMap.entrySet()) {
-            renderItem.getItemModelMesher().register(ent.getValue(), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
+            if (!(ent.getValue() instanceof ItemCrushedCrystal))
+                renderItem.getItemModelMesher().register(ent.getValue(), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
         }
+        List<ResourceLocation> locs = new ArrayList<>();
+        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedShardRough"));
+        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedShardSmooth"));
+        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedChunkRough"));
+        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedChunkSmooth"));
+
+        for(int i = 0;i<locs.size();i++){
+            renderItem.getItemModelMesher().register(crystalCrushed, i, new ModelResourceLocation(locs.get(i), "inventory"));
+        }
+
+        ModelBakery.registerItemVariants(crystalCrushed, (ResourceLocation[]) locs.toArray(new ResourceLocation[locs.size()]));
+
+
         for (Map.Entry<Item, int[]> ent : colourMap.entrySet()) {
+            //noinspection Convert2Lambda
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor() {
                 @Override
                 public int getColorFromItemstack(ItemStack stack, int tintIndex) {
@@ -84,6 +103,19 @@ public class FCItems {
     public static void registerItemColour(Item item, String name, String key, int[] layers) {
         if (isDevEnv)
             writeFile(key, key);
+        item.setUnlocalizedName(key).setCreativeTab(tab);
+        renderMap.put(key, item);
+        colourMap.put(item, layers);
+        GameRegistry.register(item, new ResourceLocation(Reference.modid + ":" + key));
+    }
+
+    public static void registerItemColour(Item item, String name, String key, String textures[], int[] layers) {
+        if (isDevEnv) {
+            for (String tex : textures) {
+                writeFile(key, tex);
+            }
+        }
+
         item.setUnlocalizedName(key).setCreativeTab(tab);
         renderMap.put(key, item);
         colourMap.put(item, layers);

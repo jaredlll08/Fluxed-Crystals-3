@@ -1,4 +1,4 @@
-package getfluxed.fluxedcrystals.api.registries.crystal;
+package getfluxed.fluxedcrystals.api.registries.materials;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -11,7 +11,7 @@ public class Resource<T> {
     private T stack;
 
     public Resource(T stack) {
-        if (stack instanceof ItemStack || stack instanceof FluidStack) {
+        if (stack instanceof ItemStack || stack instanceof FluidStack || stack instanceof String) {
             this.stack = stack;
         } else {
             //NO-OP
@@ -25,11 +25,21 @@ public class Resource<T> {
     public boolean isFluidStack() {
         return stack instanceof FluidStack;
     }
-    public ItemStack getItemStack(){
-        return ((ItemStack)stack).copy();
+
+    public boolean isOreDict() {
+        return stack instanceof String;
     }
-    public FluidStack getFluidStack(){
-        return (FluidStack)stack;
+
+    public ItemStack getItemStack() {
+        return ((ItemStack) stack).copy();
+    }
+
+    public FluidStack getFluidStack() {
+        return (FluidStack) stack;
+    }
+
+    public String getOreDict() {
+        return (String) stack;
     }
 
     public <T> T getStack() {

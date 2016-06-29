@@ -6,7 +6,7 @@ import getfluxed.fluxedcrystals.data.GeneratorData;
 import getfluxed.fluxedcrystals.data.RecipeData;
 import getfluxed.fluxedcrystals.items.FCItems;
 import getfluxed.fluxedcrystals.network.PacketHandler;
-import getfluxed.fluxedcrystals.proxy.IProxy;
+import getfluxed.fluxedcrystals.proxy.CommonProxy;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.util.CreativeTabFC;
 import net.minecraft.launchwrapper.Launch;
@@ -33,12 +33,11 @@ public class FluxedCrystals {
     public static long totalTime = 0;
     public static boolean isDevEnv = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
-    @SidedProxy(clientSide = "getfluxed.fluxedcrystals.proxy.ClientProxy", serverSide = "getfluxed.fluxedcrystals.proxy.ServerProxy")
-    public static IProxy proxy;
+    @SidedProxy(clientSide = "getfluxed.fluxedcrystals.proxy.ClientProxy", serverSide = "getfluxed.fluxedcrystals.proxy.CommonProxy")
+    public static CommonProxy proxy;
 
 
     @Mod.Instance
-
     public static FluxedCrystals instance;
     public static CreativeTabFC tab = new CreativeTabFC();
 

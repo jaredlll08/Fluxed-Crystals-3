@@ -51,7 +51,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     boolean firstTicked = false;
     private MultiBlock multiBlock;
     private int tick;
-    private ItemStack[] items = new ItemStack[2];
+    private ItemStack[] items = new ItemStack[5];
     private Crystal crystalInfo;
     private boolean growing;
     private double currentGrowth = 0;
@@ -434,7 +434,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
             case 0:
                 return stack.getItem() instanceof ICrystalInfoProvider;
             default:
-                return false;
+                return true;
         }
     }
 

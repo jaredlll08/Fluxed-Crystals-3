@@ -6,10 +6,12 @@ import getfluxed.fluxedcrystals.api.crystals.ICrystalInfoProvider;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.client.gui.crystalio.ContainerCrystalIO;
 import getfluxed.fluxedcrystals.client.gui.crystalio.GUICrystalIO;
+import getfluxed.fluxedcrystals.items.FCItems;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.greenhouse.io.MessageCrystalIO;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
+import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -22,12 +24,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 /**
  * Created by Jared on 6/4/2016.
  */
 public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implements ITickable, ISidedInventory, IOpenableGUI {
 
+    public Random rand = new Random(2906);
 
     @Override
     public void update() {
@@ -43,19 +47,46 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                 master.setGrowing(true);
                 sendUpdate = true;
             } else if (!master.getCrystalInfo().equals(Crystal.NULL) && !master.getCrystalInfo().getName().equals(Crystal.NULL.getName())) {
-                master.setCurrentGrowth(master.getCurrentGrowth() + 1);
-                if (master.getCurrentGrowth() >= (master.getCrystalInfo().getGrowthTimePerBlock()*master.getMultiBlock().getAirBlocks().size())) {
+                master.setCurrentGrowth(master.getCurrentGrowth() + 100);
+                if (master.getCurrentGrowth() >= (master.getCrystalInfo().getGrowthTimePerBlock() * master.getMultiBlock().getAirBlocks().size())) {
                     ItemStack retStack = CrystalRegistry.getCrystal(master.getCrystalInfo().getName()).getResourceOut().getItemStack();
-                    retStack.stackSize = getWorld().rand.nextInt(master.getCrystalInfo().getCrushedCrystalPerBlockMax()) + getMasterTile().getCrystalInfo().getCrushedCrystalPerBlockMin();
-                    System.out.println(retStack.stackSize);
-                    addInventorySlotContents(1, retStack);
+                    int retSize = rand.nextInt(master.getCrystalInfo().getCrushedCrystalPerBlockMax()) + getMasterTile().getCrystalInfo().getCrushedCrystalPerBlockMin() * master.getMultiBlock().getAirBlocks().size();
+                    int shardsRough = 0;
+                    int shardsSmooth = 0;
+                    int chunksRough = 0;
+                    int chunksSmooth = 0;
+
+                    //retSize = 200
+                    shardsRough = retSize;
+                    shardsSmooth = shardsRough / 9;
+                    chunksRough = shardsSmooth / 9;
+                    chunksSmooth = chunksRough / 9;
+
+                    chunksRough -= chunksSmooth;
+                    shardsSmooth -= chunksRough;
+                    shardsRough -= shardsSmooth;
+
+
+                    System.out.println("crushed: " + (shardsRough + ":" + shardsSmooth + ":" + chunksRough + ":" + chunksSmooth) + " retSize: " + retSize);
+                    ItemStack roughShards = new ItemStack(FCItems.crystalCrushed, shardsRough, 0);
+                    NBTHelper.setString(roughShards, "crystalName", master.getCrystalInfo().getName());
+                    ItemStack smoothShards = new ItemStack(FCItems.crystalCrushed, shardsSmooth, 1);
+                    NBTHelper.setString(smoothShards, "crystalName", master.getCrystalInfo().getName());
+                    ItemStack roughChunks = new ItemStack(FCItems.crystalCrushed, chunksRough, 2);
+                    NBTHelper.setString(roughChunks, "crystalName", master.getCrystalInfo().getName());
+                    ItemStack smoothChunks = new ItemStack(FCItems.crystalCrushed, chunksSmooth, 3);
+                    NBTHelper.setString(smoothChunks, "crystalName", master.getCrystalInfo().getName());
+                    addInventorySlotContents(1, roughShards);
+                    addInventorySlotContents(2, smoothShards);
+                    addInventorySlotContents(3, roughChunks);
+                    addInventorySlotContents(4, smoothChunks);
                     master.setCurrentGrowth(0);
                     master.setGrowing(false);
                     master.setCrystalInfo(Crystal.NULL);
                 }
                 sendUpdate = true;
             }
-            if(master.isGrowing() && master.getCrystalInfo().equals(Crystal.NULL)){
+            if (master.isGrowing() && master.getCrystalInfo().equals(Crystal.NULL)) {
                 master.setGrowing(false);
                 master.setCurrentGrowth(0);
                 sendUpdate = true;
