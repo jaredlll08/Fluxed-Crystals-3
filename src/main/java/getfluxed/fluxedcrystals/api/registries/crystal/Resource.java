@@ -1,4 +1,4 @@
-package getfluxed.fluxedcrystals.api.registries.crystal;
+package getfluxed.fluxedcrystals.api.registries.materials;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -46,18 +46,4 @@ public class Resource<T> {
         return (T) stack;
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Resource)) return false;
-        Resource<?> resource = (Resource<?>) o;
-        return getStack() != null ? getStack().equals(resource.getStack()) : resource.getStack() == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return getStack() != null ? getStack().hashCode() : 0;
-    }
 }
