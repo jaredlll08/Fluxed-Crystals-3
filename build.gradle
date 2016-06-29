@@ -33,7 +33,7 @@ archivesBaseName = "Fluxed-Crystals 3"
 
 minecraft {
     useDepAts = true
-    version = "1.9.4-12.17.0.1910-1.9.4"
+    version = "1.9.4-12.17.0.1976"
     runDir = "run"
     mappings = "snapshot_20160518"
 }
