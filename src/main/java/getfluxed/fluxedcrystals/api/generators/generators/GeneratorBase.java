@@ -3,6 +3,7 @@ package getfluxed.fluxedcrystals.api.generators.generators;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerator;
 import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
+import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -21,7 +23,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-public abstract class GeneratorBase extends TileEnergyBase implements ISidedInventory, ITickable {
+public abstract class GeneratorBase extends TileEntity implements ISidedInventory, ITickable {
 
     public ItemStack[] items;
     private int maxEnergy;
@@ -30,9 +32,11 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
     private boolean firstTicked = false;
     private int firstTickedTime = 40;
 
+    private BaseTeslaContainer container;
+
 
     public GeneratorBase(int cap, int inventorySize) {
-        super(cap);
+        container = new BaseTeslaContainer()
         maxEnergy = cap;
         items = new ItemStack[inventorySize];
     }
@@ -43,10 +47,9 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
 
     @Override
     public void update() {
-        super.update();
         if (!worldObj.isRemote) {
             PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
-            if (generationTimerDefault < 0 && storage.getEnergyStored() < storage.getMaxEnergyStored()) {
+            if (generationTimerDefault < 0 && this.container.getStoredPower() < this.container.getCapacity()) {
                 if (getStackInSlot(0) != null) {
                     if (canGenerateEnergy(getStackInSlot(0))) {
                         generationTimer = getGenerationTime(getStackInSlot(0));
@@ -65,7 +68,7 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
                     markDirty();
                 }
             }
-            if (generationTimerDefault > 0 && getEnergyStored() < getMaxStorage()) {
+            if (generationTimerDefault > 0 && this.container.getStoredPower() < this.container.getCapacity()) {
                 generationTimer--;
                 generateEnergy(worldObj, getPos(), generationTimer);
                 if (!worldObj.isRemote) {
@@ -190,22 +193,19 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
         return player.getDistanceSq(getPos().getX() + 0.5f, getPos().getY() + 0.5f, getPos().getZ() + 0.5f) <= 64;
     }
 
-    @Override
-    public EnumSet<EnumFacing> getValidOutputs() {
+    /*public EnumSet<EnumFacing> getValidOutputs() {
         return EnumSet.allOf(EnumFacing.class);
     }
 
-    @Override
     public EnumSet<EnumFacing> getValidInputs() {
         return EnumSet.noneOf(EnumFacing.class);
     }
 
-    @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
         if (getValidOutputs().contains(from)) {
-            int ret = storage.extractEnergy(maxExtract, true);
+            long ret = this.container.takePower(maxExtract, true);
             if (!simulate) {
-                storage.extractEnergy(ret, false);
+                this.container.takePower(ret, false);
             }
             return ret;
         }
@@ -215,16 +215,16 @@ public abstract class GeneratorBase extends TileEnergyBase implements ISidedInve
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         if (getValidInputs().contains(from)) {
-            int ret = storage.receiveEnergy(maxReceive, true);
+            int ret = this.container.receiveEnergy(maxReceive, true);
             if (!simulate) {
-                storage.receiveEnergy(ret, false);
+                this.container.receiveEnergy(ret, false);
             }
 
             return ret;
 
         }
         return 0;
-    }
+    }*/
 
     @Nullable
     @Override

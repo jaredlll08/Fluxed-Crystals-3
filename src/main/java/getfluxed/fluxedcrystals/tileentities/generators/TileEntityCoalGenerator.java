@@ -22,9 +22,7 @@ public class TileEntityCoalGenerator extends GeneratorBase implements IOpenableG
 
     @Override
     public void generateEnergy(World world, BlockPos pos, int timer) {
-        if (this.storage.getEnergyStored() < this.storage.getMaxEnergyStored()) {
-            this.storage.receiveEnergy(40, false);
-        }
+        this.container.givePower(40, false);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class TileEntityCoalGenerator extends GeneratorBase implements IOpenableG
         if (getStackInSlot(0) == null && !isGenerating()) {
             active = false;
         }
-        if (getEnergyStored() == getMaxStorage()) {
+        if (this.container.getStoredPower() == this.container.getCapacity()) {
             active = false;
         }
 
@@ -47,7 +45,7 @@ public class TileEntityCoalGenerator extends GeneratorBase implements IOpenableG
     }
 
     public boolean canGenerateEnergy(ItemStack stack) {
-        return this.storage.getEnergyStored() < this.storage.getMaxEnergyStored() && Registry.BasicCoalGenerator.containsItemStack(stack);
+        return this.container.getStoredPower() < this.container.getCapacity() && Registry.BasicCoalGenerator.containsItemStack(stack);
     }
 
     @Override
@@ -82,9 +80,7 @@ public class TileEntityCoalGenerator extends GeneratorBase implements IOpenableG
 
     @Override
     public void clear() {
-
     }
-
 
     @Override
     public int getGenerationTime(ItemStack stack) {

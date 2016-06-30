@@ -13,6 +13,7 @@ import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageFurnace;
 import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.util.NBTHelper;
+import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +37,7 @@ import java.util.EnumSet;
 /**
  * Created by Jared on 5/25/2016.
  */
-public class TileEntityMachineFurnace extends TileEnergyBase implements ITickable, ISidedInventory,IOpenableGUI {
+public class TileEntityMachineFurnace extends TileEntity implements ITickable, ISidedInventory,IOpenableGUI {
 
     private static int[] slotsAll = {0, 1};
     public ItemStack[] items;
@@ -50,7 +52,10 @@ public class TileEntityMachineFurnace extends TileEnergyBase implements ITickabl
     private String recipeIndex;
     private int prevEnergy;
 
+    private BaseTeslaContainer container;
+
     public TileEntityMachineFurnace() {
+        container = new BaseTeslaContainer()
         super(10000);
         items = new ItemStack[2];
     }
@@ -76,8 +81,6 @@ public class TileEntityMachineFurnace extends TileEnergyBase implements ITickabl
     }
 
     public void update() {
-
-        super.update();
 
         boolean canWork = false;
         boolean sendUpdate = false;

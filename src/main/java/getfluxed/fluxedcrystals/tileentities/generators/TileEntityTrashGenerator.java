@@ -24,9 +24,8 @@ public class TileEntityTrashGenerator extends GeneratorBase implements IOpenable
 
     @Override
     public void generateEnergy(World world, BlockPos pos, int generationTimer) {
-        if (this.storage.getEnergyStored() < this.storage.getMaxEnergyStored()) {
-            this.storage.receiveEnergy(10, false);
-        }
+        this.container.givePower(10, false);
+
     }
 
     @Override
@@ -39,7 +38,7 @@ public class TileEntityTrashGenerator extends GeneratorBase implements IOpenable
         if (getStackInSlot(0) == null && !isGenerating()) {
             active = false;
         }
-        if (getEnergyStored() == getMaxStorage()) {
+        if (this.container.getStoredPower() == this.container.getCapacity()) {
             active = false;
         }
 

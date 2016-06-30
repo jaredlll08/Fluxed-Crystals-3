@@ -4,6 +4,7 @@ import getfluxed.fluxedcrystals.api.generators.generators.GeneratorBase;
 import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineBase;
 import getfluxed.fluxedcrystals.util.RenderUtils;
+import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -121,9 +122,9 @@ public class GuiBase extends GuiContainer {
     }
 
     //How full is power bar
-    public void drawPowerBar(TileEnergyBase tile) {
+    public void drawPowerBar(BaseTeslaContainer container) {
         GlStateManager.pushAttrib();
-        int barWidth = (int) (((float) tile.getEnergyStored() / tile.getMaxStorage()) * 88);
+        int barWidth = (int) (((float) container.getStoredPower() / container.getCapacity()) * 88);
         drawTexturedModalRect(44, 59, 44, 166, barWidth, 19);
         GlStateManager.popAttrib();
     }

@@ -30,6 +30,6 @@ public class GuiTrashGenerator extends GuiBase {
         super.drawGuiContainerForegroundLayer(mx, my);
 
         this.drawGeneratorProgress(81, 36, tile);
-        this.drawPowerBar(tile);
+        this.drawPowerBar(tile.container);
     }
 }

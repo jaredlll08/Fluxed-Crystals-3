@@ -42,6 +42,6 @@ public class GUICoalGenerator extends GuiBase {
         super.drawGuiContainerForegroundLayer(mx, my);
 
         this.drawGeneratorProgress(82, 38, tile);
-        this.drawPowerBar(tile);
+        this.drawPowerBar(tile.container);
     }
 }

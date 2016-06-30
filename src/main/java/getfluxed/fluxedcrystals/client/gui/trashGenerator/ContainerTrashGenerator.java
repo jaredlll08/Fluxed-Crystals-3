@@ -7,6 +7,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 
 public class ContainerTrashGenerator extends ContainerBase {
+
     public ContainerTrashGenerator(InventoryPlayer invPlayer, TileEntityTrashGenerator manager) {
 
         addSlotToContainer(new SlotTileDep(manager, 0, 80, 11));
