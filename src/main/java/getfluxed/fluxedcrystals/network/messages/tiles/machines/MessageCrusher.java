@@ -2,6 +2,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles.machines;
 
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import io.netty.buffer.ByteBuf;
+import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +23,7 @@ public class MessageCrusher implements IMessage, IMessageHandler<MessageCrusher,
     private int needCycleTime;
     private int itemCycleTime;
     private int deviceCycleTime;
-    private int energy;
+    private long energy;
 
     public MessageCrusher() {
 
@@ -37,7 +38,7 @@ public class MessageCrusher implements IMessage, IMessageHandler<MessageCrusher,
         this.needCycleTime = tileEntityGemCutter.needCycleTime;
         this.itemCycleTime = tileEntityGemCutter.itemCycleTime;
         this.deviceCycleTime = tileEntityGemCutter.deviceCycleTime;
-        this.energy = tileEntityGemCutter.getEnergyStored();
+        this.energy = tileEntityGemCutter.container.getStoredPower();
 
     }
 
@@ -70,7 +71,7 @@ public class MessageCrusher implements IMessage, IMessageHandler<MessageCrusher,
         buf.writeInt(this.itemCycleTime);
         buf.writeInt(this.deviceCycleTime);
 
-        buf.writeInt(this.energy);
+        buf.writeLong(this.energy);
     }
 
     @Override
@@ -91,7 +92,7 @@ public class MessageCrusher implements IMessage, IMessageHandler<MessageCrusher,
                 ((TileEntityMachineCrusher) tileEntity).needCycleTime = message.needCycleTime;
                 ((TileEntityMachineCrusher) tileEntity).itemCycleTime = message.itemCycleTime;
                 ((TileEntityMachineCrusher) tileEntity).deviceCycleTime = message.deviceCycleTime;
-                ((TileEntityMachineCrusher) tileEntity).setEnergyStored(message.energy);
+                ((TileEntityMachineCrusher) tileEntity).container = new BaseTeslaContainer(message.energy, 10000, 250, 20);
 
 
             }

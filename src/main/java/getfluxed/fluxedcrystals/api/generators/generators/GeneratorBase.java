@@ -2,7 +2,6 @@ package getfluxed.fluxedcrystals.api.generators.generators;
 
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerator;
-import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
 import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -13,7 +12,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -21,23 +19,20 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
-import java.util.EnumSet;
 
 public abstract class GeneratorBase extends TileEntity implements ISidedInventory, ITickable {
 
     public ItemStack[] items;
-    private int maxEnergy;
     public int generationTimer = -1;
     public int generationTimerDefault = -1;
     private boolean firstTicked = false;
     private int firstTickedTime = 40;
 
-    private BaseTeslaContainer container;
+    public BaseTeslaContainer container;
 
 
     public GeneratorBase(int cap, int inventorySize) {
-        container = new BaseTeslaContainer()
-        maxEnergy = cap;
+        container = new BaseTeslaContainer(cap, Integer.MAX_VALUE, 250);
         items = new ItemStack[inventorySize];
     }
 

@@ -3,6 +3,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles.machines;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineFurnace;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineSawmill;
 import io.netty.buffer.ByteBuf;
+import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +24,7 @@ public class MessageSawmill implements IMessage, IMessageHandler<MessageSawmill,
     private int needCycleTime;
     private int itemCycleTime;
     private int deviceCycleTime;
-    private int energy;
+    private long energy;
 
     public MessageSawmill() {
 
@@ -38,7 +39,7 @@ public class MessageSawmill implements IMessage, IMessageHandler<MessageSawmill,
         this.needCycleTime = furnace.needCycleTime;
         this.itemCycleTime = furnace.itemCycleTime;
         this.deviceCycleTime = furnace.deviceCycleTime;
-        this.energy = furnace.getEnergyStored();
+        this.energy = furnace.container.getStoredPower();
 
     }
 
@@ -71,7 +72,7 @@ public class MessageSawmill implements IMessage, IMessageHandler<MessageSawmill,
         buf.writeInt(this.itemCycleTime);
         buf.writeInt(this.deviceCycleTime);
 
-        buf.writeInt(this.energy);
+        buf.writeLong(this.energy);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class MessageSawmill implements IMessage, IMessageHandler<MessageSawmill,
                 ((TileEntityMachineFurnace) tileEntity).needCycleTime = message.needCycleTime;
                 ((TileEntityMachineFurnace) tileEntity).itemCycleTime = message.itemCycleTime;
                 ((TileEntityMachineFurnace) tileEntity).deviceCycleTime = message.deviceCycleTime;
-                ((TileEntityMachineFurnace) tileEntity).setEnergyStored(message.energy);
+                ((TileEntityMachineFurnace) tileEntity).container = new BaseTeslaContainer(message.energy, 10000, 250, 20);
 
 
             }

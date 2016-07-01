@@ -4,14 +4,10 @@ import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeFurnace;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.blocks.machines.BlockFluxfurnace;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
 import getfluxed.fluxedcrystals.client.gui.furnace.ContainerFurnace;
 import getfluxed.fluxedcrystals.client.gui.furnace.GUIFurnace;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageFurnace;
-import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,7 +28,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
-import java.util.EnumSet;
 
 /**
  * Created by Jared on 5/25/2016.
@@ -50,13 +45,12 @@ public class TileEntityMachineFurnace extends TileEntity implements ITickable, I
     private int totalTime = 0;
     // empty if not currently working on any valid recipe
     private String recipeIndex;
-    private int prevEnergy;
+    private long prevEnergy;
 
-    private BaseTeslaContainer container;
+    public BaseTeslaContainer container;
 
     public TileEntityMachineFurnace() {
-        container = new BaseTeslaContainer()
-        super(10000);
+        container = new BaseTeslaContainer(10000, 250, 250);
         items = new ItemStack[2];
     }
 
@@ -97,15 +91,15 @@ public class TileEntityMachineFurnace extends TileEntity implements ITickable, I
         }
 
         if (!this.worldObj.isRemote) {
-            if (prevEnergy != getEnergyStored()) {
-                prevEnergy = getEnergyStored();
+            if (prevEnergy != this.container.getStoredPower()) {
+                prevEnergy = this.container.getStoredPower();
                 sendUpdate = true;
             }
             RecipeFurnace recipeFurnace = null;
-            if (getStackInSlot(0) != null && !getRecipeIndex().isEmpty() && storage.getEnergyStored() > 0) {
+            if (getStackInSlot(0) != null && !getRecipeIndex().isEmpty() && this.container.getStoredPower() > 0) {
                 recipeFurnace = RecipeRegistry.getFurnaceRecipeByID(getRecipeIndex());
                 if (recipeFurnace != null) {
-                    if (storage.getEnergyStored() >= 250) {
+                    if (this.container.getStoredPower() >= 250) {
                         if (getStackInSlot(1) != null) {
                             if (NBTHelper.isInputEqual(recipeFurnace.getOutput(), getStackInSlot(1))) {
                                 if (getStackInSlot(1).stackSize < getStackInSlot(1).getMaxStackSize()) {
@@ -145,7 +139,7 @@ public class TileEntityMachineFurnace extends TileEntity implements ITickable, I
 
                     this.itemCycleTime = 0;
                     process();
-                    storage.extractEnergy(250, false);
+                    this.container.takePower(250, false);
                     sendUpdate = true;
 
                 }
@@ -417,16 +411,6 @@ public class TileEntityMachineFurnace extends TileEntity implements ITickable, I
                 }
             }
         }
-    }
-
-    @Override
-    public EnumSet<EnumFacing> getValidOutputs() {
-        return EnumSet.noneOf(EnumFacing.class);
-    }
-
-    @Override
-    public EnumSet<EnumFacing> getValidInputs() {
-        return EnumSet.allOf(EnumFacing.class);
     }
 
     @Override

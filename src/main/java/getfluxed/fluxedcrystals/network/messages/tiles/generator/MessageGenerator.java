@@ -3,6 +3,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles.generator;
 import getfluxed.fluxedcrystals.api.generators.generators.FluidGeneratorBase;
 import getfluxed.fluxedcrystals.api.generators.generators.GeneratorBase;
 import io.netty.buffer.ByteBuf;
+import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -18,7 +19,7 @@ public class MessageGenerator implements IMessage, IMessageHandler<MessageGenera
     private int z;
     private int generationTimer;
     private int generationTimerDefault;
-    private int energy;
+    private long energy;
 
     public MessageGenerator() {
 
@@ -31,7 +32,7 @@ public class MessageGenerator implements IMessage, IMessageHandler<MessageGenera
         this.z = tile.getPos().getZ();
         this.generationTimer = tile.generationTimer;
         this.generationTimerDefault = tile.generationTimerDefault;
-        this.energy = tile.getEnergyStored();
+        this.energy = tile.container.getStoredPower();
     }
 
     public MessageGenerator(FluidGeneratorBase tile) {
@@ -65,7 +66,7 @@ public class MessageGenerator implements IMessage, IMessageHandler<MessageGenera
 
         buf.writeInt(generationTimer);
         buf.writeInt(generationTimerDefault);
-        buf.writeInt(energy);
+        buf.writeLong(energy);
     }
 
     @Override
@@ -81,11 +82,12 @@ public class MessageGenerator implements IMessage, IMessageHandler<MessageGenera
             if (tileEntity instanceof GeneratorBase) {
                 ((GeneratorBase) tileEntity).generationTimer = message.generationTimer;
                 ((GeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;
-                ((GeneratorBase) tileEntity).setEnergyStored(message.energy);
+                ((GeneratorBase) tileEntity).container = new BaseTeslaContainer(message.energy, 10000, 250, 20);;
             } else if (tileEntity instanceof FluidGeneratorBase) {
                 ((FluidGeneratorBase) tileEntity).generationTimer = message.generationTimer;
                 ((FluidGeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;
-                ((FluidGeneratorBase) tileEntity).setEnergyStored(message.energy);
+                //TODO
+                //((FluidGeneratorBase) tileEntity).container = new BaseTeslaContainer(message.energy, 10000, 250, 20);;
             }
         }
     }

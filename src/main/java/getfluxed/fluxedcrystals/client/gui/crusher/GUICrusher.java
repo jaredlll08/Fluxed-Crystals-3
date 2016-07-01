@@ -2,18 +2,11 @@ package getfluxed.fluxedcrystals.client.gui.crusher;
 
 import getfluxed.fluxedcrystals.api.client.gui.GuiBase;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
-import getfluxed.fluxedcrystals.client.gui.crystalio.ContainerCrystalIO;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
-import getfluxed.fluxedcrystals.util.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 public class GUICrusher extends GuiBase {
 
@@ -36,7 +29,7 @@ public class GUICrusher extends GuiBase {
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
         super.drawGuiContainerForegroundLayer(mx, my);
 
-        this.drawPowerBar(tile);
+        this.drawPowerBar(tile.container);
         this.drawMachineProgress(tile);
     }
 

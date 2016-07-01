@@ -4,8 +4,8 @@ import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
 import getfluxed.fluxedcrystals.blocks.machines.BlockMachine;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageMachineBase;
-import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
 import getfluxed.fluxedcrystals.util.NBTHelper;
+import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.text.ITextComponent;
@@ -27,7 +28,7 @@ import java.util.HashMap;
 /**
  * Created by Jared on 5/31/2016.
  */
-public abstract class TileEntityMachineBase extends TileEnergyBase implements ITickable, ISidedInventory {
+public abstract class TileEntityMachineBase extends TileEntity implements ITickable, ISidedInventory {
 
     private static int[] slotsAll;
     public ItemStack[] items;
@@ -40,10 +41,12 @@ public abstract class TileEntityMachineBase extends TileEnergyBase implements IT
     private int totalTime = 0;
     // empty if not currently working on any valid recipe
     private String recipeIndex;
-    private int prevEnergy;
+    private long prevEnergy;
+
+    public BaseTeslaContainer container;
 
     public TileEntityMachineBase(int energyCap, int invSize) {
-        super(energyCap);
+        container = new BaseTeslaContainer(10000, 250, 250);
         items = new ItemStack[2];
         slotsAll = new int[invSize];
         for (int i = 0; i < invSize; i++) {
@@ -80,7 +83,6 @@ public abstract class TileEntityMachineBase extends TileEnergyBase implements IT
     public abstract boolean isValidInput(ItemStack stack);
 
     public void update() {
-        super.update();
         boolean canWork = false;
         boolean sendUpdate = false;
         // If we are still working then cycle the counter down 1
@@ -96,15 +98,15 @@ public abstract class TileEntityMachineBase extends TileEnergyBase implements IT
         }
 
         if (!this.worldObj.isRemote) {
-            if (prevEnergy != getEnergyStored()) {
-                prevEnergy = getEnergyStored();
+            if (prevEnergy != this.container.getStoredPower()) {
+                prevEnergy = this.container.getStoredPower();
                 sendUpdate = true;
             }
             RecipeMachineBase recipe = null;
-            if (getStackInSlot(0) != null && !getRecipeIndex().isEmpty() && storage.getEnergyStored() > 0) {
+            if (getStackInSlot(0) != null && !getRecipeIndex().isEmpty() && this.container.getStoredPower() > 0) {
                 recipe = getRecipe(getRecipeIndex());
                 if (recipe != null) {
-                    if (storage.getEnergyStored() >= getEnergyUsed()) {
+                    if (this.container.getStoredPower() >= getEnergyUsed()) {
                         if (getStackInSlot(1) != null) {
                             if (NBTHelper.isInputEqual(recipe.getOutput(), getStackInSlot(1))) {
                                 if (getStackInSlot(1).stackSize + recipe.getOutputAmount() < getStackInSlot(1).getMaxStackSize()) {
@@ -143,7 +145,7 @@ public abstract class TileEntityMachineBase extends TileEnergyBase implements IT
 
                     this.itemCycleTime = 0;
                     process();
-                    storage.extractEnergy(getEnergyUsed(), false);
+                    this.container.takePower(getEnergyUsed(), false);
                     sendUpdate = true;
 
                 }
@@ -417,12 +419,10 @@ public abstract class TileEntityMachineBase extends TileEnergyBase implements IT
         }
     }
 
-    @Override
     public EnumSet<EnumFacing> getValidOutputs() {
         return EnumSet.noneOf(EnumFacing.class);
     }
 
-    @Override
     public EnumSet<EnumFacing> getValidInputs() {
         return EnumSet.allOf(EnumFacing.class);
     }

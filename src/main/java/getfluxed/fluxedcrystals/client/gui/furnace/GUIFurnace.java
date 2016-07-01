@@ -4,7 +4,6 @@ import getfluxed.fluxedcrystals.api.client.gui.GuiBase;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineFurnace;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -30,7 +29,7 @@ public class GUIFurnace extends GuiBase {
         super.drawGuiContainerForegroundLayer(mx, my);
 
         drawMachineProgress(tile.itemCycleTime, tile.needCycleTime);
-        drawPowerBar(tile.);
+        drawPowerBar(tile.container);
     }
 
     @Override
