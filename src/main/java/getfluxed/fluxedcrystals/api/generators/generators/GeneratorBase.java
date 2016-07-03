@@ -32,7 +32,7 @@ public abstract class GeneratorBase extends TileEntity implements ISidedInventor
 
 
     public GeneratorBase(int cap, int inventorySize) {
-        container = new BaseTeslaContainer(cap, Integer.MAX_VALUE, 250);
+        container = new BaseTeslaContainer(cap, 250, 250);
         items = new ItemStack[inventorySize];
     }
 

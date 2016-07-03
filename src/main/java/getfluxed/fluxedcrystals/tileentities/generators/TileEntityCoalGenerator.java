@@ -7,7 +7,6 @@ import getfluxed.fluxedcrystals.blocks.generators.BlockCoalGenerator;
 import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
 import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +21,7 @@ public class TileEntityCoalGenerator extends GeneratorBase implements IOpenableG
 
     @Override
     public void generateEnergy(World world, BlockPos pos, int timer) {
+        System.out.println("Generating energy:" + this.container.getStoredPower());
         this.container.givePower(40, false);
     }
 
