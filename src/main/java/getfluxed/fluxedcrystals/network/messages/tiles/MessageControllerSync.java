@@ -5,7 +5,6 @@ import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -87,15 +86,6 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
                 tile.getEnergyStorage().receiveEnergy(message.current, false);
                 if (tile.tank != null)
                     tile.tank.setCapacity(message.multiBlock.getAirBlocks().size() * 16000);
-                if (message.hasCrystalIO) {
-                    if (tile.getItems().length != 2) {
-                        tile.setItems(new ItemStack[2]);
-                    }
-                } else {
-                    if (tile.getItems().length == 2) {
-                        tile.setItems(new ItemStack[0]);
-                    }
-                }
                 tile.setCrystalInfo(message.crystalInfo);
             }
         }

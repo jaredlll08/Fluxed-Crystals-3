@@ -54,7 +54,7 @@ public class MessageGenerator implements IMessage, IMessageHandler<MessageGenera
 
         this.generationTimer = buf.readInt();
         this.generationTimerDefault = buf.readInt();
-        this.energy = buf.readInt();
+        this.energy = buf.readLong();
     }
 
     @Override
@@ -82,7 +82,11 @@ public class MessageGenerator implements IMessage, IMessageHandler<MessageGenera
             if (tileEntity instanceof GeneratorBase) {
                 ((GeneratorBase) tileEntity).generationTimer = message.generationTimer;
                 ((GeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;
-                ((GeneratorBase) tileEntity).container = new BaseTeslaContainer(message.energy, 10000, 250, 20);;
+                long cap = ((GeneratorBase) tileEntity).container.getCapacity();
+                long input = ((GeneratorBase) tileEntity).container.getInputRate();
+                long output = ((GeneratorBase) tileEntity).container.getOutputRate();
+                ((GeneratorBase) tileEntity).container = new BaseTeslaContainer(message.energy, cap, input, output);
+
             } else if (tileEntity instanceof FluidGeneratorBase) {
                 ((FluidGeneratorBase) tileEntity).generationTimer = message.generationTimer;
                 ((FluidGeneratorBase) tileEntity).generationTimerDefault = message.generationTimerDefault;

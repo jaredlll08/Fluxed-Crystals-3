@@ -94,7 +94,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
             firstTicked = true;
         }
 
-        if (tick % 40 == 0) {
+        if (tick % 80 == 0) {
             if (!getMultiBlock().isActive()) {
                 if (multiBlock.getMaster().equals(new BlockPos(0, 0, 0))) {
                     multiBlock.setMaster(getPos());
@@ -159,14 +159,12 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                 int count = 0;
                 sides:
                 while (getWorld().getBlockState(pos.offset(fac, ++count)).getBlock() instanceof BlockBaseFrame) {
-                    if (watch.elapsed(TimeUnit.MILLISECONDS) > 2000) {
-                        break sides;
-                    }
                 }
                 count--;
                 if (count == 0) {
                     return 0;
                 }
+
                 switch (fac) {
                     case NORTH:
                         if (northSize == 0 || northSize > count) {
@@ -192,6 +190,8 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
 
             }
+            System.out.println("Sides took: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
             LinkedList<BlockPos> airPos = new LinkedList<>();
             LinkedList<BlockPos> bottomLayer = new LinkedList<>();
             LinkedList<BlockPos> topLayer = new LinkedList<>();
@@ -212,14 +212,12 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                     return 0;
                 }
 
+
                 //Counts the height of the structure (excluding base platform)
                 int y = 1;
                 air:
                 while ((getWorld().isAirBlock(bp.offset(EnumFacing.UP, y)) || y == 0) && y < 256) {
                     y++;
-                    if (watch.elapsed(TimeUnit.MILLISECONDS) > 2000) {
-                        break air;
-                    }
                 }
                 if (y == 1 || y == 256 || y < ySize) {
                     return 0;
@@ -227,18 +225,24 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                 ySize = y;
 
             }
-            for (int y = 1; y < ySize; y++) {
+            System.out.println("Bottom check took: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
+
+           air: for (int y = 1; y < ySize; y++) {
                 if (!checkAirLayer(getWorld(), northEast.offset(EnumFacing.UP, y), southWest.offset(EnumFacing.UP, y))) {
                     return 0;
                 }
-
             }
+            System.out.println("Air took: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
             southWest = southWest.offset(EnumFacing.UP, ySize);
             BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.DOWN, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.UP, 1)).forEach(inner::add);
+
             for (BlockPos bp : bottomLayer) {
                 topLayer.add(bp.offset(EnumFacing.UP, ySize));
             }
-
+            System.out.println("Top took: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
             //Gets all the airblocks
             BlockPos.getAllInBox(northEast.offset(EnumFacing.WEST, 1).offset(EnumFacing.SOUTH, 1).offset(EnumFacing.UP, 1), southWest.offset(EnumFacing.EAST, 1).offset(EnumFacing.NORTH, 1).offset(EnumFacing.DOWN, 1)).forEach(airPos::add);
 
@@ -248,6 +252,8 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                     sides.add(bp);
                 }
             }
+            System.out.println("Side Frames took: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
             int energyCapacity = 0;
             boolean hasCrystalIO = false;
             for (BlockPos bp : sides) {
@@ -266,6 +272,8 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
                 }
             }
+            System.out.println("Side check took: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
             for (BlockPos bp : bottomLayer) {
                 if (!(worldObj.getBlockState(bp).getBlock() instanceof BlockBaseFrame) && !bp.equals(getPos())) {
                     return 0;
@@ -278,6 +286,8 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                     }
                 }
             }
+            System.out.println("Bottom check took: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
             for (BlockPos bp : topLayer) {
                 if (!(worldObj.getTileEntity(bp) instanceof IFrame)) {
                     return 0;
@@ -294,14 +304,16 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
                 }
             }
+            System.out.println("Top Check took: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
             for (BlockPos bp : airPos) {
                 if (!worldObj.isAirBlock(bp)) {
                     return 0;
                 } else {
                 }
             }
-
-
+            System.out.println("air check took: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
             if (completeStructure) {
                 MultiBlock multiBlock = new MultiBlock(pos, bottomLayer, topLayer, airPos, sides, true);
                 setMultiBlock(multiBlock);
@@ -319,6 +331,8 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                 FluxedCrystals.logger.log(Level.INFO, String.format("Completed a %sx%sx%s structure in: %s ms", (int) multiblock.maxX - (int) multiblock.minX + 1, (int) multiblock.maxY - (int) multiblock.minY + 1, (int) multiblock.maxZ - (int) multiblock.minZ + 1, time));
                 return energyCapacity;
             }
+            System.out.println("Failed: " + watch.elapsed(TimeUnit.MILLISECONDS));
+            watch.reset().start();
         }
         return 0;
     }
@@ -336,7 +350,6 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        System.out.println("start read:" + compound);
         setMultiBlock(MultiBlock.readFromNBT(compound.getCompoundTag("multiblock")));
         NBTTagCompound tankTag = compound.getCompoundTag("tank");
         this.tank.readFromNBT(tankTag);
@@ -345,13 +358,11 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         setCrystalInfo(Crystal.readFromNBT(compound.getCompoundTag("crystalTag")));
         setGrowing(compound.getBoolean("growing"));
         setCurrentGrowth(compound.getDouble("currentGrowth"));
-        System.out.println("end read: " + compound);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        System.out.println("start write: " + compound);
         NBTTagCompound multi = new NBTTagCompound();
         MultiBlock.writeToNBT(multi, getMultiBlock());
         compound.setTag("multiblock", multi);
@@ -364,7 +375,6 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
         compound.setTag("crystalTag", crystalTag);
         compound.setBoolean("growing", isGrowing());
         compound.setDouble("currentGrowth", getCurrentGrowth());
-        System.out.println("end write: " + compound);
         return compound;
     }
 
@@ -498,7 +508,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
     @Override
     public ItemStack getStackInSlot(int par1) {
-        if (par1 > getSizeInventory()) {
+        if (par1 >= getSizeInventory()) {
             return null;
         }
         return items[par1];
@@ -506,7 +516,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
 
     @Override
     public void setInventorySlotContents(int i, ItemStack itemstack) {
-        if (i > getSizeInventory()) {
+        if (i >= getSizeInventory()) {
             return;
         }
         items[i] = itemstack;
@@ -517,7 +527,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     }
 
     public ItemStack addInventorySlotContents(int i, ItemStack itemstack) {
-        if (i > getSizeInventory()) {
+        if (i >= getSizeInventory()) {
             return null;
         }
         if (items[i] != null) {

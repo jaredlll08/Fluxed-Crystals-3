@@ -11,6 +11,10 @@ public class ContainerCrystalIO extends ContainerBase {
 
         addSlotToContainer(new SlotTileDep(tile, 0, 8, 8));
         addSlotToContainer(new SlotTileDep(tile, 1, 152, 8));
+        addSlotToContainer(new SlotTileDep(tile, 2, 152, 26));
+        addSlotToContainer(new SlotTileDep(tile, 3, 152, 44));
+        addSlotToContainer(new SlotTileDep(tile, 4, 152, 62));
+
         for (int x = 0; x < 9; x++) {
             addSlotToContainer(new Slot(invPlayer, x, 8 + 18 * x, 142));
         }

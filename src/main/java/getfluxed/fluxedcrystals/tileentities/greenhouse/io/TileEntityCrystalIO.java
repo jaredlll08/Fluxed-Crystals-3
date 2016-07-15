@@ -50,21 +50,47 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                 master.setCurrentGrowth(master.getCurrentGrowth() + 100);
                 if (master.getCurrentGrowth() >= (master.getCrystalInfo().getGrowthTimePerBlock() * master.getMultiBlock().getAirBlocks().size())) {
                     ItemStack retStack = CrystalRegistry.getCrystal(master.getCrystalInfo().getName()).getResourceOut().getItemStack();
-                    int retSize = rand.nextInt(master.getCrystalInfo().getCrushedCrystalPerBlockMax()) + getMasterTile().getCrystalInfo().getCrushedCrystalPerBlockMin() * master.getMultiBlock().getAirBlocks().size();
+                    int retSize = rand.nextInt(master.getCrystalInfo().getCrushedCrystalPerBlockMax()) + getMasterTile().getCrystalInfo().getCrushedCrystalPerBlockMin() * (master.getMultiBlock().getAirBlocks().size()*10);
                     int shardsRough = 0;
                     int shardsSmooth = 0;
                     int chunksRough = 0;
                     int chunksSmooth = 0;
+                    System.out.println("ret: " + retSize);
+                    while (retSize > 0) {
+                        retSize--;
+                        System.out.println(retSize);
+                        shardsRough++;
+                        if (shardsRough >= 9) {
+                            if (shardsSmooth < 64) {
+                                shardsRough = 0;
+                                shardsSmooth++;
+                            }
+                        }
+                        if (shardsSmooth >= 9) {
+                            if (chunksRough < 64) {
+                                shardsSmooth = 0;
+                                chunksRough++;
+                            }
+                        }
+                        if (chunksRough >= 9) {
+                            if (chunksSmooth < 64) {
+                                chunksRough = 0;
+                                chunksSmooth++;
+                            }
+                        }
+                    }
+                    //retSize = 153
+//                    //chunksSmooth = 153 /9 (17), 17/9 (2), 2/9 (0)
+//                    //chunksRough = (153 - chunksSmooth (0)) (153) /9 (17), 17 /9 (2)
+//                    //shardsSmooth = (153 - chunksRough
+//                    chunksSmooth = Math.round(retSize / 9 / 9 / 9);
+//                    chunksRough = Math.round((retSize - (chunksSmooth*9*9*9)) / 9 / 9);
+//                    shardsSmooth = Math.round((retSize - (chunksRough*9*9)) / 9);
+//                    shardsRough = (retSize - (shardsSmooth*9));
 
-                    //retSize = 200
-                    shardsRough = retSize;
-                    shardsSmooth = shardsRough / 9;
-                    chunksRough = shardsSmooth / 9;
-                    chunksSmooth = chunksRough / 9;
-
-                    chunksRough -= chunksSmooth;
-                    shardsSmooth -= chunksRough;
-                    shardsRough -= shardsSmooth;
+//                    chunksRough -= chunksSmooth;
+//                    shardsSmooth -= chunksRough;
+//                    shardsRough -= shardsSmooth;
 
 
                     System.out.println("crushed: " + (shardsRough + ":" + shardsSmooth + ":" + chunksRough + ":" + chunksSmooth) + " retSize: " + retSize);
@@ -76,10 +102,14 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                     NBTHelper.setString(roughChunks, "crystalName", master.getCrystalInfo().getName());
                     ItemStack smoothChunks = new ItemStack(FCItems.crystalCrushed, chunksSmooth, 3);
                     NBTHelper.setString(smoothChunks, "crystalName", master.getCrystalInfo().getName());
-                    addInventorySlotContents(1, roughShards);
-                    addInventorySlotContents(2, smoothShards);
-                    addInventorySlotContents(3, roughChunks);
-                    addInventorySlotContents(4, smoothChunks);
+                    if (roughShards.stackSize > 0)
+                        addInventorySlotContents(1, roughShards);
+                    if (smoothShards.stackSize > 0)
+                        addInventorySlotContents(2, smoothShards);
+                    if (roughChunks.stackSize > 0)
+                        addInventorySlotContents(3, roughChunks);
+                    if (smoothChunks.stackSize > 0)
+                        addInventorySlotContents(4, smoothChunks);
                     master.setCurrentGrowth(0);
                     master.setGrowing(false);
                     master.setCrystalInfo(Crystal.NULL);

@@ -15,6 +15,7 @@ import getfluxed.fluxedcrystals.blocks.greenhouse.monitor.BlockPowerMonitor;
 import getfluxed.fluxedcrystals.blocks.machines.BlockCrusher;
 import getfluxed.fluxedcrystals.blocks.machines.BlockFluxfurnace;
 import getfluxed.fluxedcrystals.blocks.machines.BlockSawmill;
+import getfluxed.fluxedcrystals.blocks.misc.BlockCrystalCube;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityLavaGenerator;
@@ -60,7 +61,6 @@ public class FCBlocks {
     public static Block ghBatteryAdvanced = new BlockFrameBattery(32000);
     public static Block ghPowerMonitor = new BlockPowerMonitor();
 
-
     public static Block basicCoalGenerator = new BlockCoalGenerator();
     public static Block trashGenerator = new BlockTrashGenerator();
     public static Block lavaGenerator = new BlockLavaGenerator();
@@ -69,6 +69,7 @@ public class FCBlocks {
     public static Block machineFurnace = new BlockFluxfurnace();
     public static Block machineSawmill = new BlockSawmill();
 
+    public static Block crystalCube = new BlockCrystalCube();
 
     public static void preInit() {
         registerBlock(ghController, "ghSoilController", TileEntitySoilController.class);
@@ -81,6 +82,7 @@ public class FCBlocks {
         registerBlockMultiblock(ghBatteryBasic, "ghBatteryBasic");
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
+        registerBlock(crystalCube, "crystalCube");
         registerGenerators();
         registerMachines();
     }

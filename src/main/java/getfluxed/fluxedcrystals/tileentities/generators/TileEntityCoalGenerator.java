@@ -21,7 +21,7 @@ public class TileEntityCoalGenerator extends GeneratorBase implements IOpenableG
 
     @Override
     public void generateEnergy(World world, BlockPos pos, int timer) {
-        System.out.println("Generating energy:" + this.container.getStoredPower());
+//        System.out.println("Generating energy:" + this.container.getStoredPower());
         this.container.givePower(40, false);
     }
 

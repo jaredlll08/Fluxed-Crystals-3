@@ -3,6 +3,7 @@ package getfluxed.fluxedcrystals.api.generators.generators;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerator;
 import net.darkhax.tesla.api.BaseTeslaContainer;
+import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -12,9 +13,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
@@ -43,6 +46,10 @@ public abstract class GeneratorBase extends TileEntity implements ISidedInventor
     @Override
     public void update() {
         if (!worldObj.isRemote) {
+//            for (EnumFacing face : EnumFacing.values()) {
+//                if (worldObj.getTileEntity(pos.offset(face)) != null) {
+//                }
+//            }
             PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
             if (generationTimerDefault < 0 && this.container.getStoredPower() < this.container.getCapacity()) {
                 if (getStackInSlot(0) != null) {
@@ -50,9 +57,8 @@ public abstract class GeneratorBase extends TileEntity implements ISidedInventor
                         generationTimer = getGenerationTime(getStackInSlot(0));
                         generationTimerDefault = getGenerationTime(getStackInSlot(0));
                         decrStackSize(0, 1);
-                        if (!worldObj.isRemote) {
-                            markDirty();
-                        }
+                        markDirty();
+
                     }
                 }
             }
@@ -142,6 +148,7 @@ public abstract class GeneratorBase extends TileEntity implements ISidedInventor
         writeInventoryToNBT(nbt);
         nbt.setInteger("generationTimer", generationTimer);
         nbt.setInteger("generationTimerDefault", generationTimerDefault);
+        nbt.setTag("TeslaContainer", this.container.serializeNBT());
         return nbt;
     }
 
@@ -151,6 +158,7 @@ public abstract class GeneratorBase extends TileEntity implements ISidedInventor
         readInventoryFromNBT(nbt);
         generationTimer = nbt.getInteger("generationTimer");
         generationTimerDefault = nbt.getInteger("generationTimerDefault");
+        this.container = new BaseTeslaContainer(nbt.getCompoundTag("TeslaContainer"));
     }
 
     public void readInventoryFromNBT(NBTTagCompound tags) {
@@ -240,4 +248,22 @@ public abstract class GeneratorBase extends TileEntity implements ISidedInventor
         return ItemStackHelper.getAndRemove(items, index);
     }
 
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+
+        if (capability == TeslaCapabilities.CAPABILITY_PRODUCER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
+            return (T) this.container;
+
+        return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == TeslaCapabilities.CAPABILITY_PRODUCER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
+            return true;
+
+        return super.hasCapability(capability, facing);
+    }
 }
