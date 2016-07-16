@@ -19,7 +19,7 @@ public class GUISawmill extends GuiBase {
     }
 
     public GUISawmill(InventoryPlayer invPlayer, TileEntityMachineSawmill tile2) {
-        super(new ContainerSawmill(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerSawmill(invPlayer, tile2), tile2, invPlayer.player, "Sawmill");
         this.tile = tile2;
         this.title = true;
         this.outlines = true;

@@ -1,23 +1,18 @@
 package getfluxed.fluxedcrystals.client.gui.slot;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
-public class SlotTileDep extends Slot {
+public class SlotTileDep extends SlotItemHandler {
 
-	private int slotMax;
-	public SlotTileDep(IInventory inventory, int number, int x, int y) {
-		super(inventory, number, x, y);
-		this.slotMax = inventory.getInventoryStackLimit();
-	}
 
-	public int getSlotStackLimit() {
-		return slotMax;
-	}
+    public SlotTileDep(ItemStackHandler inventory, int number, int x, int y) {
+        super(inventory, number, x, y);
+    }
 
-	public boolean isItemValid(ItemStack stack) {
-		return inventory.isItemValidForSlot(this.slotNumber, stack);
-	}
+    public boolean isItemValid(ItemStack stack) {
+        return inventory.isItemValidForSlot(this.slotNumber, stack);
+    }
 
 }

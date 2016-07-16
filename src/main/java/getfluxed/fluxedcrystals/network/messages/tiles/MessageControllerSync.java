@@ -20,7 +20,6 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
     private MultiBlock multiBlock;
     private int current;
     private int maxCapacity;
-    private boolean hasCrystalIO;
     private Crystal crystalInfo;
 
     public MessageControllerSync() {
@@ -35,7 +34,6 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
         this.multiBlock = tile.getMultiBlock();
         this.current = tile.getEnergyStorage().getMaxEnergyStored();
         this.maxCapacity = tile.getEnergyStorage().getMaxEnergyStored();
-        this.hasCrystalIO = tile.getItems().length != 0;
         this.crystalInfo = tile.getCrystalInfo();
     }
 
@@ -48,7 +46,6 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
 
         this.current = buf.readInt();
         this.maxCapacity = buf.readInt();
-        this.hasCrystalIO = buf.readBoolean();
         this.crystalInfo = Crystal.readFromByteBuf(buf);
         this.multiBlock = MultiBlock.readFromByteBuf(buf);
     }
@@ -63,7 +60,6 @@ public class MessageControllerSync implements IMessage, IMessageHandler<MessageC
 
         buf.writeInt(current);
         buf.writeInt(maxCapacity);
-        buf.writeBoolean(hasCrystalIO);
         crystalInfo.writeToByteBuf(buf);
         MultiBlock.writeToByteBuf(buf, multiBlock);
     }

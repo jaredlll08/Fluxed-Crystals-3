@@ -13,7 +13,7 @@ public class GUICrusher extends GuiBase {
     private TileEntityMachineCrusher tile;
 
     public GUICrusher(InventoryPlayer invPlayer, TileEntityMachineCrusher tile2) {
-        super(new ContainerCrusher(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerCrusher(invPlayer, tile2), tile2, invPlayer.player, "Crusher");
         this.tile = tile2;
 
         this.title = true;

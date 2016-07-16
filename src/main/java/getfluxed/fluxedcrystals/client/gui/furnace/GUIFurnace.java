@@ -18,7 +18,7 @@ public class GUIFurnace extends GuiBase {
     }
 
     public GUIFurnace(InventoryPlayer invPlayer, TileEntityMachineFurnace tile2) {
-        super(new ContainerFurnace(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerFurnace(invPlayer, tile2), tile2, invPlayer.player, "Furnace");
         this.tile = tile2;
         this.title = true;
         this.outlines = true;

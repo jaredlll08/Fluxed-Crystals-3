@@ -10,7 +10,7 @@ public class ContainerTrashGenerator extends ContainerBase {
 
     public ContainerTrashGenerator(InventoryPlayer invPlayer, TileEntityTrashGenerator manager) {
 
-        addSlotToContainer(new SlotTileDep(manager, 0, 80, 11));
+        addSlotToContainer(new SlotTileDep(manager.itemStackHandler, 0, 80, 11));
 
         for (int x = 0; x < 9; x++) {
             addSlotToContainer(new Slot(invPlayer, x, 8 + 18 * x, 142));

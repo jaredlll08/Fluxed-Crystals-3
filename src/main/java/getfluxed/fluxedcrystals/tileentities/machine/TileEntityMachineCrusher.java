@@ -3,11 +3,8 @@ package getfluxed.fluxedcrystals.tileentities.machine;
 import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
 import getfluxed.fluxedcrystals.client.gui.crusher.ContainerCrusher;
 import getfluxed.fluxedcrystals.client.gui.crusher.GUICrusher;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -43,11 +40,6 @@ public class TileEntityMachineCrusher extends TileEntityMachineBase implements I
     @Override
     public boolean isValidInput(ItemStack stack) {
         return RecipeRegistry.isCrusherInput(stack);
-    }
-
-    @Override
-    public String getName() {
-        return "Crusher";
     }
 
     @Override

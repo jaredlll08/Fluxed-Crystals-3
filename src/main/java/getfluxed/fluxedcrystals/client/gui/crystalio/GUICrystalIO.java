@@ -21,7 +21,7 @@ public class GUICrystalIO extends GuiBase {
     }
 
     public GUICrystalIO(InventoryPlayer invPlayer, TileEntityCrystalIO tile2) {
-        super(new ContainerCrystalIO(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerCrystalIO(invPlayer, tile2), tile2, invPlayer.player, "Crystal IO");
         this.tile = tile2;
         this.title = true;
         this.outlines = true;
@@ -29,7 +29,7 @@ public class GUICrystalIO extends GuiBase {
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
         if (title)
-            this.fontRendererObj.drawString(this.tile.getDisplayName().getUnformattedText(), 38, 6, 0xa0a0a0);
+            this.fontRendererObj.drawString("Crystal IO", 38, 6, 0xa0a0a0);
 
         GlStateManager.pushAttrib();
         GlStateManager.color(1, 1, 1, 1);

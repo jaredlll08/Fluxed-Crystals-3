@@ -9,8 +9,8 @@ import net.minecraft.inventory.Slot;
 public class ContainerFurnace extends ContainerBase {
     public ContainerFurnace(InventoryPlayer invPlayer, TileEntityMachineFurnace tile) {
 
-        addSlotToContainer(new SlotTileDep(tile, 0, 44, 35));
-        addSlotToContainer(new SlotTileDep(tile, 1, 116, 35));
+        addSlotToContainer(new SlotTileDep(tile.itemStackHandler, 0, 44, 35));
+        addSlotToContainer(new SlotTileDep(tile.itemStackHandler, 1, 116, 35));
         for (int x = 0; x < 9; x++) {
             addSlotToContainer(new Slot(invPlayer, x, 8 + 18 * x, 142));
         }
