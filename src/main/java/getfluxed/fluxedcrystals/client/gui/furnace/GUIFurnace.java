@@ -27,7 +27,6 @@ public class GUIFurnace extends GuiBase {
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
         super.drawGuiContainerForegroundLayer(mx, my);
-
         drawMachineProgress(tile.itemCycleTime, tile.needCycleTime);
         drawPowerBar(tile.container);
     }

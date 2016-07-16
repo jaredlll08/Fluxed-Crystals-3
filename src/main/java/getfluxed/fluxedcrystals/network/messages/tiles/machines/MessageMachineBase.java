@@ -54,7 +54,7 @@ public class MessageMachineBase implements IMessage, IMessageHandler<MessageMach
         this.needCycleTime = buf.readInt();
         this.itemCycleTime = buf.readInt();
         this.deviceCycleTime = buf.readInt();
-        this.energy = buf.readInt();
+        this.energy = buf.readLong();
 
     }
 
@@ -70,7 +70,6 @@ public class MessageMachineBase implements IMessage, IMessageHandler<MessageMach
         buf.writeInt(this.needCycleTime);
         buf.writeInt(this.itemCycleTime);
         buf.writeInt(this.deviceCycleTime);
-
         buf.writeLong(this.energy);
     }
 
@@ -90,9 +89,10 @@ public class MessageMachineBase implements IMessage, IMessageHandler<MessageMach
                 ((TileEntityMachineBase) tileEntity).needCycleTime = message.needCycleTime;
                 ((TileEntityMachineBase) tileEntity).itemCycleTime = message.itemCycleTime;
                 ((TileEntityMachineBase) tileEntity).deviceCycleTime = message.deviceCycleTime;
-                ((TileEntityMachineBase) tileEntity).container = new BaseTeslaContainer(message.energy, 10000, 250, 20);
-
-
+                long cap = ((TileEntityMachineBase) tileEntity).container.getCapacity();
+                long input = ((TileEntityMachineBase) tileEntity).container.getInputRate();
+                long output = ((TileEntityMachineBase) tileEntity).container.getOutputRate();
+                ((TileEntityMachineBase) tileEntity).container = new BaseTeslaContainer(message.energy, cap, input, output);
             }
         }
     }

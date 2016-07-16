@@ -1,5 +1,6 @@
 package getfluxed.fluxedcrystals.tileentities.machine;
 
+import getfluxed.fluxedcrystals.api.capabilities.ItemStackHandlerMachine;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
 import getfluxed.fluxedcrystals.blocks.machines.BlockMachine;
 import getfluxed.fluxedcrystals.network.PacketHandler;
@@ -17,7 +18,6 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -28,7 +28,7 @@ import java.util.HashMap;
  */
 public abstract class TileEntityMachineBase extends TileEntity implements ITickable {
 
-    public ItemStackHandler itemStackHandler;
+    public ItemStackHandlerMachine itemStackHandler;
     public int itemCycleTime; // How long the current cycle has been running
     public int deviceCycleTime; // How long the machine will cycle
     public byte state;
@@ -37,14 +37,14 @@ public abstract class TileEntityMachineBase extends TileEntity implements ITicka
     private int currentTime = 0;
     private int totalTime = 0;
     // empty if not currently working on any valid recipe
-    private String recipeIndex;
+    private String recipeIndex = "";
     private long prevEnergy;
 
     public BaseTeslaContainer container;
 
     public TileEntityMachineBase(int energyCap, int invSize) {
         container = new BaseTeslaContainer(10000, 250, 250);
-        itemStackHandler = new ItemStackHandler(2);
+        itemStackHandler = new ItemStackHandlerMachine(this, 2);
     }
 
     public int getTotalTime() {
@@ -173,6 +173,7 @@ public abstract class TileEntityMachineBase extends TileEntity implements ITicka
     @Override
     public void markDirty() {
         super.markDirty();
+        System.out.println("dirty");
         PacketHandler.INSTANCE.sendToAllAround(new MessageMachineBase(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
 
     }
@@ -278,7 +279,7 @@ public abstract class TileEntityMachineBase extends TileEntity implements ITicka
     @SuppressWarnings("unchecked")
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 
-        if (capability == TeslaCapabilities.CAPABILITY_PRODUCER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
+        if (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
             return (T) this.container;
         else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return (T) this.itemStackHandler;
@@ -290,7 +291,7 @@ public abstract class TileEntityMachineBase extends TileEntity implements ITicka
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == TeslaCapabilities.CAPABILITY_PRODUCER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
+        if (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
             return true;
         else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return true;

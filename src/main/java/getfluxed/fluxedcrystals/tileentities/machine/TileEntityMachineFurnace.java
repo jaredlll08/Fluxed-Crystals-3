@@ -5,7 +5,6 @@ import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.client.gui.furnace.ContainerFurnace;
 import getfluxed.fluxedcrystals.client.gui.furnace.GUIFurnace;
-import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -17,11 +16,13 @@ import java.util.HashMap;
  * Created by Jared on 5/25/2016.
  */
 public class TileEntityMachineFurnace extends TileEntityMachineBase implements IOpenableGUI {
-    public BaseTeslaContainer container;
-
     public TileEntityMachineFurnace() {
         super(32000, 2);
-        container = new BaseTeslaContainer(10000, 250, 250);
+    }
+
+    @Override
+    public int getEnergyUsed() {
+        return 250;
     }
 
     @Override
@@ -37,11 +38,6 @@ public class TileEntityMachineFurnace extends TileEntityMachineBase implements I
     @Override
     public boolean isValidInput(ItemStack stack) {
         return RecipeRegistry.isFurnaceInput(stack);
-    }
-
-    @Override
-    public int getEnergyUsed() {
-        return 250;
     }
 
     @Override

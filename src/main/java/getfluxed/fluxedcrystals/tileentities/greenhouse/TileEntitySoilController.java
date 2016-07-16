@@ -141,6 +141,8 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
     public int checkMultiblock() {
         if (isMaster()) {
             Stopwatch watch = Stopwatch.createStarted();
+            Stopwatch total = Stopwatch.createStarted();
+
 
             int northSize = 0;
             int southSize = 0;
@@ -216,7 +218,6 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                     return -1;
                 }
                 ySize = y;
-
             }
             System.out.println("Bottom check took: " + watch.elapsed(TimeUnit.MILLISECONDS));
             watch.reset().start();
@@ -321,7 +322,7 @@ public class TileEntitySoilController extends TileEnergyBase implements ITickabl
                     setCurrentGrowth(0);
                 }
                 this.setMaster(getPos());
-                long time = watch.elapsed(TimeUnit.MILLISECONDS);
+                long time = total.elapsed(TimeUnit.MILLISECONDS);
                 AxisAlignedBB multiblock = new AxisAlignedBB(northEast, southWest);
                 FluxedCrystals.logger.log(Level.INFO, String.format("Completed a %sx%sx%s structure in: %s ms", (int) multiblock.maxX - (int) multiblock.minX + 1, (int) multiblock.maxY - (int) multiblock.minY + 1, (int) multiblock.maxZ - (int) multiblock.minZ + 1, time));
                 return energyCapacity;

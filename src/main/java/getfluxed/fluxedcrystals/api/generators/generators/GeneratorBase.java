@@ -42,17 +42,26 @@ public abstract class GeneratorBase extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (!worldObj.isRemote) {
-//            for (EnumFacing face : EnumFacing.values()) {
-//                if (worldObj.getTileEntity(pos.offset(face)) != null) {
-//                }
-//            }
             PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
+            for (EnumFacing face : EnumFacing.values()) {
+                if (worldObj.getTileEntity(pos.offset(face)) != null) {
+                    if (worldObj.getTileEntity(pos.offset(face)).hasCapability(TeslaCapabilities.CAPABILITY_CONSUMER, face.getOpposite())) {
+                        BaseTeslaContainer con = (BaseTeslaContainer) worldObj.getTileEntity(pos.offset(face)).getCapability(TeslaCapabilities.CAPABILITY_CONSUMER, face.getOpposite());
+                        if (container.getStoredPower() >= 250 && con.getCapacity() - con.getStoredPower() >= 250) {
+                            con.givePower(250, false);
+                            container.takePower(250, false);
+                            markDirty();
+                            worldObj.getTileEntity(pos.offset(face)).markDirty();
+                        }
+                    }
+                }
+            }
             if (generationTimerDefault < 0 && this.container.getStoredPower() < this.container.getCapacity()) {
                 if (itemStackHandler.getStackInSlot(0) != null) {
                     if (canGenerateEnergy(itemStackHandler.getStackInSlot(0))) {
                         generationTimer = getGenerationTime(itemStackHandler.getStackInSlot(0));
                         generationTimerDefault = getGenerationTime(itemStackHandler.getStackInSlot(0));
-                        itemStackHandler.extractItem(0,1,false);
+                        itemStackHandler.extractItem(0, 1, false);
                         markDirty();
 
                     }
@@ -101,7 +110,7 @@ public abstract class GeneratorBase extends TileEntity implements ITickable {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        this.itemStackHandler.deserializeNBT(nbt);
+        this.itemStackHandler.deserializeNBT(nbt.getCompoundTag("items"));
         generationTimer = nbt.getInteger("generationTimer");
         generationTimerDefault = nbt.getInteger("generationTimerDefault");
         this.container = new BaseTeslaContainer(nbt.getCompoundTag("TeslaContainer"));
@@ -156,7 +165,6 @@ public abstract class GeneratorBase extends TileEntity implements ITickable {
         super.onDataPacket(net, pkt);
         readFromNBT(pkt.getNbtCompound());
     }
-
 
 
     @Override

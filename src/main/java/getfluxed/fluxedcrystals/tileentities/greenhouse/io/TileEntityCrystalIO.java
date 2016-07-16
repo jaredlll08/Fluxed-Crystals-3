@@ -38,7 +38,7 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
             if (!master.isGrowing() && master.getCrystalInfo().equals(Crystal.NULL) && getMasterTile().itemStackHandler.getStackInSlot(0) != null && getMasterTile().itemStackHandler.getStackInSlot(0).getItem() instanceof ICrystalInfoProvider) {
                 Crystal info = ((ICrystalInfoProvider) getMasterTile().itemStackHandler.getStackInSlot(0).getItem()).getCrystal(getMasterTile().itemStackHandler.getStackInSlot(0));
                 master.setCrystalInfo(info);
-                getMasterTile().itemStackHandler.extractItem(0,1,false);
+                getMasterTile().itemStackHandler.extractItem(0, 1, false);
                 master.setCurrentGrowth(0);
                 master.setGrowing(true);
                 sendUpdate = true;
@@ -51,10 +51,8 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                     int shardsSmooth = 0;
                     int chunksRough = 0;
                     int chunksSmooth = 0;
-                    System.out.println("ret: " + retSize);
                     while (retSize > 0) {
                         retSize--;
-                        System.out.println(retSize);
                         shardsRough++;
                         if (shardsRough >= 9) {
                             if (shardsSmooth < 64) {
@@ -75,21 +73,6 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                             }
                         }
                     }
-                    //retSize = 153
-//                    //chunksSmooth = 153 /9 (17), 17/9 (2), 2/9 (0)
-//                    //chunksRough = (153 - chunksSmooth (0)) (153) /9 (17), 17 /9 (2)
-//                    //shardsSmooth = (153 - chunksRough
-//                    chunksSmooth = Math.round(retSize / 9 / 9 / 9);
-//                    chunksRough = Math.round((retSize - (chunksSmooth*9*9*9)) / 9 / 9);
-//                    shardsSmooth = Math.round((retSize - (chunksRough*9*9)) / 9);
-//                    shardsRough = (retSize - (shardsSmooth*9));
-
-//                    chunksRough -= chunksSmooth;
-//                    shardsSmooth -= chunksRough;
-//                    shardsRough -= shardsSmooth;
-
-
-                    System.out.println("crushed: " + (shardsRough + ":" + shardsSmooth + ":" + chunksRough + ":" + chunksSmooth) + " retSize: " + retSize);
                     ItemStack roughShards = new ItemStack(FCItems.crystalCrushed, shardsRough, 0);
                     NBTHelper.setString(roughShards, "crystalName", master.getCrystalInfo().getName());
                     ItemStack smoothShards = new ItemStack(FCItems.crystalCrushed, shardsSmooth, 1);
@@ -101,9 +84,9 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                     if (roughShards.stackSize > 0)
                         getMasterTile().itemStackHandler.insertItem(1, roughShards, false);
                     if (smoothShards.stackSize > 0)
-                    getMasterTile().itemStackHandler.insertItem(2, smoothShards, false);
+                        getMasterTile().itemStackHandler.insertItem(2, smoothShards, false);
                     if (roughChunks.stackSize > 0)
-                    getMasterTile().itemStackHandler.insertItem(3, roughChunks, false);
+                        getMasterTile().itemStackHandler.insertItem(3, roughChunks, false);
                     if (smoothChunks.stackSize > 0)
                         getMasterTile().itemStackHandler.insertItem(4, smoothChunks, false);
                     master.setCurrentGrowth(0);
@@ -117,7 +100,7 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                 master.setCurrentGrowth(0);
                 sendUpdate = true;
             }
-            if (sendUpdate) {
+            if (!worldObj.isRemote && sendUpdate) {
                 PacketHandler.INSTANCE.sendToAllAround(new MessageCrystalIO(getMasterTile()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
             }
 

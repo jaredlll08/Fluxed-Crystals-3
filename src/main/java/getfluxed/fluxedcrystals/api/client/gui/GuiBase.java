@@ -1,7 +1,6 @@
 package getfluxed.fluxedcrystals.api.client.gui;
 
 import getfluxed.fluxedcrystals.api.generators.generators.GeneratorBase;
-import getfluxed.fluxedcrystals.tileentities.base.TileEnergyBase;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineBase;
 import getfluxed.fluxedcrystals.util.RenderUtils;
 import net.darkhax.tesla.api.BaseTeslaContainer;
