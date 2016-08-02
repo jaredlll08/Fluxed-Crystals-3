@@ -1,5 +1,6 @@
 package getfluxed.fluxedcrystals.api.generators.generators;
 
+import getfluxed.fluxedcrystals.api.nbt.TileEntityNBT;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerator;
 import net.darkhax.tesla.api.BaseTeslaContainer;
@@ -20,7 +21,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
-public abstract class GeneratorBase extends TileEntity implements ITickable {
+public abstract class GeneratorBase extends TileEntityNBT implements ITickable {
     public ItemStackHandler itemStackHandler;
     public int generationTimer = -1;
     public int generationTimerDefault = -1;
@@ -39,47 +40,62 @@ public abstract class GeneratorBase extends TileEntity implements ITickable {
         return generationTimer > -1;
     }
 
+    protected boolean pushEnergy() {
+        for (EnumFacing dir : EnumFacing.VALUES) {
+            TileEntity tile = worldObj.getTileEntity(getPos().offset(dir));
+            if (tile != null)
+                if (tile.hasCapability(TeslaCapabilities.CAPABILITY_CONSUMER, dir.getOpposite()) || tile.hasCapability(TeslaCapabilities.CAPABILITY_HOLDER, dir.getOpposite())) {
+                    BaseTeslaContainer cont = (BaseTeslaContainer) tile.getCapability(TeslaCapabilities.CAPABILITY_HOLDER, dir.getOpposite());
+                    container.takePower(cont.givePower(container.takePower(container.getOutputRate(), true), false), false);
+                    if (!worldObj.isRemote) {
+                        tile.markDirty();
+                        markDirty();
+                        return true;
+                    }
+                }
+        }
+        return false;
+    }
+
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
-            PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
-            for (EnumFacing face : EnumFacing.values()) {
-                if (worldObj.getTileEntity(pos.offset(face)) != null) {
-                    if (worldObj.getTileEntity(pos.offset(face)).hasCapability(TeslaCapabilities.CAPABILITY_CONSUMER, face.getOpposite())) {
-                        BaseTeslaContainer con = (BaseTeslaContainer) worldObj.getTileEntity(pos.offset(face)).getCapability(TeslaCapabilities.CAPABILITY_CONSUMER, face.getOpposite());
-                        if (container.getStoredPower() >= 250 && con.getCapacity() - con.getStoredPower() >= 250) {
-                            con.givePower(250, false);
-                            container.takePower(250, false);
-                            markDirty();
-                            worldObj.getTileEntity(pos.offset(face)).markDirty();
-                        }
-                    }
-                }
-            }
-            if (generationTimerDefault < 0 && this.container.getStoredPower() < this.container.getCapacity()) {
-                if (itemStackHandler.getStackInSlot(0) != null) {
-                    if (canGenerateEnergy(itemStackHandler.getStackInSlot(0))) {
-                        generationTimer = getGenerationTime(itemStackHandler.getStackInSlot(0));
-                        generationTimerDefault = getGenerationTime(itemStackHandler.getStackInSlot(0));
-                        itemStackHandler.extractItem(0, 1, false);
-                        markDirty();
+        boolean sendUpdate = false;
+//            PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
 
-                    }
+        if (generationTimerDefault < 0 && this.container.getStoredPower() < this.container.getCapacity()) {
+            if (itemStackHandler.getStackInSlot(0) != null) {
+                if (canGenerateEnergy(itemStackHandler.getStackInSlot(0))) {
+                    generationTimer = getGenerationTime(itemStackHandler.getStackInSlot(0));
+                    generationTimerDefault = getGenerationTime(itemStackHandler.getStackInSlot(0));
+                    itemStackHandler.extractItem(0, 1, false);
+                    System.out.println("extracted");
+                    if (!worldObj.isRemote)
+                        sendUpdate = true;
+
                 }
             }
-            if (generationTimer < 0) {
-                generationTimerDefault = -1;
-                generationTimer = -1;
-                if (!worldObj.isRemote) {
-                    markDirty();
-                }
-            }
-            if (generationTimerDefault > 0 && this.container.getStoredPower() < this.container.getCapacity()) {
-                generationTimer--;
-                generateEnergy(worldObj, getPos(), generationTimer);
-                if (!worldObj.isRemote) {
-                    markDirty();
-                }
+        }
+        if (generationTimer < 0) {
+            generationTimerDefault = -1;
+            generationTimer = -1;
+            if (!worldObj.isRemote)
+                sendUpdate = true;
+        }
+        if (pushEnergy()) {
+            sendUpdate = true;
+        }
+        if (generationTimerDefault > 0 && this.container.getStoredPower() < this.container.getCapacity()) {
+            generationTimer--;
+            generateEnergy(worldObj, getPos(), generationTimer);
+            if (!worldObj.isRemote)
+                sendUpdate = true;
+        }
+
+        if (!worldObj.isRemote) {
+            if (sendUpdate) {
+                this.markDirty();
+                PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
+                this.worldObj.notifyBlockOfStateChange(getPos(), getBlockType());
             }
         }
     }
@@ -116,48 +132,17 @@ public abstract class GeneratorBase extends TileEntity implements ITickable {
         this.container = new BaseTeslaContainer(nbt.getCompoundTag("TeslaContainer"));
     }
 
-
-
-
-    /*public EnumSet<EnumFacing> getValidOutputs() {
-        return EnumSet.allOf(EnumFacing.class);
-    }
-
-    public EnumSet<EnumFacing> getValidInputs() {
-        return EnumSet.noneOf(EnumFacing.class);
-    }
-
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        if (getValidOutputs().contains(from)) {
-            long ret = this.container.takePower(maxExtract, true);
-            if (!simulate) {
-                this.container.takePower(ret, false);
-            }
-            return ret;
-        }
-        return 0;
-    }
-
-    @Override
-    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        if (getValidInputs().contains(from)) {
-            int ret = this.container.receiveEnergy(maxReceive, true);
-            if (!simulate) {
-                this.container.receiveEnergy(ret, false);
-            }
-
-            return ret;
-
-        }
-        return 0;
-    }*/
-
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
         return new SPacketUpdateTileEntity(getPos(), 0, tag);
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        return writeToNBT(new NBTTagCompound());
     }
 
     @Override

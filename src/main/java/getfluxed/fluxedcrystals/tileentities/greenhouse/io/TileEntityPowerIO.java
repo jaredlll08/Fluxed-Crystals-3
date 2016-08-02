@@ -1,82 +1,28 @@
 package getfluxed.fluxedcrystals.tileentities.greenhouse.io;
 
-import cofh.api.energy.IEnergyHandler;
-import getfluxed.fluxedcrystals.network.PacketHandler;
-import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageEnergyUpdate;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
-import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
+import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-
-import java.util.EnumSet;
+import net.minecraftforge.common.capabilities.Capability;
 
 /**
  * Created by Jared on 4/17/2016.
  */
-public class TileEntityPowerIO extends TileEntityMultiBlockComponent implements IEnergyHandler {
-
-
-    public EnumSet<EnumFacing> getValidOutputs() {
-        return EnumSet.allOf(EnumFacing.class);
-    }
-
-    public EnumSet<EnumFacing> getValidInputs() {
-        return EnumSet.allOf(EnumFacing.class);
-    }
+public class TileEntityPowerIO extends TileEntityMultiBlockComponent {
 
     @Override
-    public int receiveEnergy(EnumFacing facing, int maxReceive, boolean simulate) {
-        if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
-            TileEntitySoilController tile = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
-            if (getValidInputs().contains(facing)) {
-                int ret = tile.getEnergyStorage().receiveEnergy(maxReceive, true);
-                if (!simulate) {
-                    tile.receiveEnergy(EnumFacing.UP, ret, false);
-                }
-                if (!worldObj.isRemote) {
-                    PacketHandler.INSTANCE.sendToAllAround(new MessageEnergyUpdate(getMaster(), tile.getEnergyStored()), new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), getMaster().getX(), getMaster().getY(), getMaster().getZ(), 128D));
-                }
-                    return ret;
-            }
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER) {
+            return getMasterTile().hasCapability(capability, facing);
         }
-        return 0;
+        return super.hasCapability(capability, facing);
     }
 
-    @Override
-    public int extractEnergy(EnumFacing facing, int maxExtract, boolean simulate) {
-        if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
-            TileEntitySoilController tile = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
-            if (getValidOutputs().contains(facing)) {
-                int ret = tile.extractEnergy(EnumFacing.UP, maxExtract, true);
-                if (!simulate) {
-                    tile.extractEnergy(EnumFacing.UP, ret, false);
-                }
-                return ret;
-            }
-        }
-        return 0;
-    }
 
     @Override
-    public int getEnergyStored(EnumFacing facing) {
-        if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
-            TileEntitySoilController tile = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
-            return tile.getEnergyStored();
-        }
-        return 0;
-    }
-
-    @Override
-    public int getMaxEnergyStored(EnumFacing facing) {
-        if (getWorld() != null && getMaster() != null && worldObj.getTileEntity(getMaster()) != null && getMultiBlock() != null && getMultiBlock().isActive()) {
-            TileEntitySoilController tile = (TileEntitySoilController) worldObj.getTileEntity(getMaster());
-            return tile.getMaxStorage();
-        }
-        return 0;
-    }
-
-    @Override
-    public final boolean canConnectEnergy(EnumFacing from) {
-        return getValidInputs().contains(from) || getValidOutputs().contains(from);
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
+            return (T) getMasterTile().getCapability(capability, facing);
+        return super.getCapability(capability, facing);
     }
 }

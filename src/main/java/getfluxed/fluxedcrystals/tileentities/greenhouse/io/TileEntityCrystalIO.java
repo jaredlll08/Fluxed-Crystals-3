@@ -7,18 +7,14 @@ import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.client.gui.crystalio.ContainerCrystalIO;
 import getfluxed.fluxedcrystals.client.gui.crystalio.GUICrystalIO;
 import getfluxed.fluxedcrystals.items.FCItems;
-import getfluxed.fluxedcrystals.network.PacketHandler;
-import getfluxed.fluxedcrystals.network.messages.tiles.greenhouse.io.MessageCrystalIO;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.util.Random;
 
@@ -101,23 +97,12 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                 sendUpdate = true;
             }
             if (!worldObj.isRemote && sendUpdate) {
-                PacketHandler.INSTANCE.sendToAllAround(new MessageCrystalIO(getMasterTile()), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
+                getMasterTile().markDirty();
             }
 
         }
     }
 
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-        return compound;
-    }
 
     public TileEntitySoilController getMasterTile() {
         if (worldObj.getTileEntity(getMaster()) != null) {

@@ -2,6 +2,7 @@ package getfluxed.fluxedcrystals.client.greenhouse.monitor;
 
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.monitor.TileEntityPowerMonitor;
+import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,7 +18,7 @@ public class RenderPowerMonitor extends TileEntitySpecialRenderer<TileEntityPowe
 
     @Override
     public void renderTileEntityAt(TileEntityPowerMonitor te, double x, double y, double z, float partialTicks, int destroyStage) {
-        if (te != null && te.getMaster() != null && !te.getMaster().equals(new BlockPos(0, 0, 0)) && te.getMultiBlock() !=null&& te.getMultiBlock().isActive()) {
+        if (te != null && te.getMaster() != null && !te.getMaster().equals(new BlockPos(0, 0, 0)) && te.getMultiBlock() != null && te.getMultiBlock().isActive()) {
 //            GL11.glPushAttrib(GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT);
             GlStateManager.pushAttrib();
             GlStateManager.pushMatrix();
@@ -89,27 +90,29 @@ public class RenderPowerMonitor extends TileEntitySpecialRenderer<TileEntityPowe
         GlStateManager.disableLighting();
         Minecraft minecraft = Minecraft.getMinecraft();
         TileEntitySoilController master = (TileEntitySoilController) tileEntity.getWorld().getTileEntity(tileEntity.getMaster());
-        fontrenderer.drawString("Stored: " + getEnergyText(master.getEnergyStorage().getEnergyStored()), 4, 1, 0xFFFFFF);
-        fontrenderer.drawString("Max: " + getEnergyText(master.getEnergyStorage().getMaxEnergyStored()), 4, 12, 0xFFFFFF);
+        fontrenderer.drawString("Stored: " + getEnergyText(master.container.getStoredPower()), 4, 1, 0xFFFFFF);
+        fontrenderer.drawString("Max: " + getEnergyText(master.container.getCapacity()), 4, 12, 0xFFFFFF);
         GlStateManager.popMatrix();
     }
 
-    private String getEnergyText(int energy) {
-        StringBuilder str = new StringBuilder();
-        int rf = energy;
-        if (energy > 999 && energy < 1000000) {
-            str.append(Math.round((rf / 1000.0) * 100.0) / 100.0).append("K RF");
-        } else if (energy > 999999 && energy < 1000000000) {
-            str.append(Math.round((rf / 1000000.0) * 100.0) / 100.0).append("M RF");
-        } else if (energy > 99999999 && energy < Integer.MAX_VALUE) {
-            str.append(Math.round((rf / 1000000000.0) * 100.0) / 100.0).append("B RF");
-        } else if (energy == Integer.MAX_VALUE) {
-            str.append("PGM? Max RF");
-        } else {
-            str.append(rf).append(" RF");
-        }
-
-        return str.toString();
+    private String getEnergyText(long energy) {
+        return TeslaUtils.getDisplayableTeslaCount(energy);
+//        StringBuilder str = new StringBuilder();
+//        long tesla = energy;
+//
+//        if (energy > 999 && energy < 1000000) {
+//            str.append(Math.round((tesla / 1000.0) * 100.0) / 100.0).append("K RF");
+//        } else if (energy > 999999 && energy < 1000000000) {
+//            str.append(Math.round((tesla / 1000000.0) * 100.0) / 100.0).append("M RF");
+//        } else if (energy > 99999999 && energy < Integer.MAX_VALUE) {
+//            str.append(Math.round((tesla / 1000000000.0) * 100.0) / 100.0).append("B RF");
+//        } else if (energy == Integer.MAX_VALUE) {
+//            str.append("PGM? Max RF");
+//        } else {
+//            str.append(tesla).append(" RF");
+//        }
+//
+//        return str.toString();
     }
 
 }

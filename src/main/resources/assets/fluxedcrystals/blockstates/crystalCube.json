@@ -1,5 +1,5 @@
 {
     "variants": {
-        "normal": { "model": "fluxedcrystals:crystalCube" }
+        "normal": { "model": "fluxedcrystals:crystalOne.obj" }
     }
 }

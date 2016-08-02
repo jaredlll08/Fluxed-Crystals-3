@@ -35,6 +35,5 @@ public class GUICoalGenerator extends GuiBase {
 
         this.drawGeneratorProgress(82, 38, tile);
         this.drawPowerBar(tile.container);
-        System.out.println(tile.container.getStoredPower());
     }
 }

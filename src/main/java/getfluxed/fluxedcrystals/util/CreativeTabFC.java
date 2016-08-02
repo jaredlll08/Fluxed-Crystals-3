@@ -44,6 +44,6 @@ public class CreativeTabFC extends CreativeTabs {
 
     @Override
     public Item getTabIconItem() {
-        return Item.getItemFromBlock(FCBlocks.ghFrameGlass);
+        return Item.getItemFromBlock(FCBlocks.machineFurnace);
     }
 }

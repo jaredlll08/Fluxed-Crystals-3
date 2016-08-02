@@ -28,17 +28,13 @@ public class MessageGHLoadAll implements IMessage, IMessageHandler<MessageGHLoad
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.master = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-        int size = buf.readInt();
-
+        this.master = BlockPos.fromLong(buf.readLong());
         this.tiles = MultiBlock.readFromByteBuf(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(master != null ? master.getX() : 0);
-        buf.writeInt(master != null ? master.getY() : 0);
-        buf.writeInt(master != null ? master.getZ() : 0);
+        buf.writeLong(master.toLong());
         this.tiles.writeToByteBuf(buf, tiles);
     }
 

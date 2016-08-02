@@ -11,10 +11,11 @@ buildscript {
     }
 }
 
+apply plugin: "maven"
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 ext.buildnumber = 0
 if (System.getenv('BUILD_NUMBER') != null)
@@ -33,12 +34,14 @@ archivesBaseName = "Fluxed-Crystals 3"
 
 minecraft {
     useDepAts = true
-    version = "1.9.4-12.17.0.1976"
+    version = "1.10.2-12.18.1.2014"
     runDir = "run"
     mappings = "snapshot_20160518"
 }
 
-repositories {
+repositories {    
+    mavenLocal()
+    mavenCentral()
     maven {
         name "Tesla"
         url 'http://maven.epoxide.xyz'
@@ -58,7 +61,47 @@ dependencies {
     //compile "mcp.mobius.waila:Waila:1.7.0-B3_1.9.4"
     deobfCompile "mezz.jei:jei_1.9.4:3.4.0.204"
 }
+def commonManifest = {
+    attributes 'Main-Class': 'us.getfluxed.fluxedcrystals.FluxedCrystals'
+    //attributes 'FMLAT': 'base_at.cfg'
+}
+jar {
+    classifier = 'universal'
+    manifest commonManifest
+}
 
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+    manifest commonManifest
+}
+
+task srcJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+    manifest commonManifest
+}
+
+artifacts {
+    archives deobfJar
+    archives srcJar
+}
+
+configurations {
+    deployerJars
+}
+
+dependencies {
+    deployerJars 'org.apache.maven.wagon:wagon-ftp:2.2'
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file:///var/www/html/maven")
+        }
+    }
+}
 processResources
 {
 

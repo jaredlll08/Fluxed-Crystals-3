@@ -3,13 +3,13 @@ package getfluxed.fluxedcrystals.tileentities.greenhouse;
 import getfluxed.fluxedcrystals.api.multiblock.IFrame;
 import getfluxed.fluxedcrystals.api.multiblock.IGreenHouseComponent;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
-import net.minecraft.tileentity.TileEntity;
+import getfluxed.fluxedcrystals.api.nbt.TileEntityNBT;
 import net.minecraft.util.math.BlockPos;
 
 /**
  * Created by Jared on 3/19/2016.
  */
-public class TileEntityFrame extends TileEntity implements IGreenHouseComponent, IFrame{
+public class TileEntityFrame extends TileEntityNBT implements IGreenHouseComponent, IFrame{
     private BlockPos masterPos;
 
     @Override

@@ -1,6 +1,9 @@
 package getfluxed.fluxedcrystals.tileentities.machine;
 
 import getfluxed.fluxedcrystals.api.capabilities.ItemStackHandlerMachine;
+import getfluxed.fluxedcrystals.api.nbt.EnumConverter;
+import getfluxed.fluxedcrystals.api.nbt.NBT;
+import getfluxed.fluxedcrystals.api.nbt.TileEntityNBT;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
 import getfluxed.fluxedcrystals.blocks.machines.BlockMachine;
 import getfluxed.fluxedcrystals.network.PacketHandler;
@@ -26,14 +29,18 @@ import java.util.HashMap;
 /**
  * Created by Jared on 5/31/2016.
  */
-public abstract class TileEntityMachineBase extends TileEntity implements ITickable {
+public abstract class TileEntityMachineBase extends TileEntityNBT implements ITickable {
 
     public ItemStackHandlerMachine itemStackHandler;
+    @NBT(EnumConverter.INT)
     public int itemCycleTime; // How long the current cycle has been running
+    @NBT(EnumConverter.INT)
     public int deviceCycleTime; // How long the machine will cycle
     public byte state;
+    @NBT(EnumConverter.INT)
     public int needCycleTime; // Based on everything how long should this
     // take?????
+    @NBT(EnumConverter.INT)
     private int currentTime = 0;
     private int totalTime = 0;
     // empty if not currently working on any valid recipe
@@ -155,11 +162,13 @@ public abstract class TileEntityMachineBase extends TileEntity implements ITicka
                 sendUpdate = true;
 
             }
-
+            if (pushEnergy()) {
+                sendUpdate = true;
+            }
         }
 
-        if (sendUpdate) {
 
+        if (sendUpdate) {
             this.markDirty();
             this.state = this.deviceCycleTime > 0 ? (byte) 1 : (byte) 0;
             getWorld().addBlockEvent(getPos(), this.getBlockType(), 1, this.state);
@@ -170,10 +179,22 @@ public abstract class TileEntityMachineBase extends TileEntity implements ITicka
 
     }
 
+    protected boolean pushEnergy() {
+        for (EnumFacing dir : getValidOutputs()) {
+            TileEntity tile = worldObj.getTileEntity(getPos().offset(dir));
+            if (tile.hasCapability(TeslaCapabilities.CAPABILITY_CONSUMER, dir.getOpposite()) || tile.hasCapability(TeslaCapabilities.CAPABILITY_HOLDER, dir.getOpposite())) {
+                BaseTeslaContainer cont = (BaseTeslaContainer) tile.getCapability(TeslaCapabilities.CAPABILITY_HOLDER, dir.getOpposite());
+                container.takePower(cont.givePower(container.takePower(container.getOutputRate(), true), false), false);
+                tile.markDirty();
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void markDirty() {
         super.markDirty();
-        System.out.println("dirty");
         PacketHandler.INSTANCE.sendToAllAround(new MessageMachineBase(this), new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), (double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 128d));
 
     }
@@ -184,15 +205,15 @@ public abstract class TileEntityMachineBase extends TileEntity implements ITicka
     public void readFromNBT(NBTTagCompound tags) {
         super.readFromNBT(tags);
         itemStackHandler.deserializeNBT(tags.getCompoundTag("items"));
-        currentTime = tags.getInteger("currentTime");
+//        currentTime = tags.getInteger("currentTime");
         String index = tags.getString("recipeIndex");
         if (index.equals("___null")) {
             index = "";
         }
         setRecipeIndex(index);
-        deviceCycleTime = tags.getInteger("deviceCycleTime");
-        itemCycleTime = tags.getInteger("itemCycleTime");
-        needCycleTime = tags.getInteger("needCycleTime");
+//        deviceCycleTime = tags.getInteger("deviceCycleTime");
+//        itemCycleTime = tags.getInteger("itemCycleTime");
+//        needCycleTime = tags.getInteger("needCycleTime");
         updateCurrentRecipe();
     }
 
@@ -201,16 +222,16 @@ public abstract class TileEntityMachineBase extends TileEntity implements ITicka
     public NBTTagCompound writeToNBT(NBTTagCompound tags) {
         super.writeToNBT(tags);
         tags.setTag("items", itemStackHandler.serializeNBT());
-        tags.setInteger("currentTime", currentTime);
+//        tags.setInteger("currentTime", currentTime);
         String index = getRecipeIndex();
         if (index == null || index.isEmpty()) {
             index = "___null";
         }
         tags.setString("recipeIndex", index);
 
-        tags.setInteger("deviceCycleTime", deviceCycleTime);
-        tags.setInteger("itemCycleTime", itemCycleTime);
-        tags.setInteger("needCycleTime", needCycleTime);
+//        tags.setInteger("deviceCycleTime", deviceCycleTime);
+//        tags.setInteger("itemCycleTime", itemCycleTime);
+//        tags.setInteger("needCycleTime", needCycleTime);
         return tags;
     }
 

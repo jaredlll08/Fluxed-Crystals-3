@@ -1,20 +1,21 @@
 package getfluxed.fluxedcrystals.tileentities.greenhouse;
 
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyHandler;
+import net.darkhax.tesla.api.BaseTeslaContainer;
+import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.EnumSet;
 
 /**
  * Created by Jared on 5/7/2016.
  */
-public abstract class TileEntityMultiBlockEnergyComponent extends TileEntityMultiBlockComponent implements IEnergyHandler, ITickable {
+public abstract class TileEntityMultiBlockEnergyComponent extends TileEntityMultiBlockComponent implements ITickable {
 
-    public EnergyStorage storage;
+    public BaseTeslaContainer container;
     protected int capacity;
 
     public TileEntityMultiBlockEnergyComponent(int cap) {
@@ -23,13 +24,13 @@ public abstract class TileEntityMultiBlockEnergyComponent extends TileEntityMult
     }
 
     public double getEnergyColor() {
-        double energy = storage.getEnergyStored();
-        double maxEnergy = storage.getMaxEnergyStored();
+        double energy = container.getStoredPower();
+        double maxEnergy = container.getCapacity();
         return energy / maxEnergy;
     }
 
     private void init(int cap) {
-        storage = new EnergyStorage(cap);
+        container = new BaseTeslaContainer(cap, 250, 250);
     }
 
     public abstract EnumSet<EnumFacing> getValidOutputs();
@@ -44,95 +45,19 @@ public abstract class TileEntityMultiBlockEnergyComponent extends TileEntityMult
     protected void pushEnergy() {
         for (EnumFacing dir : getValidOutputs()) {
             TileEntity tile = worldObj.getTileEntity(getPos().offset(dir));
-            if (tile instanceof IEnergyHandler) {
-                IEnergyHandler ieh = (IEnergyHandler) tile;
-                storage.extractEnergy(ieh.receiveEnergy(dir, storage.extractEnergy(getOutputSpeed(), true), false), false);
+            if (tile.hasCapability(TeslaCapabilities.CAPABILITY_CONSUMER, dir.getOpposite()) || tile.hasCapability(TeslaCapabilities.CAPABILITY_HOLDER, dir.getOpposite())) {
+                BaseTeslaContainer cont = (BaseTeslaContainer) tile.getCapability(TeslaCapabilities.CAPABILITY_HOLDER, dir.getOpposite());
+                container.takePower(cont.givePower(container.takePower(container.getOutputRate(), true), false), false);
+                tile.markDirty();
             }
         }
     }
 
-	/* I/O Handling */
 
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        if (getValidOutputs().contains(from)) {
-            int ret = storage.extractEnergy(maxExtract, true);
-            if (!simulate) {
-                storage.extractEnergy(ret, false);
-            }
-            return ret;
-        }
-        return 0;
-    }
-
-    @Override
-    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        if (getValidInputs().contains(from)) {
-            int ret = storage.receiveEnergy(maxReceive, true);
-            if (!simulate) {
-                storage.receiveEnergy(ret, false);
-            }
-            return ret;
-        }
-        return 0;
-    }
-
-    @Override
     public final boolean canConnectEnergy(EnumFacing from) {
         return getValidInputs().contains(from) || getValidOutputs().contains(from);
     }
 
-	/* IEnergyHandler basic impl */
-
-    @Override
-    public int getEnergyStored(EnumFacing from) {
-        return getEnergyStored();
-    }
-
-    @Override
-    public int getMaxEnergyStored(EnumFacing from) {
-        return getMaxStorage();
-    }
-
-	/* IWailaAdditionalInfo */
-
-	/* getters & setters */
-
-    public int getEnergyStored() {
-        return storage.getEnergyStored();
-    }
-
-    public void setEnergyStored(int energy) {
-        storage.setEnergyStored(energy);
-    }
-
-    public int getMaxStorage() {
-        return storage.getMaxEnergyStored();
-    }
-
-    public void setMaxStorage(int storage) {
-        this.storage.setCapacity(storage);
-    }
-
-    public int getOutputSpeed() {
-        return storage.getMaxExtract();
-    }
-
-    public void setOutputSpeed(int outputSpeed) {
-        this.storage.setMaxExtract(outputSpeed);
-    }
-
-    public int getMaxOutputSpeed() {
-        return getOutputSpeed();
-    }
-
-    public int getInputSpeed() {
-        return storage.getMaxReceive();
-    }
-
-    public void setInputSpeed(int inputSpeed) {
-        this.storage.setMaxReceive(inputSpeed);
-    }
 
 	/* Read/Write NBT */
 
@@ -140,7 +65,7 @@ public abstract class TileEntityMultiBlockEnergyComponent extends TileEntityMult
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         NBTTagCompound energy = new NBTTagCompound();
-        storage.writeToNBT(energy);
+        nbt.setTag("tesla", container.serializeNBT());
         nbt.setTag("energy", energy);
         return nbt;
     }
@@ -149,7 +74,22 @@ public abstract class TileEntityMultiBlockEnergyComponent extends TileEntityMult
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         NBTTagCompound energy = nbt.getCompoundTag("energy");
-        storage = storage.readFromNBT(energy);
+        container.deserializeNBT(nbt.getCompoundTag("tesla"));
+    }
 
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
+            return (T) this.container;
+        return super.getCapability(capability, facing);
     }
 }
