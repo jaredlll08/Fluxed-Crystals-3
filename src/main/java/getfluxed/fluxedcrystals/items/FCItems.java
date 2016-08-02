@@ -23,7 +23,7 @@ import java.io.FileWriter;
 import java.util.*;
 
 import static getfluxed.fluxedcrystals.FluxedCrystals.isDevEnv;
-import static getfluxed.fluxedcrystals.FluxedCrystals.tab;
+import static getfluxed.fluxedcrystals.reference.Reference.tab;
 
 /**
  * Created by Jared on 3/17/2016.

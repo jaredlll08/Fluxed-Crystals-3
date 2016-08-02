@@ -4,7 +4,6 @@ import getfluxed.fluxedcrystals.api.client.gui.GuiBase;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineFurnace;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -19,7 +18,7 @@ public class GUIFurnace extends GuiBase {
     }
 
     public GUIFurnace(InventoryPlayer invPlayer, TileEntityMachineFurnace tile2) {
-        super(new ContainerFurnace(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerFurnace(invPlayer, tile2), tile2, invPlayer.player, "Furnace");
         this.tile = tile2;
         this.title = true;
         this.outlines = true;
@@ -28,9 +27,8 @@ public class GUIFurnace extends GuiBase {
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
         super.drawGuiContainerForegroundLayer(mx, my);
-
         drawMachineProgress(tile.itemCycleTime, tile.needCycleTime);
-        drawPowerBar(tile);
+        drawPowerBar(tile.container);
     }
 
     @Override

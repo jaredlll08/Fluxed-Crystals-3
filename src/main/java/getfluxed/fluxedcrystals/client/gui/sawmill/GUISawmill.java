@@ -4,7 +4,6 @@ import getfluxed.fluxedcrystals.api.client.gui.GuiBase;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineSawmill;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +19,7 @@ public class GUISawmill extends GuiBase {
     }
 
     public GUISawmill(InventoryPlayer invPlayer, TileEntityMachineSawmill tile2) {
-        super(new ContainerSawmill(invPlayer, tile2), tile2, invPlayer.player, tile2.getDisplayName().getUnformattedText());
+        super(new ContainerSawmill(invPlayer, tile2), tile2, invPlayer.player, "Sawmill");
         this.tile = tile2;
         this.title = true;
         this.outlines = true;
@@ -33,7 +32,7 @@ public class GUISawmill extends GuiBase {
         super.drawGuiContainerForegroundLayer(mx, my);
 
         drawMachineProgress(tile);
-        drawPowerBar(tile);
+        drawPowerBar(tile.container);
     }
 
     @Override

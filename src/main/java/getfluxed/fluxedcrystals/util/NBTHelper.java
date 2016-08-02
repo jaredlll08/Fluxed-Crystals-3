@@ -182,8 +182,16 @@ public class NBTHelper {
     }
 
     public static boolean isStackEqual(ItemStack stack1, ItemStack stack2) {
-        initNBTTagCompound(stack1);
-        initNBTTagCompound(stack2);
+        if (stack1.getTagCompound() != null && stack2.getTagCompound() == null) {
+            return false;
+        }
+        if (stack1.getTagCompound() == null && stack2.getTagCompound() != null) {
+            return false;
+        }
+        if (stack1.getTagCompound() == null && stack2.getTagCompound() == null) {
+            return stack1.isItemEqual(stack2);
+        }
+
         return stack1.isItemEqual(stack2) && stack1.getTagCompound().equals(stack2.getTagCompound());
     }
 

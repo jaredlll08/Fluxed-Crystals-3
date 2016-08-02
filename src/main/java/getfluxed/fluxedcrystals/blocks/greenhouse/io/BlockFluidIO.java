@@ -11,10 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.IFluidContainerItem;
-import net.minecraftforge.fluids.IFluidHandler;
 
 /**
  * Created by Jared on 4/15/2016.
@@ -36,19 +33,18 @@ public class BlockFluidIO extends BlockMultiblockComponent {
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileEntityFluidIO tile = (TileEntityFluidIO) worldIn.getTileEntity(pos);
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        TileEntityFluidIO tile = (TileEntityFluidIO) world.getTileEntity(pos);
         if (tile.getMaster() != null && !tile.getMaster().equals(new BlockPos(0, 0, 0)) && tile.getMultiBlock().isActive()) {
-            TileEntitySoilController tank = (TileEntitySoilController) worldIn.getTileEntity(tile.getMaster());
-
-            if (heldItem != null && tile instanceof IFluidHandler) {
-                if (FluidUtil.interactWithTank(heldItem, playerIn, tile, side.getOpposite()))
+            TileEntitySoilController tank = (TileEntitySoilController) world.getTileEntity(tile.getMaster());
+            ItemStack input = player.getHeldItem(hand);
+            if (input != null) {
+                if (FluidUtil.interactWithFluidHandler(input, tank.tank, player)) {
+                    if (!world.isRemote)
+                        tank.markDirty();
                     return true;
+                }
             }
-
-            if (heldItem == null)
-                return false;
-            return FluidContainerRegistry.isFilledContainer(heldItem) || heldItem.getItem() instanceof IFluidContainerItem;
         }
         return false;
     }

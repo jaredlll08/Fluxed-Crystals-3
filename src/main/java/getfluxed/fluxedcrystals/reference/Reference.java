@@ -1,5 +1,7 @@
 package getfluxed.fluxedcrystals.reference;
 
+import getfluxed.fluxedcrystals.util.CreativeTabFC;
+
 import java.io.File;
 
 public class Reference {
@@ -10,4 +12,6 @@ public class Reference {
     public static final String dependencies = "after:fluxedcore";
 
     public static File configDirectory;
+    public static CreativeTabFC tab = new CreativeTabFC();
+
 }

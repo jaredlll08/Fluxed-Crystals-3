@@ -2,7 +2,6 @@ package getfluxed.fluxedcrystals.blocks;
 
 import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.blocks.generators.BlockCoalGenerator;
-import getfluxed.fluxedcrystals.blocks.generators.BlockLavaGenerator;
 import getfluxed.fluxedcrystals.blocks.generators.BlockTrashGenerator;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrame;
@@ -15,9 +14,9 @@ import getfluxed.fluxedcrystals.blocks.greenhouse.monitor.BlockPowerMonitor;
 import getfluxed.fluxedcrystals.blocks.machines.BlockCrusher;
 import getfluxed.fluxedcrystals.blocks.machines.BlockFluxfurnace;
 import getfluxed.fluxedcrystals.blocks.machines.BlockSawmill;
+import getfluxed.fluxedcrystals.blocks.misc.BlockCrystalCube;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityLavaGenerator;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
@@ -29,22 +28,30 @@ import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineFurnace;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineSawmill;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
 
+import static getfluxed.fluxedcrystals.reference.Reference.tab;
+
 /**
  * Created by Jared on 3/17/2016.
  */
+@SuppressWarnings("WeakerAccess")
 public class FCBlocks {
 
     public static Map<String, Block> renderMap = new HashMap<>();
@@ -60,14 +67,14 @@ public class FCBlocks {
     public static Block ghBatteryAdvanced = new BlockFrameBattery(32000);
     public static Block ghPowerMonitor = new BlockPowerMonitor();
 
-
     public static Block basicCoalGenerator = new BlockCoalGenerator();
     public static Block trashGenerator = new BlockTrashGenerator();
-    public static Block lavaGenerator = new BlockLavaGenerator();
 
     public static Block machineCrusher = new BlockCrusher();
     public static Block machineFurnace = new BlockFluxfurnace();
     public static Block machineSawmill = new BlockSawmill();
+
+    public static Block crystalCube = new BlockCrystalCube();
 
 
     public static void preInit() {
@@ -81,6 +88,12 @@ public class FCBlocks {
         registerBlockMultiblock(ghBatteryBasic, "ghBatteryBasic");
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
+
+//        registerBlock(controller, "controller", controller.createNewTileEntity(null, 0).getClass());
+//        registerBlock(frame, "frame", frame.createNewTileEntity(null, 0).getClass());
+//        registerBlock(substrate, "substrate", substrate.createNewTileEntity(null, 0).getClass());
+        registerBlock(crystalCube, "crystalCube");
+
         registerGenerators();
         registerMachines();
     }
@@ -88,7 +101,6 @@ public class FCBlocks {
     public static void registerGenerators() {
         registerBlock(basicCoalGenerator, "coalGenBasic", TileEntityCoalGenerator.class);
         registerBlock(trashGenerator, "trashGenerator", TileEntityTrashGenerator.class);
-        registerBlock(lavaGenerator, "lavaGenerator", TileEntityLavaGenerator.class);
 
     }
 
@@ -106,6 +118,12 @@ public class FCBlocks {
         for (Map.Entry<String, Block> ent : renderMap.entrySet()) {
             renderItem.getItemModelMesher().register(Item.getItemFromBlock(ent.getValue()), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
         }
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
+            @Override
+            public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
+                return 0xFF0000;
+            }
+        }, crystalCube);
     }
 
     public static void postInit() {
@@ -113,23 +131,23 @@ public class FCBlocks {
 
 
     private static void registerBlock(Block block, String key) {
-        registerBlock(block, key, key, null, FluxedCrystals.tab);
+        registerBlock(block, key, key, null, tab);
     }
 
     private static void registerBlock(Block block, String key, String texture) {
-        registerBlock(block, key, texture, null, FluxedCrystals.tab);
+        registerBlock(block, key, texture, null, tab);
     }
 
     private static void registerBlock(Block block, String key, String texture, Class tile) {
-        registerBlock(block, key, texture, tile, FluxedCrystals.tab);
+        registerBlock(block, key, texture, tile, tab);
     }
 
     private static void registerBlockMultiblock(Block block, String key) {
-        registerBlock(block, key, key, TileEntityMultiBlockComponent.class, FluxedCrystals.tab);
+        registerBlock(block, key, key, TileEntityMultiBlockComponent.class, tab);
     }
 
     private static void registerBlock(Block block, String key, Class tile) {
-        registerBlock(block, key, key, tile, FluxedCrystals.tab);
+        registerBlock(block, key, key, tile, tab);
     }
 
     private static void registerBlock(Block block, String key, Class tile, CreativeTabs tab) {

@@ -8,7 +8,6 @@ import getfluxed.fluxedcrystals.items.FCItems;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.proxy.CommonProxy;
 import getfluxed.fluxedcrystals.reference.Reference;
-import getfluxed.fluxedcrystals.util.CreativeTabFC;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -28,7 +27,6 @@ import static getfluxed.fluxedcrystals.config.Config.registerJsons;
 @Mod(modid = Reference.modid, name = Reference.name, version = Reference.version, dependencies = Reference.dependencies)
 public class FluxedCrystals {
 
-
     public static final Logger logger = LogManager.getLogger(Reference.modid);
     public static long totalTime = 0;
     public static boolean isDevEnv = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
@@ -39,7 +37,6 @@ public class FluxedCrystals {
 
     @Mod.Instance
     public static FluxedCrystals instance;
-    public static CreativeTabFC tab = new CreativeTabFC();
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
@@ -47,10 +44,11 @@ public class FluxedCrystals {
         long time = System.currentTimeMillis();
         Reference.configDirectory = new File(e.getSuggestedConfigurationFile().getParent(), "/" + Reference.modid + "/");
         Config.load();
+        proxy.registerRenderers();
         FCBlocks.preInit();
         FCItems.preInit();
         PacketHandler.preInit();
-        proxy.registerRenderers();
+
         proxy.registerEvents();
         time = (System.currentTimeMillis() - time);
         totalTime += time;

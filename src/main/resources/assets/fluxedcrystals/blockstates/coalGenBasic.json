@@ -1,10 +1,10 @@
 {
     "variants": {
-		"active=false,facing=north": { "model": "fluxedcrystals:coalGenBasic" },
+        "active=false,facing=north": { "model": "fluxedcrystals:coalGenBasic" },
         "active=false,facing=south": { "model": "fluxedcrystals:coalGenBasic", "y": 180 },
         "active=false,facing=west":  { "model": "fluxedcrystals:coalGenBasic", "y": 270 },
         "active=false,facing=east":  { "model": "fluxedcrystals:coalGenBasic", "y": 90 },
-		"active=true,facing=north": { "model": "fluxedcrystals:coalGenBasicActive" },
+        "active=true,facing=north": { "model": "fluxedcrystals:coalGenBasicActive" },
         "active=true,facing=south": { "model": "fluxedcrystals:coalGenBasicActive", "y": 180 },
         "active=true,facing=west":  { "model": "fluxedcrystals:coalGenBasicActive", "y": 270 },
         "active=true,facing=east":  { "model": "fluxedcrystals:coalGenBasicActive", "y": 90 }

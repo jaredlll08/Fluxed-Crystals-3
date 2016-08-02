@@ -2,6 +2,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles.machines;
 
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineFurnace;
 import io.netty.buffer.ByteBuf;
+import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +23,7 @@ public class MessageFurnace implements IMessage, IMessageHandler<MessageFurnace,
     private int needCycleTime;
     private int itemCycleTime;
     private int deviceCycleTime;
-    private int energy;
+    private long energy;
 
     public MessageFurnace() {
 
@@ -37,7 +38,7 @@ public class MessageFurnace implements IMessage, IMessageHandler<MessageFurnace,
         this.needCycleTime = furnace.needCycleTime;
         this.itemCycleTime = furnace.itemCycleTime;
         this.deviceCycleTime = furnace.deviceCycleTime;
-        this.energy = furnace.getEnergyStored();
+        this.energy = furnace.container.getStoredPower();
 
     }
 
@@ -70,7 +71,7 @@ public class MessageFurnace implements IMessage, IMessageHandler<MessageFurnace,
         buf.writeInt(this.itemCycleTime);
         buf.writeInt(this.deviceCycleTime);
 
-        buf.writeInt(this.energy);
+        buf.writeLong(this.energy);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class MessageFurnace implements IMessage, IMessageHandler<MessageFurnace,
                 ((TileEntityMachineFurnace) tileEntity).needCycleTime = message.needCycleTime;
                 ((TileEntityMachineFurnace) tileEntity).itemCycleTime = message.itemCycleTime;
                 ((TileEntityMachineFurnace) tileEntity).deviceCycleTime = message.deviceCycleTime;
-                ((TileEntityMachineFurnace) tileEntity).setEnergyStored(message.energy);
+                ((TileEntityMachineFurnace) tileEntity).container = new BaseTeslaContainer(message.energy, 10000, 250, 20);;
 
 
             }

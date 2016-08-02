@@ -44,7 +44,10 @@ public class RenderController extends TileEntitySpecialRenderer<TileEntitySoilCo
                         double nY = 0.8 + rand.nextDouble();
                         double nZ = rand.nextDouble() + 0.5;
                         GL11.glTranslated(bp.subtract(pos).getX() + nX, bp.subtract(pos).getY() - nY, bp.subtract(pos).getZ() + nZ);
-                        cube.render(0.0675f);
+                        float rot = rand.nextFloat();
+                        GL11.glRotatef(rot, rand.nextInt(2),rand.nextInt(2),rand.nextInt(2));
+                        cube.render(0.0675f/2);
+                        GL11.glRotatef(rand.nextFloat(), rand.nextInt(2),rand.nextInt(2),rand.nextInt(2));
                         GL11.glTranslated(-bp.subtract(pos).getX() - nX, -bp.subtract(pos).getY() + nY, -bp.subtract(pos).getZ() - nZ);
                     }
                 }

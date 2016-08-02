@@ -3,11 +3,8 @@ package getfluxed.fluxedcrystals.tileentities.machine;
 import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.ContainerCoalGenerator;
-import getfluxed.fluxedcrystals.client.gui.coalGenerator.GUICoalGenerator;
 import getfluxed.fluxedcrystals.client.gui.sawmill.ContainerSawmill;
 import getfluxed.fluxedcrystals.client.gui.sawmill.GUISawmill;
-import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -41,11 +38,6 @@ public class TileEntityMachineSawmill extends TileEntityMachineBase implements I
     @Override
     public boolean isValidInput(ItemStack stack) {
         return RecipeRegistry.isSawmillInput(stack);
-    }
-
-    @Override
-    public String getName() {
-        return "Sawmill";
     }
 
     @Override

@@ -2,6 +2,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles.machines;
 
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineBase;
 import io.netty.buffer.ByteBuf;
+import net.darkhax.tesla.api.BaseTeslaContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +23,7 @@ public class MessageMachineBase implements IMessage, IMessageHandler<MessageMach
     private int needCycleTime;
     private int itemCycleTime;
     private int deviceCycleTime;
-    private int energy;
+    private long energy;
 
     public MessageMachineBase() {
 
@@ -37,7 +38,7 @@ public class MessageMachineBase implements IMessage, IMessageHandler<MessageMach
         this.needCycleTime = tile.needCycleTime;
         this.itemCycleTime = tile.itemCycleTime;
         this.deviceCycleTime = tile.deviceCycleTime;
-        this.energy = tile.getEnergyStored();
+        this.energy = tile.container.getStoredPower();
 
     }
 
@@ -53,7 +54,7 @@ public class MessageMachineBase implements IMessage, IMessageHandler<MessageMach
         this.needCycleTime = buf.readInt();
         this.itemCycleTime = buf.readInt();
         this.deviceCycleTime = buf.readInt();
-        this.energy = buf.readInt();
+        this.energy = buf.readLong();
 
     }
 
@@ -69,8 +70,7 @@ public class MessageMachineBase implements IMessage, IMessageHandler<MessageMach
         buf.writeInt(this.needCycleTime);
         buf.writeInt(this.itemCycleTime);
         buf.writeInt(this.deviceCycleTime);
-
-        buf.writeInt(this.energy);
+        buf.writeLong(this.energy);
     }
 
     @Override
@@ -89,9 +89,10 @@ public class MessageMachineBase implements IMessage, IMessageHandler<MessageMach
                 ((TileEntityMachineBase) tileEntity).needCycleTime = message.needCycleTime;
                 ((TileEntityMachineBase) tileEntity).itemCycleTime = message.itemCycleTime;
                 ((TileEntityMachineBase) tileEntity).deviceCycleTime = message.deviceCycleTime;
-                ((TileEntityMachineBase) tileEntity).setEnergyStored(message.energy);
-
-
+                long cap = ((TileEntityMachineBase) tileEntity).container.getCapacity();
+                long input = ((TileEntityMachineBase) tileEntity).container.getInputRate();
+                long output = ((TileEntityMachineBase) tileEntity).container.getOutputRate();
+                ((TileEntityMachineBase) tileEntity).container = new BaseTeslaContainer(message.energy, cap, input, output);
             }
         }
     }
