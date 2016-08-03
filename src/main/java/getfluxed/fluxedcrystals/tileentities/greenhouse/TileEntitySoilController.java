@@ -96,7 +96,7 @@ public class TileEntitySoilController extends TileEntityNBT implements ITickable
         return 8192D;
     }
 
-//    @Override
+    //    @Override
 //    public EnumSet<EnumFacing> getValidOutputs() {
 //        return EnumSet.allOf(EnumFacing.class);
 //    }
@@ -105,17 +105,22 @@ public class TileEntitySoilController extends TileEntityNBT implements ITickable
 //    public EnumSet<EnumFacing> getValidInputs() {
 //        return EnumSet.allOf(EnumFacing.class);
 //    }
+    public void updateMultiBlock() {
+        long check = checkMultiblock();
+        if (check > -1) {
+            this.container.setCapacity(check);
+        }
+        if (!worldObj.isRemote) {
+            PacketHandler.INSTANCE.sendToAllAround(new MessageControllerSync(this), new NetworkRegistry.TargetPoint(getWorld().provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
+            markDirty();
+        }
+
+    }
 
     @Override
     public void update() {
         if (getWorld() != null && !firstTicked) {
-            long check = checkMultiblock();
-            if (check > -1) {
-                this.container.setCapacity(check);
-            }
-            if (!worldObj.isRemote) {
-                markDirty();
-            }
+            updateMultiBlock();
             firstTicked = true;
         }
         //TODO update client when a side is broken

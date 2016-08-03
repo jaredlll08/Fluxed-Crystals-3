@@ -39,6 +39,11 @@ public abstract class BlockMultiblockComponent extends Block implements ITileEnt
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileEntityMultiBlockComponent tile = (TileEntityMultiBlockComponent)worldIn.getTileEntity(pos);
+        if(tile.getMasterTile() !=null){
+            tile.getMasterTile().getMultiBlock().setActive(false);
+            tile.markDirty();
+        }
         super.breakBlock(worldIn, pos, state);
     }
 
