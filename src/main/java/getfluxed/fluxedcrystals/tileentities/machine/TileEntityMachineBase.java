@@ -9,7 +9,7 @@ import getfluxed.fluxedcrystals.blocks.machines.BlockMachine;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.machines.MessageMachineBase;
 import getfluxed.fluxedcrystals.util.NBTHelper;
-import net.darkhax.tesla.api.BaseTeslaContainer;
+import net.darkhax.tesla.api.implementation.BaseTeslaContainer;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

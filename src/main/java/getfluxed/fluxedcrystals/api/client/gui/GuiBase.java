@@ -3,7 +3,7 @@ package getfluxed.fluxedcrystals.api.client.gui;
 import getfluxed.fluxedcrystals.api.generators.generators.GeneratorBase;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineBase;
 import getfluxed.fluxedcrystals.util.RenderUtils;
-import net.darkhax.tesla.api.BaseTeslaContainer;
+import net.darkhax.tesla.api.implementation.BaseTeslaContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;

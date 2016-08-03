@@ -54,13 +54,13 @@ public class TileEntityFluidIO extends TileEntityMultiBlockComponent implements 
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+        if (getMasterTile() != null && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
             return (T) getMasterTile().tank;
         return super.getCapability(capability, facing);
     }
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+        return (getMasterTile() != null && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) || super.hasCapability(capability, facing);
     }
 }

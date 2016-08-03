@@ -12,7 +12,7 @@ public class TileEntityPowerIO extends TileEntityMultiBlockComponent {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER) {
+        if (getMasterTile() != null && capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER) {
             return getMasterTile().hasCapability(capability, facing);
         }
         return super.hasCapability(capability, facing);
@@ -21,7 +21,7 @@ public class TileEntityPowerIO extends TileEntityMultiBlockComponent {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
+        if (getMasterTile() != null && (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER))
             return (T) getMasterTile().getCapability(capability, facing);
         return super.getCapability(capability, facing);
     }

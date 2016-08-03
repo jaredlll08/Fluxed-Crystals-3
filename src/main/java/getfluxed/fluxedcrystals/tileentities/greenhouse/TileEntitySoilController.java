@@ -16,7 +16,7 @@ import getfluxed.fluxedcrystals.blocks.greenhouse.io.BlockCrystalIO;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageControllerSync;
 import getfluxed.fluxedcrystals.network.messages.tiles.MessageGHLoadAll;
-import net.darkhax.tesla.api.BaseTeslaContainer;
+import net.darkhax.tesla.api.implementation.BaseTeslaContainer;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;

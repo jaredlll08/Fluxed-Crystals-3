@@ -1,6 +1,7 @@
 package getfluxed.fluxedcrystals.api;
 
-import net.darkhax.tesla.api.BaseTeslaContainer;
+
+import net.darkhax.tesla.api.implementation.BaseTeslaContainer;
 
 /**
  * Created by alex_ on 30/06/2016.

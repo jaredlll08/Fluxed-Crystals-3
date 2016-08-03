@@ -2,7 +2,7 @@ package getfluxed.fluxedcrystals.network.messages.tiles.machines;
 
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import io.netty.buffer.ByteBuf;
-import net.darkhax.tesla.api.BaseTeslaContainer;
+import net.darkhax.tesla.api.implementation.BaseTeslaContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
