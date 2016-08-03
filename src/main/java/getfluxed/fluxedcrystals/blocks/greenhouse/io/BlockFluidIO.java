@@ -35,7 +35,7 @@ public class BlockFluidIO extends BlockMultiblockComponent {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntityFluidIO tile = (TileEntityFluidIO) world.getTileEntity(pos);
-        if (tile.getMaster() != null && !tile.getMaster().equals(new BlockPos(0, 0, 0)) && tile.getMultiBlock().isActive()) {
+        if (tile.getMaster() != null && !tile.getMaster().equals(new BlockPos(0, 0, 0)) && tile.getMultiBlock() != null && tile.getMultiBlock().isActive()) {
             TileEntitySoilController tank = (TileEntitySoilController) world.getTileEntity(tile.getMaster());
             ItemStack input = player.getHeldItem(hand);
             if (input != null) {
