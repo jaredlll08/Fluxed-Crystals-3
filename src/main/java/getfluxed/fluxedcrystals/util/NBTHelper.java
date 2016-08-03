@@ -196,8 +196,15 @@ public class NBTHelper {
     }
 
     public static boolean isInputEqual(ItemStack input, ItemStack output) {
-        initNBTTagCompound(input);
-        initNBTTagCompound(output);
+        if (input.getTagCompound() != null && output.getTagCompound() == null) {
+            return false;
+        }
+        if (input.getTagCompound() == null && output.getTagCompound() != null) {
+            return false;
+        }
+        if (input.getTagCompound() == null && output.getTagCompound() == null) {
+            return input.isItemEqual(output);
+        }
         if (input.getTagCompound().getKeySet().equals(output.getTagCompound().getKeySet())) {
             for (String s : input.getTagCompound().getKeySet()) {
                 if (!input.getTagCompound().getTag(s).equals(output.getTagCompound().getTag(s))) {
