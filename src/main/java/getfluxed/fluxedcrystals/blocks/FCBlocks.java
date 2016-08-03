@@ -121,9 +121,9 @@ public class FCBlocks {
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
             @Override
             public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
-                return 0xFF0000;
+                return new Random().nextInt();
             }
-        }, crystalCube);
+        }, new Block[]{crystalCube});
     }
 
     public static void postInit() {

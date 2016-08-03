@@ -5,12 +5,10 @@ import getfluxed.fluxedcrystals.client.greenhouse.RenderController;
 import getfluxed.fluxedcrystals.client.greenhouse.monitor.RenderPowerMonitor;
 import getfluxed.fluxedcrystals.client.gui.GUIHandler;
 import getfluxed.fluxedcrystals.events.ClientEventHandler;
-import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.monitor.TileEntityPowerMonitor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 /**
@@ -22,7 +20,7 @@ public class ClientProxy extends CommonProxy {
         super.registerRenderers();
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPowerMonitor.class, new RenderPowerMonitor());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySoilController.class, new RenderController(new ModelCube()));
-        OBJLoader.INSTANCE.addDomain(Reference.modid);
+//        OBJLoader.INSTANCE.addDomain(Reference.modid);
     }
 
     @Override

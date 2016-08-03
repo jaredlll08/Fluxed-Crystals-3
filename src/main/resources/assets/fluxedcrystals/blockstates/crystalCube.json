@@ -1,5 +1,46 @@
 {
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "fluxedcrystals:crystalCube",
+		"custom":{
+		"flip-v": true
+		}
+     },
+    
     "variants": {
-        "normal": { "model": "fluxedcrystals:crystalOne.obj" }
+    	
+        "normal": [
+        {
+		
+		}
+   		 ],
+        "inventory": [{
+            "transform": {
+                "thirdperson": {
+					"translation": [0, 0.2, 0],
+                    "rotation": [ { "y": 0}, {"x": 0}, {"z": 0} ],
+                    "scale": 0.375
+                },
+                "firstperson": {
+                    "rotation": [ { "y": 0}, {"x": 0}, {"z": 0} ]
+                },
+                "gui": {
+                    "rotation": [ {"y": 90} ],
+                    "translation": [0, 0, 0]
+                },
+                "ground": {
+                    "rotation": [ { "y": 0}, {"x": 0}, {"z": 0} ]
+                },
+                "fixed": {
+                	"translation": [0.0, -0.0, 0.0],
+                    "rotation": [ { "y": 0}, {"x": 0}, {"z": 0} ]
+                },
+                "head":{
+                    "rotation": [ { "y": 0}, {"x": 0}, {"z": 0} ]
+                }
+            }
+        }]
     }
 }
+
