@@ -88,10 +88,6 @@ public class FCBlocks {
         registerBlockMultiblock(ghBatteryBasic, "ghBatteryBasic");
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
-
-//        registerBlock(controller, "controller", controller.createNewTileEntity(null, 0).getClass());
-//        registerBlock(frame, "frame", frame.createNewTileEntity(null, 0).getClass());
-//        registerBlock(substrate, "substrate", substrate.createNewTileEntity(null, 0).getClass());
         registerBlock(crystalCube, "crystalCube");
 
         registerGenerators();

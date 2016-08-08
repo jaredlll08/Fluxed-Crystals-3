@@ -10,7 +10,6 @@ import net.minecraft.util.BlockRenderLayer;
  */
 public class BlockCrystalCube extends Block {
 
-
     public BlockCrystalCube() {
         super(Material.GLASS);
     }
