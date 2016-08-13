@@ -1,6 +1,6 @@
 package getfluxed.fluxedcrystals.api.generators.generators;
 
-import getfluxed.fluxedcrystals.api.nbt.TileEntityNBT;
+import getfluxed.fluxedcrystals.api.nbt.TileEntityBase;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.network.messages.tiles.generator.MessageGenerator;
 import net.darkhax.tesla.api.implementation.BaseTeslaContainer;
@@ -17,11 +17,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
-public abstract class GeneratorBase extends TileEntityNBT implements ITickable {
+public abstract class GeneratorBase extends TileEntityBase implements ITickable {
     public ItemStackHandler itemStackHandler;
     public int generationTimer = -1;
     public int generationTimerDefault = -1;
@@ -174,5 +175,10 @@ public abstract class GeneratorBase extends TileEntityNBT implements ITickable {
             return true;
         }
         return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public IItemHandler getInventory() {
+        return itemStackHandler;
     }
 }

@@ -83,7 +83,7 @@ public class OBJColourModel implements IRetexturableModel, IModelCustomData {
         TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
         for (Map.Entry<String, OBJColourModel.Material> e : matLib.materials.entrySet()) {
             if (e.getValue().getTexture().getTextureLocation().getResourcePath().startsWith("#")) {
-                FMLLog.severe("OBJLoader: Unresolved texture '%s' for obj model '%s'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
+                FMLLog.severe("OBJColourModel: Unresolved texture '%s' for obj model '%s'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
                 builder.put(e.getKey(), missing);
             } else {
                 builder.put(e.getKey(), bakedTextureGetter.apply(e.getValue().getTexture().getTextureLocation()));
@@ -281,11 +281,11 @@ public class OBJColourModel implements IRetexturableModel, IModelCustomData {
                     } else {
                         if (!unknownObjectCommands.contains(key)) {
                             unknownObjectCommands.add(key);
-                            FMLLog.info("OBJLoader.Parser: command '%s' (model: '%s') is not currently supported, skipping. Line: %d '%s'", key, objFrom, lineNum, currentLine);
+                            FMLLog.info("OBJColourModel.Parser: command '%s' (model: '%s') is not currently supported, skipping. Line: %d '%s'", key, objFrom, lineNum, currentLine);
                         }
                     }
                 } catch (RuntimeException e) {
-                    throw new RuntimeException(String.format("OBJLoader.Parser: Exception parsing line #%d: `%s`", lineNum, currentLine), e);
+                    throw new RuntimeException(String.format("OBJColourModel.Parser: Exception parsing line #%d: `%s`", lineNum, currentLine), e);
                 }
             }
 
@@ -460,7 +460,7 @@ public class OBJColourModel implements IRetexturableModel, IModelCustomData {
                 } else {
                     if (!unknownMaterialCommands.contains(key)) {
                         unknownMaterialCommands.add(key);
-                        FMLLog.info("OBJLoader.MaterialLibrary: key '%s' (model: '%s') is not currently supported, skipping", key, new ResourceLocation(domain, path));
+                        FMLLog.info("OBJColourModel.MaterialLibrary: key '%s' (model: '%s') is not currently supported, skipping", key, new ResourceLocation(domain, path));
                     }
                 }
             }
@@ -475,7 +475,7 @@ public class OBJColourModel implements IRetexturableModel, IModelCustomData {
         private String name = DEFAULT_NAME;
 
         public Material() {
-            this(new Vector4f(1f, 1f, 1f, 1f));
+            this(new Vector4f(1f, 1f, 1f, 0.5f));
         }
 
         public Material(Vector4f color) {
@@ -483,7 +483,7 @@ public class OBJColourModel implements IRetexturableModel, IModelCustomData {
         }
 
         public Material(OBJColourModel.Texture texture) {
-            this(new Vector4f(1f, 1f, 1f, 1f), texture, DEFAULT_NAME);
+            this(new Vector4f(1f, 1f, 1f, 0.5f), texture, DEFAULT_NAME);
         }
 
         public Material(Vector4f color, OBJColourModel.Texture texture, String name) {
@@ -1152,6 +1152,7 @@ public class OBJColourModel implements IRetexturableModel, IModelCustomData {
                 builder.setContractUVs(true);
                 builder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
                 builder.setTexture(sprite);
+                //Colour tint
                 builder.setQuadTint(0);
                 OBJColourModel.Normal faceNormal = f.getNormal();
                 putVertexData(builder, f.verts[0], faceNormal, OBJColourModel.TextureCoordinate.getDefaultUVs()[0], sprite);

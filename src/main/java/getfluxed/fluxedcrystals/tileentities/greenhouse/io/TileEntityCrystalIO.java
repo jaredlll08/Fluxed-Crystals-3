@@ -4,11 +4,14 @@ import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.api.crystals.ICrystalInfoProvider;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
+import getfluxed.fluxedcrystals.blocks.FCBlocks;
+import getfluxed.fluxedcrystals.blocks.misc.BlockCrystalCube;
 import getfluxed.fluxedcrystals.client.gui.crystalio.ContainerCrystalIO;
 import getfluxed.fluxedcrystals.client.gui.crystalio.GUICrystalIO;
 import getfluxed.fluxedcrystals.items.FCItems;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
+import getfluxed.fluxedcrystals.tileentities.misc.TileEntityCrystalCube;
 import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -40,6 +43,16 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
                 sendUpdate = true;
             } else if (!master.getCrystalInfo().equals(Crystal.NULL) && !master.getCrystalInfo().getName().equals(Crystal.NULL.getName())) {
                 master.setCurrentGrowth(master.getCurrentGrowth() + 100);
+                int stage = (int) ((master.getCurrentGrowth() / (master.getCrystalInfo().getGrowthTimePerBlock() * master.getMultiBlock().getAirBlocks().size())) * 10);
+                switch (stage) {
+                    case 0:
+                        for (BlockPos bp : master.getMultiBlock().getBottomLayer()) {
+                            bp = bp.up();
+                            worldObj.setBlockState(bp, FCBlocks.crystalCube.getDefaultState().withProperty(BlockCrystalCube.onGround, true), 3);
+                            ((TileEntityCrystalCube) worldObj.getTileEntity(bp)).setCrystal(master.getCrystalInfo());
+                        }
+                        break;
+                }
                 if (master.getCurrentGrowth() >= (master.getCrystalInfo().getGrowthTimePerBlock() * master.getMultiBlock().getAirBlocks().size())) {
                     ItemStack retStack = CrystalRegistry.getCrystal(master.getCrystalInfo().getName()).getResourceOut().getItemStack();
                     int retSize = rand.nextInt(master.getCrystalInfo().getCrushedCrystalPerBlockMax()) + getMasterTile().getCrystalInfo().getCrushedCrystalPerBlockMin() * (master.getMultiBlock().getAirBlocks().size());

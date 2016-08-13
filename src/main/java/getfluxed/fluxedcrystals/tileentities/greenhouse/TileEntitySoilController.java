@@ -8,7 +8,7 @@ import getfluxed.fluxedcrystals.api.multiblock.IGreenHouseComponent;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
 import getfluxed.fluxedcrystals.api.nbt.EnumConverter;
 import getfluxed.fluxedcrystals.api.nbt.NBT;
-import getfluxed.fluxedcrystals.api.nbt.TileEntityNBT;
+import getfluxed.fluxedcrystals.api.nbt.TileEntityBase;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrameBattery;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.base.BlockBaseFrame;
@@ -30,6 +30,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.logging.log4j.Level;
 
@@ -40,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Jared on 3/19/2016.
  */
-public class TileEntitySoilController extends TileEntityNBT implements ITickable, IGreenHouseComponent {
+public class TileEntitySoilController extends TileEntityBase implements ITickable, IGreenHouseComponent {
 
     public ItemStackHandler itemStackHandler = new ItemStackHandler(5);
 
@@ -467,5 +468,10 @@ public class TileEntitySoilController extends TileEntityNBT implements ITickable
         } else if (capability == TeslaCapabilities.CAPABILITY_CONSUMER || capability == TeslaCapabilities.CAPABILITY_HOLDER)
             return (T) this.container;
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public IItemHandler getInventory() {
+        return itemStackHandler;
     }
 }

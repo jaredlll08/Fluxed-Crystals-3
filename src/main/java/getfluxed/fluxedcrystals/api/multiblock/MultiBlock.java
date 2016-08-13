@@ -67,7 +67,7 @@ public class MultiBlock {
         }
         LinkedList<BlockPos> topLayer = new LinkedList<>();
         for (int i = 0; i < tag.getTagList("topLayer", Constants.NBT.TAG_COMPOUND).tagCount(); i++) {
-            bottomLayer.add(readPosFromNBT(tag.getTagList("topLayer", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
+            topLayer.add(readPosFromNBT(tag.getTagList("topLayer", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
         LinkedList<BlockPos> airBlocks = new LinkedList<>();
         for (int i = 0; i < tag.getTagList("airBlocks", Constants.NBT.TAG_COMPOUND).tagCount(); i++) {
@@ -86,6 +86,7 @@ public class MultiBlock {
     public static void writeToNBT(NBTTagCompound tag, MultiBlock multiBlock) {
         writePosToNBT(tag, multiBlock.getMaster());
         if (multiBlock.isActive()) {
+
             NBTTagList bottomLayer = new NBTTagList();
             for (BlockPos bp : multiBlock.getBottomLayer()) {
                 NBTTagCompound bpTag = new NBTTagCompound();
@@ -93,6 +94,7 @@ public class MultiBlock {
                 bottomLayer.appendTag(bpTag);
             }
             tag.setTag("bottomLayer", bottomLayer);
+
             NBTTagList topLayer = new NBTTagList();
             for (BlockPos bp : multiBlock.getTopLayer()) {
                 NBTTagCompound bpTag = new NBTTagCompound();
@@ -100,6 +102,7 @@ public class MultiBlock {
                 topLayer.appendTag(bpTag);
             }
             tag.setTag("topLayer", topLayer);
+
             NBTTagList airBlocks = new NBTTagList();
             for (BlockPos bp : multiBlock.getAirBlocks()) {
                 NBTTagCompound bpTag = new NBTTagCompound();

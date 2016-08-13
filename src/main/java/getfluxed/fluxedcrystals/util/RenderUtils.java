@@ -11,8 +11,6 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 
 public class RenderUtils {
 
-
-
     public static void drawLine(double x, double y, double x2, double y2, float red, float green, float blue, float lineWidth) {
         int count = FMLClientHandler.instance().getClient().thePlayer.ticksExisted;
         float alpha = 0.3F + MathHelper.sin((float) (count+x)) * 0.3F + 0.3F;

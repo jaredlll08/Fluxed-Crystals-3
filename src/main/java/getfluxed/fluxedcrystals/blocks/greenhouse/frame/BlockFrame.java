@@ -23,7 +23,6 @@ public class BlockFrame extends BlockMultiblockComponent {
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
         Block block = iblockstate.getBlock();
-
         if (!blockState.equals(iblockstate)) {
             return true;
         }

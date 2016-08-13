@@ -3,7 +3,7 @@ package getfluxed.fluxedcrystals.tileentities.greenhouse;
 import getfluxed.fluxedcrystals.api.multiblock.IFrame;
 import getfluxed.fluxedcrystals.api.multiblock.IGreenHouseComponent;
 import getfluxed.fluxedcrystals.api.multiblock.MultiBlock;
-import getfluxed.fluxedcrystals.api.nbt.TileEntityNBT;
+import getfluxed.fluxedcrystals.api.nbt.TileEntityBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -14,15 +14,8 @@ import javax.annotation.Nullable;
 /**
  * Created by Jared on 3/19/2016.
  */
-public class TileEntityMultiBlockComponent extends TileEntityNBT implements IGreenHouseComponent, IFrame {
+public class TileEntityMultiBlockComponent extends TileEntityBase implements IGreenHouseComponent, IFrame {
     private BlockPos masterPos = new BlockPos(0, 0, 0);
-
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-
-    }
 
     @Override
     public boolean isMaster() {

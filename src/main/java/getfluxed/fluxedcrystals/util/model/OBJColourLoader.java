@@ -33,7 +33,7 @@ public enum OBJColourLoader implements ICustomModelLoader {
 
     public void addDomain(String domain) {
         enabledDomains.add(domain.toLowerCase());
-        FMLLog.log(Level.INFO, "OBJLoader: Domain %s has been added.", domain.toLowerCase());
+        FMLLog.log(Level.INFO, "OBJColourModel: Domain %s has been added.", domain.toLowerCase());
     }
 
     public void onResourceManagerReload(IResourceManager resourceManager) {

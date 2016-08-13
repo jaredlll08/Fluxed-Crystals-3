@@ -27,6 +27,7 @@ import getfluxed.fluxedcrystals.tileentities.greenhouse.monitor.TileEntityPowerM
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineFurnace;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineSawmill;
+import getfluxed.fluxedcrystals.tileentities.misc.TileEntityCrystalCube;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -88,7 +89,7 @@ public class FCBlocks {
         registerBlockMultiblock(ghBatteryBasic, "ghBatteryBasic");
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
-        registerBlock(crystalCube, "crystalCube");
+        registerBlock(crystalCube, "crystalCube", TileEntityCrystalCube.class);
 
         registerGenerators();
         registerMachines();
@@ -117,7 +118,9 @@ public class FCBlocks {
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
             @Override
             public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
-                return new Random().nextInt();
+                if (state.getValue(BlockCrystalCube.onGround))
+                    return ((TileEntityCrystalCube) worldIn.getTileEntity(pos)).getCrystal().getColour();
+                return 0xFFFFFF;
             }
         }, new Block[]{crystalCube});
     }

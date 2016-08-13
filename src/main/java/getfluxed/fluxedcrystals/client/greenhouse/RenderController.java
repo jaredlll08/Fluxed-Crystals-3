@@ -36,21 +36,21 @@ public class RenderController extends TileEntitySpecialRenderer<TileEntitySoilCo
                 GlStateManager.disableLighting();
                 Random rand = new Random(crystal.hashCode());
                 int stage = (int) ((te.getCurrentGrowth() / (crystal.getGrowthTimePerBlock()*te.getMultiBlock().getAirBlocks().size())) * 10);
-                for (double i = 0; i < stage; i++) {
-                    for (BlockPos bp : te.getMultiBlock().getAirBlocks()) {
-                        bp = bp.up();
-                        GL11.glColor4d((rand.nextBoolean() ? crystal.getColourObj().getRed() : crystal.getColourObj().brighter().getRed()) / 255.0, (rand.nextBoolean() ? crystal.getColourObj().getGreen() : crystal.getColourObj().brighter().getGreen()) / 255.0, (rand.nextBoolean() ? crystal.getColourObj().getBlue() : crystal.getColourObj().brighter().getBlue()) / 255.0 / 255.0, 1);
-                        double nX = rand.nextDouble() + 0.5;
-                        double nY = 0.8 + rand.nextDouble();
-                        double nZ = rand.nextDouble() + 0.5;
-                        GL11.glTranslated(bp.subtract(pos).getX() + nX, bp.subtract(pos).getY() - nY, bp.subtract(pos).getZ() + nZ);
-                        float rot = rand.nextFloat();
-                        GL11.glRotatef(rot, rand.nextInt(2),rand.nextInt(2),rand.nextInt(2));
-                        cube.render(0.0675f/2);
-                        GL11.glRotatef(rand.nextFloat(), rand.nextInt(2),rand.nextInt(2),rand.nextInt(2));
-                        GL11.glTranslated(-bp.subtract(pos).getX() - nX, -bp.subtract(pos).getY() + nY, -bp.subtract(pos).getZ() - nZ);
-                    }
-                }
+//                for (double i = 0; i < stage; i++) {
+//                    for (BlockPos bp : te.getMultiBlock().getAirBlocks()) {
+//                        bp = bp.up();
+//                        GL11.glColor4d((rand.nextBoolean() ? crystal.getColourObj().getRed() : crystal.getColourObj().brighter().getRed()) / 255.0, (rand.nextBoolean() ? crystal.getColourObj().getGreen() : crystal.getColourObj().brighter().getGreen()) / 255.0, (rand.nextBoolean() ? crystal.getColourObj().getBlue() : crystal.getColourObj().brighter().getBlue()) / 255.0 / 255.0, 1);
+//                        double nX = rand.nextDouble() + 0.5;
+//                        double nY = 0.8 + rand.nextDouble();
+//                        double nZ = rand.nextDouble() + 0.5;
+//                        GL11.glTranslated(bp.subtract(pos).getX() + nX, bp.subtract(pos).getY() - nY, bp.subtract(pos).getZ() + nZ);
+//                        float rot = rand.nextFloat();
+//                        GL11.glRotatef(rot, rand.nextInt(2),rand.nextInt(2),rand.nextInt(2));
+//                        cube.render(0.0675f/2);
+//                        GL11.glRotatef(rand.nextFloat(), rand.nextInt(2),rand.nextInt(2),rand.nextInt(2));
+//                        GL11.glTranslated(-bp.subtract(pos).getX() - nX, -bp.subtract(pos).getY() + nY, -bp.subtract(pos).getZ() - nZ);
+//                    }
+//                }
                 GlStateManager.enableLighting();
                 GL11.glPopMatrix();
                 GL11.glTranslated(-x, -y, -z);

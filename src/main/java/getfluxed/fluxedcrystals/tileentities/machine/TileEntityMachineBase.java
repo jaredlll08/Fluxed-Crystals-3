@@ -3,7 +3,7 @@ package getfluxed.fluxedcrystals.tileentities.machine;
 import getfluxed.fluxedcrystals.api.capabilities.ItemStackHandlerMachine;
 import getfluxed.fluxedcrystals.api.nbt.EnumConverter;
 import getfluxed.fluxedcrystals.api.nbt.NBT;
-import getfluxed.fluxedcrystals.api.nbt.TileEntityNBT;
+import getfluxed.fluxedcrystals.api.nbt.TileEntityBase;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
 import getfluxed.fluxedcrystals.blocks.machines.BlockMachine;
 import getfluxed.fluxedcrystals.network.PacketHandler;
@@ -21,6 +21,7 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -29,7 +30,7 @@ import java.util.HashMap;
 /**
  * Created by Jared on 5/31/2016.
  */
-public abstract class TileEntityMachineBase extends TileEntityNBT implements ITickable {
+public abstract class TileEntityMachineBase extends TileEntityBase implements ITickable {
 
     public ItemStackHandlerMachine itemStackHandler;
     @NBT(EnumConverter.INT)
@@ -318,5 +319,11 @@ public abstract class TileEntityMachineBase extends TileEntityNBT implements ITi
             return true;
         }
         return super.hasCapability(capability, facing);
+    }
+
+
+    @Override
+    public IItemHandler getInventory() {
+        return itemStackHandler;
     }
 }
