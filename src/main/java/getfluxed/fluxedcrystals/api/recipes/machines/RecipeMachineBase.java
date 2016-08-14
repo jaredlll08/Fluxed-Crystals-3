@@ -52,7 +52,11 @@ public class RecipeMachineBase {
     }
 
     public boolean matchesExact(ItemStack stack) {
-        return RecipeRegistry.compareStacks(input, stack) && NBTHelper.isInputEqual(input, stack);
+        System.out.println(">>>");
+        System.out.println(RecipeRegistry.compareStacks(input, stack));
+        System.out.println(NBTHelper.isInputEqual(input, stack));
+        System.out.println("<<<");
+        return NBTHelper.isInputEqual(input, stack);
     }
 
     public ItemStack getInput() {

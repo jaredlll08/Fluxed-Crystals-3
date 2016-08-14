@@ -35,7 +35,7 @@ public class MessageGHLoadAll implements IMessage, IMessageHandler<MessageGHLoad
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeLong(master.toLong());
-        this.tiles.writeToByteBuf(buf, tiles);
+        MultiBlock.writeToByteBuf(buf, tiles);
     }
 
 

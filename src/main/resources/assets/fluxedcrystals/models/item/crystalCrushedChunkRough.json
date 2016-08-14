@@ -1,7 +1,7 @@
 {
     "parent": "builtin/generated",
     "textures": {
-        "layer0": "fluxedcrystals:items/crystalCrushedShardRough"
+        "layer0": "fluxedcrystals:items/crystalCrushedChunkRough"
     },
     "display": {
         "thirdperson": {

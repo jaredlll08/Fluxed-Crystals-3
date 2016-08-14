@@ -99,14 +99,12 @@ public class OBJColourModel implements IRetexturableModel, IModelCustomData {
 
     @Override
     public IModel process(ImmutableMap<String, String> customData) {
-        OBJColourModel ret = new OBJColourModel(this.matLib, this.modelLocation, new OBJColourModel.CustomData(this.customData, customData));
-        return ret;
+        return new OBJColourModel(this.matLib, this.modelLocation, new CustomData(this.customData, customData));
     }
 
     @Override
     public IModel retexture(ImmutableMap<String, String> textures) {
-        OBJColourModel ret = new OBJColourModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation, this.customData);
-        return ret;
+        return new OBJColourModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation, this.customData);
     }
 
     static class CustomData {
@@ -273,8 +271,7 @@ public class OBJColourModel implements IRetexturableModel, IModelCustomData {
                         groupList.clear();
                         if (key.equalsIgnoreCase("g")) {
                             String[] splitSpace = data.split(" ");
-                            for (String s : splitSpace)
-                                groupList.add(s);
+                            Collections.addAll(groupList, splitSpace);
                         } else {
                             groupList.add(data);
                         }
@@ -549,8 +546,7 @@ public class OBJColourModel implements IRetexturableModel, IModelCustomData {
         }
 
         public ResourceLocation getTextureLocation() {
-            ResourceLocation loc = new ResourceLocation(this.path);
-            return loc;
+            return new ResourceLocation(this.path);
         }
 
         public void setPath(String path) {

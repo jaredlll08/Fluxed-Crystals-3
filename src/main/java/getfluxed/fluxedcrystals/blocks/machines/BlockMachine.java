@@ -39,6 +39,7 @@ public abstract class BlockMachine extends BlockContainer {
     }
 
     protected BlockStateContainer createBlockState() {
+        //noinspection RedundantArrayCreation,RedundantArrayCreation,RedundantArrayCreation
         return new BlockStateContainer(this, new IProperty[]{FACING, isActive});
     }
 

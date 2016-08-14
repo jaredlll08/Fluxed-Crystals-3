@@ -203,7 +203,7 @@ public class NBTHelper {
             return false;
         }
         if (input.getTagCompound() == null && output.getTagCompound() == null) {
-            return input.isItemEqual(output);
+            return RecipeRegistry.compareStacks(input, output);
         }
         if (input.getTagCompound().getKeySet().equals(output.getTagCompound().getKeySet())) {
             for (String s : input.getTagCompound().getKeySet()) {

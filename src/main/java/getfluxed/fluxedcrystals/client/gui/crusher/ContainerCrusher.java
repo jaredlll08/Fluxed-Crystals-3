@@ -1,22 +1,17 @@
 package getfluxed.fluxedcrystals.client.gui.crusher;
 
 import getfluxed.fluxedcrystals.client.gui.base.ContainerBase;
-import getfluxed.fluxedcrystals.client.gui.slot.SlotTileDep;
+import getfluxed.fluxedcrystals.client.gui.slot.SlotMachineInput;
+import getfluxed.fluxedcrystals.client.gui.slot.SlotOutput;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineCrusher;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 
 public class ContainerCrusher extends ContainerBase {
     public ContainerCrusher(InventoryPlayer invPlayer, TileEntityMachineCrusher tile) {
 
-        addSlotToContainer(new SlotTileDep(tile.itemStackHandler, 0, 44, 35));
-        addSlotToContainer(new SlotTileDep(tile.itemStackHandler, 1, 116, 35) {
-            @Override
-            public boolean isItemValid(ItemStack stack) {
-                return false;
-            }
-        });
+        addSlotToContainer(new SlotMachineInput(tile, 0, 44, 35));
+        addSlotToContainer(new SlotOutput(tile.itemStackHandler, 1, 116, 35));
         for (int x = 0; x < 9; x++) {
             addSlotToContainer(new Slot(invPlayer, x, 8 + 18 * x, 142));
         }

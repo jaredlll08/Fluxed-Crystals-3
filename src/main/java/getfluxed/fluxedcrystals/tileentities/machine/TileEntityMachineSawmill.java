@@ -1,7 +1,7 @@
 package getfluxed.fluxedcrystals.tileentities.machine;
 
 import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
-import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
+import getfluxed.fluxedcrystals.api.recipes.machines.RecipeSawmill;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.client.gui.sawmill.ContainerSawmill;
 import getfluxed.fluxedcrystals.client.gui.sawmill.GUISawmill;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 /**
  * Created by Jared on 5/31/2016.
  */
-public class TileEntityMachineSawmill extends TileEntityMachineBase implements IOpenableGUI {
+public class TileEntityMachineSawmill extends TileEntityMachineBase<RecipeSawmill> implements IOpenableGUI {
     public TileEntityMachineSawmill() {
         super(32000, 2);
     }
@@ -26,12 +26,12 @@ public class TileEntityMachineSawmill extends TileEntityMachineBase implements I
     }
 
     @Override
-    public RecipeMachineBase getRecipe(String index) {
+    public RecipeSawmill getRecipe(String index) {
         return RecipeRegistry.getSawmillRecipeByID(index);
     }
 
     @Override
-    public HashMap<String, RecipeMachineBase> getRecipes() {
+    public HashMap<String, RecipeSawmill> getRecipes() {
         return RecipeRegistry.getAllSawmillRecipes();
     }
 

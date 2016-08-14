@@ -23,7 +23,6 @@ public class RecipeData {
         registerCrusherRecipes();
         registerFurnaceRecipes();
         registerSawmillRecipes();
-
     }
 
     private static void registerCrusherRecipes() {
@@ -41,7 +40,7 @@ public class RecipeData {
 
     private static void registerFurnaceRecipes() {
         for (Map.Entry<ItemStack, ItemStack> ent : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
-            RecipeRegistry.registerFurnaceRecipe(ent.getKey().getUnlocalizedName() + ":" + ent.getValue().getUnlocalizedName(), new RecipeFurnace(ent.getKey().copy(), ent.getValue().copy(), ent.getKey().stackSize, ent.getValue().stackSize));
+            RecipeRegistry.registerFurnaceRecipe(new RecipeFurnace(ent.getKey().copy(), ent.getValue().copy(), ent.getKey().stackSize, ent.getValue().stackSize));
         }
         for (Map.Entry<String, Crystal> ent : CrystalRegistry.getCrystalMap().entrySet()) {
             if (ent.getValue().getResourceIn().isItemStack() && ent.getValue().getResourceOut().isItemStack()) {
@@ -50,12 +49,12 @@ public class RecipeData {
                     input.setTagCompound(new NBTTagCompound());
                 }
                 input.getTagCompound().setString("crystalName", ent.getKey());
-                RecipeRegistry.registerFurnaceRecipe(input.getUnlocalizedName() + ":" + ent.getValue().getResourceOut().getItemStack().getUnlocalizedName(), new RecipeFurnace(input, ent.getValue().getResourceOut().getItemStack(), 1, 1));
+                RecipeRegistry.registerFurnaceRecipe(new RecipeFurnace(input, ent.getValue().getResourceOut().getItemStack(), 1, 1));
             }
         }
     }
 
     private static void registerSawmillRecipes() {
-        RecipeRegistry.registerSawmillRecipe(Blocks.LOG.getUnlocalizedName() + ":" + Blocks.PLANKS.getUnlocalizedName(), new RecipeSawmill(new ItemStack(Blocks.LOG), new ItemStack(Blocks.PLANKS), 1, 6));
+        RecipeRegistry.registerSawmillRecipe(new RecipeSawmill(new ItemStack(Blocks.LOG), new ItemStack(Blocks.PLANKS), 1, 6));
     }
 }

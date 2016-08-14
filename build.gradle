@@ -28,13 +28,13 @@ else {
     logger.lifecycle "No build number detected, setting to ${ext.buildnumber}"
 }
 
-version = "1.9-1.0.0-b${buildnumber}"
+version = "1.10.2-1.0.0-b${buildnumber}"
 group= "us.getfluxed" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Fluxed-Crystals 3"
 
 minecraft {
     useDepAts = true
-    version = "1.10.2-12.18.1.2014"
+    version = "1.10.2-12.18.1.2061"
     runDir = "run"
     mappings = "snapshot_20160518"
 }

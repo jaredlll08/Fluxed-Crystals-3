@@ -39,8 +39,7 @@ public class NBTFluidTankConverter implements INBTConverter<FluidTank> {
             fluid = null;
         }
         if (fluid != null) {
-            FluidTank retTank = new FluidTank(fluid, tank.getInteger("capacity"));
-            return retTank;
+            return new FluidTank(fluid, tank.getInteger("capacity"));
         } else {
             return new FluidTank(tank.getInteger("capacity"));
         }

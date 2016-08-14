@@ -52,17 +52,6 @@ public class Config {
         JSONParser<Crystal.CrystalType> readerCrystal = new JSONParser<Crystal.CrystalType>(seed, Crystal.CrystalType.class);
         registerCrystals(readerCrystal.getElements("data"));
         CrystalRegistry.setEditing(false);
-        try {
-            for (Map.Entry<String, Crystal> c : CrystalRegistry.getCrystalMap().entrySet()) {
-                try {
-
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            }
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
     }
 
     public static boolean isBlock(ItemStack stack) {

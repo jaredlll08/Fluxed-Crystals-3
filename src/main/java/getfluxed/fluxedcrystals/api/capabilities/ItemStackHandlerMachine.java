@@ -34,28 +34,10 @@ public class ItemStackHandlerMachine implements IItemHandler, IItemHandlerModifi
     @Override
     public void setStackInSlot(int slot, ItemStack stack) {
         validateSlotIndex(slot);
-        boolean changedItem;
-        if (stacks[slot] == null || stack == null) {
-            changedItem = (stacks[slot] == null) != (stack == null); // non-null
-            // to
-            // null,
-            // or
-            // vice
-            // versa
-        } else {
-            changedItem = !stacks[slot].isItemEqual(stack);
-        }
-
         stacks[slot] = stack;
-
         if (stack != null && stack.stackSize > 64) {
             stack.stackSize = 64;
         }
-
-        if (slot == 0 && changedItem) {
-            tile.updateCurrentRecipe();
-        }
-
         onContentsChanged(slot);
     }
 
@@ -88,6 +70,9 @@ public class ItemStackHandlerMachine implements IItemHandler, IItemHandlerModifi
             limit -= existing.stackSize;
         }
 
+        if(slot == 0 && !tile.isValidInput(stack)){
+            return stack;
+        }
         if (limit <= 0)
             return stack;
 
@@ -95,6 +80,7 @@ public class ItemStackHandlerMachine implements IItemHandler, IItemHandlerModifi
 
         if (!simulate) {
             if (existing == null) {
+                System.out.println(reachedLimit);
                 this.stacks[slot] = reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack;
             } else {
                 existing.stackSize += reachedLimit ? limit : stack.stackSize;
@@ -180,6 +166,8 @@ public class ItemStackHandlerMachine implements IItemHandler, IItemHandlerModifi
     }
 
     protected void onContentsChanged(int slot) {
-
+        if (slot == 0) {
+            tile.updateCurrentRecipe();
+        }
     }
 }

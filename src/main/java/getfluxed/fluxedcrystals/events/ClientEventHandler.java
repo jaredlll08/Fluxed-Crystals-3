@@ -57,7 +57,7 @@ public class ClientEventHandler {
     private static final DecimalFormat timeFormatter = new DecimalFormat("########0.000");
 
     private static long mean(long[] values) {
-        long sum = 0l;
+        long sum = 0;
         for (long v : values) {
             sum += v;
         }

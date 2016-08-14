@@ -1,7 +1,8 @@
 package getfluxed.fluxedcrystals.client.gui.base;
 
-import getfluxed.fluxedcrystals.util.NBTHelper;
+import getfluxed.fluxedcrystals.client.gui.slot.SlotOutput;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -14,7 +15,6 @@ import java.util.List;
  */
 public class ContainerBase extends Container {
 
-
     @Override
     public boolean canInteractWith(EntityPlayer player) {
         return true;
@@ -26,35 +26,37 @@ public class ContainerBase extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer entityPlayer, int idx) {
-        ItemStack itemStack = null;
-        Slot slot = this.inventorySlots.get(idx);
 
-        if ((slot != null) && (slot.getHasStack())) {
-            itemStack = slot.getStack();
+        //TODO change to work with isItemValid ==false
+        ItemStack itemStack = null;
+        Slot clickSlot = (Slot) this.inventorySlots.get(idx);
+
+        if (clickSlot instanceof SlotOutput) {
+            return null;
+        }
+
+        if ((clickSlot != null) && (clickSlot.getHasStack())) {
+            itemStack = clickSlot.getStack();
 
             if (itemStack == null) {
                 return null;
             }
+            List<Slot> selectedSlots = new ArrayList<Slot>();
 
-            List<Slot> selectedSlots = new ArrayList();
-
-            for (int x = 0; x < this.inventorySlots.size(); x++) {
-                Slot advSlot = this.inventorySlots.get(x);
-                if (advSlot.isItemValid(itemStack)) {
-                    selectedSlots.add(advSlot);
+            if (clickSlot.inventory instanceof InventoryPlayer) {
+                for (int x = 0; x < this.inventorySlots.size(); x++) {
+                    Slot advSlot = (Slot) this.inventorySlots.get(x);
+                    if (advSlot.isItemValid(itemStack)) {
+                        selectedSlots.add(advSlot);
+                    }
                 }
-            }
+            } else {
+                for (int x = 0; x < this.inventorySlots.size(); x++) {
+                    Slot advSlot = (Slot) this.inventorySlots.get(x);
 
-            if ((selectedSlots.isEmpty())) {
-                if (itemStack != null) {
-                    for (int x = 0; x < this.inventorySlots.size(); x++) {
-                        Slot advSlot = this.inventorySlots.get(x);
-                        ItemStack dest = advSlot.getStack();
-                        if (dest == null) {
-                            advSlot.putStack(itemStack != null ? itemStack.copy() : null);
-                            advSlot.onSlotChanged();
-                            updateSlot(advSlot);
-                            return null;
+                    if ((advSlot.inventory instanceof InventoryPlayer)) {
+                        if (advSlot.isItemValid(itemStack)) {
+                            selectedSlots.add(advSlot);
                         }
                     }
                 }
@@ -66,7 +68,7 @@ public class ContainerBase extends Container {
                         if (d.getHasStack()) {
                             ItemStack t = d.getStack();
 
-                            if ((itemStack != null) && (NBTHelper.isStackEqual(itemStack, t))) {
+                            if ((itemStack != null) && (itemStack.isItemEqual(t))) {
                                 int maxSize = t.getMaxStackSize();
 
                                 if (maxSize > d.getSlotStackLimit()) {
@@ -83,43 +85,9 @@ public class ContainerBase extends Container {
                                 itemStack.stackSize -= placeAble;
 
                                 if (itemStack.stackSize <= 0) {
-                                    slot.putStack(null);
+                                    clickSlot.putStack(null);
                                     d.onSlotChanged();
-                                    updateSlot(slot);
-                                    updateSlot(d);
-                                    return null;
-                                }
-
-                                updateSlot(d);
-                            }
-                        }
-                    }
-                }
-
-                for (Slot d : selectedSlots) {
-                    if ((d.isItemValid(itemStack)) && (itemStack != null)) {
-                        if (d.getHasStack()) {
-                            ItemStack t = d.getStack();
-                            if ((itemStack != null) && (NBTHelper.isStackEqual(itemStack, t))) {
-                                int maxSize = t.getMaxStackSize();
-
-                                if (maxSize > d.getSlotStackLimit()) {
-                                    maxSize = d.getSlotStackLimit();
-                                }
-
-                                int placeAble = maxSize - t.stackSize;
-
-                                if (itemStack.stackSize < placeAble) {
-                                    placeAble = itemStack.stackSize;
-                                }
-
-                                t.stackSize += placeAble;
-                                itemStack.stackSize -= placeAble;
-
-                                if (itemStack.stackSize <= 0) {
-                                    slot.putStack(null);
-                                    d.onSlotChanged();
-                                    updateSlot(slot);
+                                    updateSlot(clickSlot);
                                     updateSlot(d);
                                     return null;
                                 }
@@ -140,12 +108,13 @@ public class ContainerBase extends Container {
                             }
 
                             itemStack.stackSize -= tmp.stackSize;
+                            //Sets the stack
                             d.putStack(tmp);
 
                             if (itemStack.stackSize <= 0) {
-                                slot.putStack(null);
+                                clickSlot.putStack(null);
                                 d.onSlotChanged();
-                                updateSlot(slot);
+                                updateSlot(clickSlot);
                                 updateSlot(d);
                                 return null;
                             }
@@ -156,9 +125,11 @@ public class ContainerBase extends Container {
                 }
             }
 
-            slot.putStack(itemStack != null ? itemStack.copy() : null);
+            clickSlot.putStack(itemStack != null ? itemStack.copy() : null);
         }
-        updateSlot(slot);
+        updateSlot(clickSlot);
         return null;
     }
+
+
 }

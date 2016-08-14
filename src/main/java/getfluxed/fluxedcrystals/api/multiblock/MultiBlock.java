@@ -79,8 +79,7 @@ public class MultiBlock {
             sides.add(readPosFromNBT(tag.getTagList("sides", Constants.NBT.TAG_COMPOUND).getCompoundTagAt(i)));
         }
         boolean active = tag.getBoolean("active");
-        MultiBlock m = new MultiBlock(master, bottomLayer, topLayer, airBlocks, sides, active);
-        return m;
+        return new MultiBlock(master, bottomLayer, topLayer, airBlocks, sides, active);
     }
 
     public static void writeToNBT(NBTTagCompound tag, MultiBlock multiBlock) {
@@ -254,15 +253,14 @@ public class MultiBlock {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MultiBlock{");
-        sb.append("master=").append(master);
-        sb.append(", bottomLayer=").append(bottomLayer);
-        sb.append(", topLayer=").append(topLayer);
-        sb.append(", airBlocks=").append(airBlocks);
-        sb.append(", sides=").append(sides);
-        sb.append(", active=").append(active);
-        sb.append('}');
-        return sb.toString();
+        String sb = "MultiBlock{" + "master=" + master +
+                ", bottomLayer=" + bottomLayer +
+                ", topLayer=" + topLayer +
+                ", airBlocks=" + airBlocks +
+                ", sides=" + sides +
+                ", active=" + active +
+                '}';
+        return sb;
     }
 
     public boolean containsModule(World world, IGreenHouseModule module) {

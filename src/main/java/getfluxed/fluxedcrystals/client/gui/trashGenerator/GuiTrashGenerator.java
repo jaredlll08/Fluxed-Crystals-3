@@ -1,15 +1,10 @@
 package getfluxed.fluxedcrystals.client.gui.trashGenerator;
 
 import getfluxed.fluxedcrystals.api.client.gui.GuiBase;
-import getfluxed.fluxedcrystals.client.gui.sawmill.ContainerSawmill;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 public class GuiTrashGenerator extends GuiBase {
 

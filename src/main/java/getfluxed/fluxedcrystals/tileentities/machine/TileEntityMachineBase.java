@@ -30,7 +30,7 @@ import java.util.HashMap;
 /**
  * Created by Jared on 5/31/2016.
  */
-public abstract class TileEntityMachineBase extends TileEntityBase implements ITickable {
+public abstract class TileEntityMachineBase<E extends RecipeMachineBase> extends TileEntityBase implements ITickable {
 
     public ItemStackHandlerMachine itemStackHandler;
     @NBT(EnumConverter.INT)
@@ -77,9 +77,9 @@ public abstract class TileEntityMachineBase extends TileEntityBase implements IT
 
     public abstract int getEnergyUsed();
 
-    public abstract RecipeMachineBase getRecipe(String index);
+    public abstract E getRecipe(String index);
 
-    public abstract HashMap<String, RecipeMachineBase> getRecipes();
+    public abstract HashMap<String, E> getRecipes();
 
     public abstract boolean isValidInput(ItemStack stack);
 
@@ -97,13 +97,12 @@ public abstract class TileEntityMachineBase extends TileEntityBase implements IT
                 ((BlockMachine) worldObj.getBlockState(getPos()).getBlock()).setState(false, this.worldObj, getPos());
             }
         }
-
         if (!this.worldObj.isRemote) {
             if (prevEnergy != this.container.getStoredPower()) {
                 prevEnergy = this.container.getStoredPower();
                 sendUpdate = true;
             }
-            RecipeMachineBase recipe = null;
+            E recipe = null;
             if (itemStackHandler.getStackInSlot(0) != null && !getRecipeIndex().isEmpty() && this.container.getStoredPower() > 0) {
                 recipe = getRecipe(getRecipeIndex());
                 if (recipe != null) {
@@ -159,13 +158,13 @@ public abstract class TileEntityMachineBase extends TileEntityBase implements IT
 
             // Last check
             if (this.deviceCycleTime > 0) {
-
                 sendUpdate = true;
 
             }
-            if (pushEnergy()) {
-                sendUpdate = true;
-            }
+            //why was this here?
+//            if (pushEnergy()) {
+//                sendUpdate = true;
+//            }
         }
 
 
@@ -239,7 +238,8 @@ public abstract class TileEntityMachineBase extends TileEntityBase implements IT
 
     public boolean process() {
         if (!getRecipeIndex().isEmpty()) {
-            RecipeMachineBase recipe = getRecipe(getRecipeIndex());
+            System.out.println(getRecipeIndex());
+            E recipe = getRecipe(getRecipeIndex());
             if (recipe != null && itemStackHandler.getStackInSlot(0) != null && recipe.matchesExact(itemStackHandler.getStackInSlot(0))) {
                 if (itemStackHandler.getStackInSlot(1) == null || NBTHelper.isInputEqual(itemStackHandler.getStackInSlot(1), recipe.getOutput())) {
                     itemStackHandler.extractItem(0, 1, false);
@@ -248,6 +248,7 @@ public abstract class TileEntityMachineBase extends TileEntityBase implements IT
                         ItemStack out = recipe.getOutput().copy();
                         out.stackSize = recipe.getOutputAmount();
                         itemStackHandler.insertItem(1, out, false);
+
                         currentTime = 0;
                     }
                 }
@@ -264,9 +265,9 @@ public abstract class TileEntityMachineBase extends TileEntityBase implements IT
         ItemStack inputStack = itemStackHandler.getStackInSlot(0);
         if (inputStack != null && inputStack.stackSize > 0) {
             for (String id : getRecipes().keySet()) {
-                RecipeMachineBase recipe = getRecipe(id);
-
+                E recipe = getRecipe(id);
                 if (recipe != null && recipe.matchesExact(inputStack)) {
+                    System.out.println("matches");
                     setRecipeIndex(id);
                     break;
                 }

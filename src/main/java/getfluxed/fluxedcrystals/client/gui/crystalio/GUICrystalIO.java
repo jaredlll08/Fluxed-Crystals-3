@@ -13,8 +13,6 @@ import org.lwjgl.input.Keyboard;
 
 public class GUICrystalIO extends GuiBase {
 
-    private TileEntityCrystalIO tile;
-
     @Override
     public ResourceLocation getTexture() {
         return new ResourceLocation(Reference.modid, "textures/gui/ioCrystal.png");
@@ -22,7 +20,6 @@ public class GUICrystalIO extends GuiBase {
 
     public GUICrystalIO(InventoryPlayer invPlayer, TileEntityCrystalIO tile2) {
         super(new ContainerCrystalIO(invPlayer, tile2), tile2, invPlayer.player, "Crystal IO");
-        this.tile = tile2;
         this.title = true;
         this.outlines = true;
     }

@@ -1,7 +1,7 @@
 package getfluxed.fluxedcrystals.tileentities.machine;
 
 import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
-import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
+import getfluxed.fluxedcrystals.api.recipes.machines.RecipeCrusher;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.client.gui.crusher.ContainerCrusher;
 import getfluxed.fluxedcrystals.client.gui.crusher.GUICrusher;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 /**
  * Created by Jared on 5/3/2016.
  */
-public class TileEntityMachineCrusher extends TileEntityMachineBase implements IOpenableGUI {
+public class TileEntityMachineCrusher extends TileEntityMachineBase<RecipeCrusher> implements IOpenableGUI {
 
 
     public TileEntityMachineCrusher() {
@@ -28,12 +28,12 @@ public class TileEntityMachineCrusher extends TileEntityMachineBase implements I
     }
 
     @Override
-    public RecipeMachineBase getRecipe(String index) {
+    public RecipeCrusher getRecipe(String index) {
         return RecipeRegistry.getCrusherRecipeByID(index);
     }
 
     @Override
-    public HashMap<String, RecipeMachineBase> getRecipes() {
+    public HashMap<String, RecipeCrusher> getRecipes() {
         return RecipeRegistry.getAllCrusherRecipes();
     }
 

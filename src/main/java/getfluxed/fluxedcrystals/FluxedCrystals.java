@@ -2,8 +2,6 @@ package getfluxed.fluxedcrystals;
 
 import getfluxed.fluxedcrystals.blocks.FCBlocks;
 import getfluxed.fluxedcrystals.config.Config;
-import getfluxed.fluxedcrystals.data.GeneratorData;
-import getfluxed.fluxedcrystals.data.RecipeData;
 import getfluxed.fluxedcrystals.items.FCItems;
 import getfluxed.fluxedcrystals.network.PacketHandler;
 import getfluxed.fluxedcrystals.proxy.CommonProxy;
@@ -21,8 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-
-import static getfluxed.fluxedcrystals.config.Config.registerJsons;
 
 @Mod(modid = Reference.modid, name = Reference.name, version = Reference.version, dependencies = Reference.dependencies)
 public class FluxedCrystals {
@@ -70,6 +66,7 @@ public class FluxedCrystals {
     public void postInit(FMLPostInitializationEvent e) {
         logger.log(Level.INFO, "Starting PostInit");
         long time = System.currentTimeMillis();
+        proxy.registerOthers();
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed PostInit in: " + time + "ms");
@@ -81,9 +78,6 @@ public class FluxedCrystals {
     public void loadComplete(FMLLoadCompleteEvent e) {
         logger.log(Level.INFO, "Starting LoadComplete");
         long time = System.currentTimeMillis();
-        registerJsons();
-        GeneratorData.init();
-        RecipeData.init();
         time = (System.currentTimeMillis() - time);
         totalTime += time;
         logger.log(Level.INFO, "Completed LoadComplete in: " + time + "ms");

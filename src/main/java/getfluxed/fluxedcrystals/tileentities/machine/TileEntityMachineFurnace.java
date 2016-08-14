@@ -1,7 +1,7 @@
 package getfluxed.fluxedcrystals.tileentities.machine;
 
 import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
-import getfluxed.fluxedcrystals.api.recipes.machines.RecipeMachineBase;
+import getfluxed.fluxedcrystals.api.recipes.machines.RecipeFurnace;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.client.gui.furnace.ContainerFurnace;
 import getfluxed.fluxedcrystals.client.gui.furnace.GUIFurnace;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 /**
  * Created by Jared on 5/25/2016.
  */
-public class TileEntityMachineFurnace extends TileEntityMachineBase implements IOpenableGUI {
+public class TileEntityMachineFurnace extends TileEntityMachineBase<RecipeFurnace> implements IOpenableGUI {
     public TileEntityMachineFurnace() {
         super(32000, 2);
     }
@@ -26,12 +26,12 @@ public class TileEntityMachineFurnace extends TileEntityMachineBase implements I
     }
 
     @Override
-    public RecipeMachineBase getRecipe(String index) {
+    public RecipeFurnace getRecipe(String index) {
         return RecipeRegistry.getFurnaceRecipeByID(index);
     }
 
     @Override
-    public HashMap<String, RecipeMachineBase> getRecipes() {
+    public HashMap<String, RecipeFurnace> getRecipes() {
         return RecipeRegistry.getAllFurnaceRecipes();
     }
 

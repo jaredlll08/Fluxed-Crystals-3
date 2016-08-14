@@ -66,7 +66,7 @@ public class MessageFluid implements IMessage, IMessageHandler<MessageFluid, IMe
             TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(message.pos);
 
             if (tileEntity instanceof TileEntitySoilController) {
-                Fluid fluid = null;
+                Fluid fluid;
                 FluidStack stack = null;
                 if (!message.fluid.isEmpty()) {
                     fluid = FluidRegistry.getFluid(message.fluid);

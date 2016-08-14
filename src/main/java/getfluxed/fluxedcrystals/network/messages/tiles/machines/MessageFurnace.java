@@ -90,7 +90,7 @@ public class MessageFurnace implements IMessage, IMessageHandler<MessageFurnace,
                 ((TileEntityMachineFurnace) tileEntity).needCycleTime = message.needCycleTime;
                 ((TileEntityMachineFurnace) tileEntity).itemCycleTime = message.itemCycleTime;
                 ((TileEntityMachineFurnace) tileEntity).deviceCycleTime = message.deviceCycleTime;
-                ((TileEntityMachineFurnace) tileEntity).container = new BaseTeslaContainer(message.energy, 10000, 250, 20);;
+                ((TileEntityMachineFurnace) tileEntity).container = new BaseTeslaContainer(message.energy, 10000, 250, 20);
 
 
             }

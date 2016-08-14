@@ -42,7 +42,7 @@ public class Resource<T> {
         return (String) stack;
     }
 
-    public <T> T getStack() {
+    public T getStack() {
         return (T) stack;
     }
 
