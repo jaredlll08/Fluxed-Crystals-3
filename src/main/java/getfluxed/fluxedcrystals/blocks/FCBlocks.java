@@ -29,20 +29,13 @@ import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineFurnace;
 import getfluxed.fluxedcrystals.tileentities.machine.TileEntityMachineSawmill;
 import getfluxed.fluxedcrystals.tileentities.misc.TileEntityCrystalCube;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
@@ -109,20 +102,8 @@ public class FCBlocks {
 
     }
 
-
     public static void init() {
-        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        for (Map.Entry<String, Block> ent : renderMap.entrySet()) {
-            renderItem.getItemModelMesher().register(Item.getItemFromBlock(ent.getValue()), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
-        }
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
-            @Override
-            public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
-                if (state.getValue(BlockCrystalCube.onGround))
-                    return ((TileEntityCrystalCube) worldIn.getTileEntity(pos)).getCrystal().getColour();
-                return 0xFFFFFF;
-            }
-        }, new Block[]{crystalCube});
+
     }
 
     public static void postInit() {
@@ -155,7 +136,7 @@ public class FCBlocks {
 
     private static void registerBlock(Block block, String key, String texture, Class tile, CreativeTabs tab) {
         block.setUnlocalizedName(key).setCreativeTab(tab);
-        if (FluxedCrystals.isDevEnv)
+        if (FluxedCrystals.isDevEnv && FMLCommonHandler.instance().getEffectiveSide()== Side.CLIENT)
             writeFile(key, texture);
         renderMap.put(texture, block);
         GameRegistry.register(block, new ResourceLocation(Reference.modid + ":" + key));

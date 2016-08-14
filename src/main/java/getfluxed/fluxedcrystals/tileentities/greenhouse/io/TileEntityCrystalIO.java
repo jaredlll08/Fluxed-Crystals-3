@@ -1,30 +1,25 @@
 package getfluxed.fluxedcrystals.tileentities.greenhouse.io;
 
-import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.api.crystals.ICrystalInfoProvider;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.blocks.FCBlocks;
 import getfluxed.fluxedcrystals.blocks.misc.BlockCrystalCube;
-import getfluxed.fluxedcrystals.client.gui.crystalio.ContainerCrystalIO;
-import getfluxed.fluxedcrystals.client.gui.crystalio.GUICrystalIO;
 import getfluxed.fluxedcrystals.items.FCItems;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntityMultiBlockComponent;
 import getfluxed.fluxedcrystals.tileentities.greenhouse.TileEntitySoilController;
 import getfluxed.fluxedcrystals.tileentities.misc.TileEntityCrystalCube;
 import getfluxed.fluxedcrystals.util.NBTHelper;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import java.util.Random;
 
 /**
  * Created by Jared on 6/4/2016.
  */
-public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implements ITickable, IOpenableGUI {
+public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implements ITickable {
 
     public Random rand = new Random(2906);
 
@@ -126,13 +121,4 @@ public class TileEntityCrystalIO extends TileEntityMultiBlockComponent implement
         return null;
     }
 
-    @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
-        return new GUICrystalIO(player.inventory, (TileEntityCrystalIO) world.getTileEntity(pos));
-    }
-
-    @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
-        return new ContainerCrystalIO(player.inventory, (TileEntityCrystalIO) world.getTileEntity(pos));
-    }
 }

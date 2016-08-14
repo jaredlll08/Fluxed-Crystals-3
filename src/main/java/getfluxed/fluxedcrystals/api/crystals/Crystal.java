@@ -1,22 +1,15 @@
 package getfluxed.fluxedcrystals.api.crystals;
 
+import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.api.registries.crystal.Resource;
-import getfluxed.fluxedcrystals.config.Config;
 import getfluxed.fluxedcrystals.util.JsonTools;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.awt.*;
-
-import static getfluxed.fluxedcrystals.config.Config.isBlock;
 
 /**
  * Created by Jared on 4/30/2016.
@@ -140,36 +133,6 @@ public class Crystal {
         this.crushedCrystalPerBlockMin = crushedCrystalPerBlockMin;
     }
 
-    public void updateColour() {
-        try {
-            if (isDynamicColour()) {
-                if (getResourceIn().isItemStack()) {
-                    if (isBlock(getResourceIn().getItemStack())) {
-                        String name = Block.REGISTRY.getNameForObject(Block.getBlockFromItem(getResourceIn().getItemStack().getItem())).toString();
-                        IResource res = FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/blocks/" + name.split(":")[1] + ".png"));
-                        if (res != null) {
-                            setColour(Config.getColour(res.getInputStream()));
-                        }
-
-                    } else {
-                        String name = Item.REGISTRY.getNameForObject(getResourceIn().getItemStack().getItem()).toString();
-                        IResource res = FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/items/" + name.split(":")[1] + ".png"));
-                        if (res != null) {
-                            setColour(Config.getColour(res.getInputStream()));
-                        }
-                    }
-                } else {
-                    if (getResourceIn().isFluidStack()) {
-                        String name = Block.REGISTRY.getNameForObject(getResourceIn().getFluidStack().getFluid().getBlock()).toString() + "_flow";
-                        setColour(Config.getColour(FMLClientHandler.instance().getClient().getResourceManager().getResource(new ResourceLocation(name.split(":")[0], "textures/blocks/" + name.split(":")[1] + ".png")).getInputStream()));
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void writeToByteBuf(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, getName());
     }
@@ -210,7 +173,7 @@ public class Crystal {
 
         public Crystal register() {
             Crystal c = new Crystal(this.name, this.resourceIn, this.resourceOut, this.colour, this.dynamicColour, this.dustNeeded, this.growthTimePerBlock, this.crushedCrystalPerBlockMin, this.crushedCrystalPerBlockMax);
-            c.updateColour();
+            FluxedCrystals.proxy.updateColour(c);
             return c;
         }
     }

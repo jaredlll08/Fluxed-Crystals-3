@@ -43,7 +43,8 @@ public class BlockCoalGenerator extends BlockContainer {
         if (tileentity != null) {
             tileentity.validate();
             worldIn.setTileEntity(pos, tileentity);
-            PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator((TileEntityCoalGenerator) tileentity), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), (double) tileentity.getPos().getX(), (double) tileentity.getPos().getY(), (double) tileentity.getPos().getZ(), 128d));
+            if (!worldIn.isRemote)
+                PacketHandler.INSTANCE.sendToAllAround(new MessageGenerator((TileEntityCoalGenerator) tileentity), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), (double) tileentity.getPos().getX(), (double) tileentity.getPos().getY(), (double) tileentity.getPos().getZ(), 128d));
         }
     }
 

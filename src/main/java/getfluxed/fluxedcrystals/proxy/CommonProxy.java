@@ -1,7 +1,9 @@
 package getfluxed.fluxedcrystals.proxy;
 
+import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeSawmill;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
+import getfluxed.fluxedcrystals.client.gui.GUIHandler;
 import getfluxed.fluxedcrystals.data.GeneratorData;
 import getfluxed.fluxedcrystals.data.RecipeData;
 import getfluxed.fluxedcrystals.events.CommonEventHandler;
@@ -24,7 +26,7 @@ public class CommonProxy {
     }
 
     public void registerGuis() {
-
+        new GUIHandler();
     }
 
 
@@ -32,7 +34,6 @@ public class CommonProxy {
         registerJsons();
         GeneratorData.init();
         RecipeData.init();
-        System.out.println("side");
         for (Map.Entry<String, RecipeSawmill> entry : RecipeRegistry.getAllSawmillRecipes().entrySet()) {
             System.out.println(entry);
         }
@@ -40,5 +41,8 @@ public class CommonProxy {
 
     public EntityPlayer getClientPlayer() {
         return null;
+    }
+
+    public void updateColour(Crystal c) {
     }
 }

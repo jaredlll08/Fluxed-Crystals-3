@@ -1,22 +1,15 @@
 package getfluxed.fluxedcrystals.items;
 
-import getfluxed.fluxedcrystals.api.crystals.Crystal;
-import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrushedCrystal;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalDust;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalSolution;
 import getfluxed.fluxedcrystals.items.crystal.ItemCrystalSolutionShell;
 import getfluxed.fluxedcrystals.reference.Reference;
-import getfluxed.fluxedcrystals.util.NBTHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -50,49 +43,11 @@ public class FCItems {
     }
 
     public static void init() {
-        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        for (Map.Entry<String, Item> ent : renderMap.entrySet()) {
-            if (!(ent.getValue() instanceof ItemCrushedCrystal))
-                renderItem.getItemModelMesher().register(ent.getValue(), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
-        }
-        List<ResourceLocation> locs = new ArrayList<>();
-        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedShardRough"));
-        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedShardSmooth"));
-        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedChunkRough"));
-        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedChunkSmooth"));
 
-        for(int i = 0;i<locs.size();i++){
-            renderItem.getItemModelMesher().register(crystalCrushed, i, new ModelResourceLocation(locs.get(i), "inventory"));
-        }
-
-        ModelBakery.registerItemVariants(crystalCrushed, (ResourceLocation[]) locs.toArray(new ResourceLocation[locs.size()]));
-
-
-        for (Map.Entry<Item, int[]> ent : colourMap.entrySet()) {
-            //noinspection Convert2Lambda
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor() {
-                @Override
-                public int getColorFromItemstack(ItemStack stack, int tintIndex) {
-                    Crystal c = CrystalRegistry.getCrystal(NBTHelper.getString(stack, "crystalName"));
-                    if (c == null) {
-                        System.out.println(NBTHelper.getString(stack, "crystalName"));
-                        return 0xFFFFFF;
-                    }
-                    for (int i : ent.getValue()) {
-                        if (tintIndex == i)
-                            if (c != null) {
-                                return c.getColour();
-                            }
-                    }
-                    return 0xFFFFFF;
-                }
-
-            }, ent.getKey());
-        }
     }
 
     public static void registerItem(Item item, String name, String key) {
-        if (isDevEnv)
+        if (isDevEnv && FMLCommonHandler.instance().getEffectiveSide()== Side.CLIENT)
             writeFile(key, key);
         item.setUnlocalizedName(key).setCreativeTab(tab);
         renderMap.put(key, item);
@@ -101,7 +56,7 @@ public class FCItems {
     }
 
     public static void registerItemColour(Item item, String name, String key, int[] layers) {
-        if (isDevEnv)
+        if (isDevEnv && FMLCommonHandler.instance().getEffectiveSide()== Side.CLIENT)
             writeFile(key, key);
         item.setUnlocalizedName(key).setCreativeTab(tab);
         renderMap.put(key, item);
@@ -110,7 +65,7 @@ public class FCItems {
     }
 
     public static void registerItemColour(Item item, String name, String key, String textures[], int[] layers) {
-        if (isDevEnv) {
+        if (isDevEnv && FMLCommonHandler.instance().getEffectiveSide()== Side.CLIENT) {
             for (String tex : textures) {
                 writeFile(key, tex);
             }
@@ -123,7 +78,7 @@ public class FCItems {
     }
 
     public static void registerItemMeta(Item item, String name, String key) {
-        if (isDevEnv)
+        if (isDevEnv && FMLCommonHandler.instance().getEffectiveSide()== Side.CLIENT)
             writeFile(key, key);
         item.setCreativeTab(tab);
         renderMap.put(key, item);
@@ -132,7 +87,7 @@ public class FCItems {
     }
 
     public static void registerItem(Item item, String name, String key, String texture) {
-        if (isDevEnv)
+        if (isDevEnv && FMLCommonHandler.instance().getEffectiveSide()== Side.CLIENT)
             writeFile(key, texture);
         item.setUnlocalizedName(key).setCreativeTab(tab);
 

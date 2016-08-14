@@ -1,5 +1,6 @@
 package getfluxed.fluxedcrystals.events;
 
+import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.api.crystals.Crystal;
 import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import net.minecraft.client.Minecraft;
@@ -9,7 +10,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.text.DecimalFormat;
@@ -26,15 +27,17 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void stitch(TextureStitchEvent e) {
         for (Crystal c : CrystalRegistry.getCrystalMap().values()) {
-            c.updateColour();
+            FluxedCrystals.proxy.updateColour(c);
         }
     }
 
     @SubscribeEvent
     public void renderGUI(RenderGameOverlayEvent.Text e) {
         if ((e.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS) || (e.getType() == RenderGameOverlayEvent.ElementType.TEXT)) {
+
             Minecraft.getMinecraft().fontRendererObj.drawString("FPS: " + Minecraft.getDebugFPS(), 50, 50, 0xFF55FF);
-            Minecraft.getMinecraft().fontRendererObj.drawString(getTPS(FMLClientHandler.instance().getServer(), Minecraft.getMinecraft().thePlayer), 50, 70, 0xFF55FF);
+            if (FMLCommonHandler.instance().getMinecraftServerInstance() != null)
+                Minecraft.getMinecraft().fontRendererObj.drawString(getTPS(FMLCommonHandler.instance().getMinecraftServerInstance(), Minecraft.getMinecraft().thePlayer), 50, 70, 0xFF55FF);
 
         }
     }

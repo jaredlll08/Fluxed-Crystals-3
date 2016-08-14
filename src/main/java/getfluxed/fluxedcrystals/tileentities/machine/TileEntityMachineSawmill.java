@@ -1,21 +1,15 @@
 package getfluxed.fluxedcrystals.tileentities.machine;
 
-import getfluxed.fluxedcrystals.api.client.gui.IOpenableGUI;
 import getfluxed.fluxedcrystals.api.recipes.machines.RecipeSawmill;
 import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
-import getfluxed.fluxedcrystals.client.gui.sawmill.ContainerSawmill;
-import getfluxed.fluxedcrystals.client.gui.sawmill.GUISawmill;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import java.util.HashMap;
 
 /**
  * Created by Jared on 5/31/2016.
  */
-public class TileEntityMachineSawmill extends TileEntityMachineBase<RecipeSawmill> implements IOpenableGUI {
+public class TileEntityMachineSawmill extends TileEntityMachineBase<RecipeSawmill>  {
     public TileEntityMachineSawmill() {
         super(32000, 2);
     }
@@ -40,13 +34,4 @@ public class TileEntityMachineSawmill extends TileEntityMachineBase<RecipeSawmil
         return RecipeRegistry.isSawmillInput(stack);
     }
 
-    @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
-        return new GUISawmill(player.inventory, (TileEntityMachineSawmill) world.getTileEntity(pos));
-    }
-
-    @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, BlockPos blockPos) {
-        return new ContainerSawmill(player.inventory, (TileEntityMachineSawmill) world.getTileEntity(pos));
-    }
 }

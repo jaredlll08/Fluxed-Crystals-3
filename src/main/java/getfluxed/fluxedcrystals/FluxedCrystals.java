@@ -40,9 +40,10 @@ public class FluxedCrystals {
         long time = System.currentTimeMillis();
         Reference.configDirectory = new File(e.getSuggestedConfigurationFile().getParent(), "/" + Reference.modid + "/");
         Config.load();
-        proxy.registerRenderers();
+
         FCBlocks.preInit();
         FCItems.preInit();
+
         PacketHandler.preInit();
         proxy.registerEvents();
         time = (System.currentTimeMillis() - time);
@@ -56,6 +57,7 @@ public class FluxedCrystals {
         long time = System.currentTimeMillis();
         FCBlocks.init();
         FCItems.init();
+        proxy.registerRenderers();
         proxy.registerGuis();
         time = (System.currentTimeMillis() - time);
         totalTime += time;

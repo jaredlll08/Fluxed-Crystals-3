@@ -1,6 +1,5 @@
 package getfluxed.fluxedcrystals.client.gui.base;
 
-import getfluxed.fluxedcrystals.client.gui.slot.SlotOutput;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -31,9 +30,9 @@ public class ContainerBase extends Container {
         ItemStack itemStack = null;
         Slot clickSlot = (Slot) this.inventorySlots.get(idx);
 
-        if (clickSlot instanceof SlotOutput) {
-            return null;
-        }
+//        if (clickSlot instanceof SlotOutput) {
+//            return null;
+//        }
 
         if ((clickSlot != null) && (clickSlot.getHasStack())) {
             itemStack = clickSlot.getStack();
