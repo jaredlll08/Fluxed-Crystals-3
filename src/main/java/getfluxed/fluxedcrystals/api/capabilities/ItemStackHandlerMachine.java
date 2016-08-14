@@ -80,7 +80,6 @@ public class ItemStackHandlerMachine implements IItemHandler, IItemHandlerModifi
 
         if (!simulate) {
             if (existing == null) {
-                System.out.println(reachedLimit);
                 this.stacks[slot] = reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack;
             } else {
                 existing.stackSize += reachedLimit ? limit : stack.stackSize;

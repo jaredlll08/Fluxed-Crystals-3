@@ -1,6 +1,5 @@
 package getfluxed.fluxedcrystals.api.recipes.machines;
 
-import getfluxed.fluxedcrystals.api.registries.RecipeRegistry;
 import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -52,10 +51,6 @@ public class RecipeMachineBase {
     }
 
     public boolean matchesExact(ItemStack stack) {
-        System.out.println(">>>");
-        System.out.println(RecipeRegistry.compareStacks(input, stack));
-        System.out.println(NBTHelper.isInputEqual(input, stack));
-        System.out.println("<<<");
         return NBTHelper.isInputEqual(input, stack);
     }
 

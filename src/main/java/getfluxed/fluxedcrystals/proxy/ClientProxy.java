@@ -7,7 +7,6 @@ import getfluxed.fluxedcrystals.blocks.misc.BlockCrystalCube;
 import getfluxed.fluxedcrystals.client.greenhouse.ModelCube;
 import getfluxed.fluxedcrystals.client.greenhouse.RenderController;
 import getfluxed.fluxedcrystals.client.greenhouse.monitor.RenderPowerMonitor;
-import getfluxed.fluxedcrystals.client.gui.GUIHandler;
 import getfluxed.fluxedcrystals.config.Config;
 import getfluxed.fluxedcrystals.events.ClientEventHandler;
 import getfluxed.fluxedcrystals.items.FCItems;
@@ -79,7 +78,6 @@ public class ClientProxy extends CommonProxy {
                 public int getColorFromItemstack(ItemStack stack, int tintIndex) {
                     Crystal c = CrystalRegistry.getCrystal(NBTHelper.getString(stack, "crystalName"));
                     if (c == null) {
-                        System.out.println(NBTHelper.getString(stack, "crystalName"));
                         return 0xFFFFFF;
                     }
                     for (int i : ent.getValue()) {

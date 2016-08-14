@@ -238,7 +238,6 @@ public abstract class TileEntityMachineBase<E extends RecipeMachineBase> extends
 
     public boolean process() {
         if (!getRecipeIndex().isEmpty()) {
-            System.out.println(getRecipeIndex());
             E recipe = getRecipe(getRecipeIndex());
             if (recipe != null && itemStackHandler.getStackInSlot(0) != null && recipe.matchesExact(itemStackHandler.getStackInSlot(0))) {
                 if (itemStackHandler.getStackInSlot(1) == null || NBTHelper.isInputEqual(itemStackHandler.getStackInSlot(1), recipe.getOutput())) {
@@ -267,7 +266,6 @@ public abstract class TileEntityMachineBase<E extends RecipeMachineBase> extends
             for (String id : getRecipes().keySet()) {
                 E recipe = getRecipe(id);
                 if (recipe != null && recipe.matchesExact(inputStack)) {
-                    System.out.println("matches");
                     setRecipeIndex(id);
                     break;
                 }

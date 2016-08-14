@@ -69,7 +69,6 @@ public abstract class GeneratorBase extends TileEntityBase implements ITickable 
                     generationTimer = getGenerationTime(itemStackHandler.getStackInSlot(0));
                     generationTimerDefault = getGenerationTime(itemStackHandler.getStackInSlot(0));
                     itemStackHandler.extractItem(0, 1, false);
-                    System.out.println("extracted");
                     if (!worldObj.isRemote)
                         sendUpdate = true;
 

@@ -70,7 +70,7 @@ public class Config {
         Iterator iter = ImageIO.getImageReaders(is);
 
         if (!iter.hasNext()) {
-            System.out.println("Cannot load the specified stream " + stream);
+            FluxedCrystals.logger.error("Unable to get Color for stream: " + stream);
         }
         ImageReader imageReader = (ImageReader) iter.next();
         imageReader.setInput(is);
