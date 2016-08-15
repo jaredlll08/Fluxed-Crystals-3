@@ -50,6 +50,14 @@ import static getfluxed.fluxedcrystals.items.FCItems.crystalCrushed;
  * Created by Jared on 3/23/2016.
  */
 public class ClientProxy extends CommonProxy {
+
+    @Override
+    public void registerRenderersPre() {
+        super.registerRenderersPre();
+        ModelLoaderRegistry.registerLoader(OBJColourLoader.INSTANCE);
+        OBJColourLoader.INSTANCE.addDomain(Reference.modid);
+    }
+
     @Override
     public void registerRenderers() {
         super.registerRenderers();
@@ -107,8 +115,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPowerMonitor.class, new RenderPowerMonitor());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySoilController.class, new RenderController(new ModelCube()));
 //        OBJLoader.INSTANCE.addDomain(Reference.modid);
-        ModelLoaderRegistry.registerLoader(OBJColourLoader.INSTANCE);
-        OBJColourLoader.INSTANCE.addDomain(Reference.modid);
+
     }
 
     @Override

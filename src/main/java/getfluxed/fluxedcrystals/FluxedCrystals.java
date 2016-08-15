@@ -40,7 +40,7 @@ public class FluxedCrystals {
         long time = System.currentTimeMillis();
         Reference.configDirectory = new File(e.getSuggestedConfigurationFile().getParent(), "/" + Reference.modid + "/");
         Config.load();
-
+        proxy.registerRenderersPre();
         FCBlocks.preInit();
         FCItems.preInit();
 

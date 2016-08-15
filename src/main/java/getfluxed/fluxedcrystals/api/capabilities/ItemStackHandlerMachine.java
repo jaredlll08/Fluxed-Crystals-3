@@ -70,7 +70,7 @@ public class ItemStackHandlerMachine implements IItemHandler, IItemHandlerModifi
             limit -= existing.stackSize;
         }
 
-        if(slot == 0 && !tile.isValidInput(stack)){
+        if (slot == 0 && !tile.isValidInput(stack)) {
             return stack;
         }
         if (limit <= 0)
@@ -168,5 +168,7 @@ public class ItemStackHandlerMachine implements IItemHandler, IItemHandlerModifi
         if (slot == 0) {
             tile.updateCurrentRecipe();
         }
+        if (!tile.getWorld().isRemote)
+            tile.markDirty();
     }
 }

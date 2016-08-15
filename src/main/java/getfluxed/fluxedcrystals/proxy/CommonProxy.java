@@ -13,6 +13,10 @@ import static getfluxed.fluxedcrystals.config.Config.registerJsons;
  * Created by Jared on 3/23/2016.
  */
 public class CommonProxy {
+
+    public void registerRenderersPre(){
+
+    }
     public void registerRenderers() {
 
     }
