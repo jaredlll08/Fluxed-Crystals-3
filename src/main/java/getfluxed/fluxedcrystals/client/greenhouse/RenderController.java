@@ -18,7 +18,7 @@ import java.util.Random;
  */
 public class RenderController extends TileEntitySpecialRenderer<TileEntitySoilController> {
     ModelCube cube;
-    ResourceLocation cubeLocation = new ResourceLocation(Reference.modid + ":textures/models/cube.png");
+    ResourceLocation cubeLocation = new ResourceLocation(Reference.MODID + ":textures/models/cube.png");
 
     public RenderController(ModelCube cube) {
         this.cube = cube;

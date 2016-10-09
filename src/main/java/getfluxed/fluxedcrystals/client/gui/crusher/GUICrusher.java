@@ -22,7 +22,7 @@ public class GUICrusher extends GuiBase {
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation(Reference.modid, "textures/gui/machineCrusher.png");
+        return new ResourceLocation(Reference.MODID, "textures/gui/machineCrusher.png");
     }
 
     @Override

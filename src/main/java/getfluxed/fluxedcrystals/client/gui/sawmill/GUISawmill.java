@@ -14,7 +14,7 @@ public class GUISawmill extends GuiBase {
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation(Reference.modid, "textures/gui/machineSawmill.png");
+        return new ResourceLocation(Reference.MODID, "textures/gui/machineSawmill.png");
 
     }
 
@@ -25,7 +25,7 @@ public class GUISawmill extends GuiBase {
         this.outlines = true;
     }
 
-    private static final ResourceLocation texture = new ResourceLocation(Reference.modid, "textures/gui/machineSawmill.png");
+    private static final ResourceLocation texture = new ResourceLocation(Reference.MODID, "textures/gui/machineSawmill.png");
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {

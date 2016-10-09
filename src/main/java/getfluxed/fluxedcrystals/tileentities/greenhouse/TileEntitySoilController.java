@@ -30,7 +30,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.logging.log4j.Level;
 
@@ -470,8 +469,4 @@ public class TileEntitySoilController extends TileEntityBase implements ITickabl
         return super.getCapability(capability, facing);
     }
 
-    @Override
-    public IItemHandler getInventory() {
-        return itemStackHandler;
-    }
 }

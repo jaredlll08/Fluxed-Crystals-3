@@ -1,20 +1,15 @@
 package getfluxed.fluxedcrystals.items.crystal;
 
-import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.api.crystals.Crystal;
-import getfluxed.fluxedcrystals.config.Config;
+import getfluxed.fluxedcrystals.api.registries.CrystalRegistry;
 import getfluxed.fluxedcrystals.items.base.FCItem;
 import getfluxed.fluxedcrystals.util.NBTHelper;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -27,20 +22,6 @@ public class ItemCrystalDust extends FCItem {
     public ItemCrystalDust() {
         setHasSubtypes(true);
     }
-
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        Config.registerJsons();
-        return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
-    }
-
-    @Override
-    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
-
-    }
-
-
 
     @Override
     public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {

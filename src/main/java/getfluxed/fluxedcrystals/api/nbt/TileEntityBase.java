@@ -2,7 +2,6 @@ package getfluxed.fluxedcrystals.api.nbt;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.Arrays;
 
@@ -43,14 +42,5 @@ public class TileEntityBase extends TileEntity {
         });
         return compound;
     }
-
-    public boolean hasInventory() {
-        return getInventory()!=null;
-    }
-
-    public IItemHandler getInventory() {
-        return null;
-    }
-
 
 }

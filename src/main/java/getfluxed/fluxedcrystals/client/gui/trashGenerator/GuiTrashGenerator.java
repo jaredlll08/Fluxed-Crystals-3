@@ -12,7 +12,7 @@ public class GuiTrashGenerator extends GuiBase {
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation(Reference.modid, "textures/gui/trashGenerator.png");
+        return new ResourceLocation(Reference.MODID, "textures/gui/trashGenerator.png");
     }
 
     public GuiTrashGenerator(InventoryPlayer invPlayer, TileEntityTrashGenerator tile2) {

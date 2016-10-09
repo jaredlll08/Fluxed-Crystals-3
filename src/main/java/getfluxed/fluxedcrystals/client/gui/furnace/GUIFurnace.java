@@ -14,7 +14,7 @@ public class GUIFurnace extends GuiBase {
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation(Reference.modid, "textures/gui/machineFurnace.png");
+        return new ResourceLocation(Reference.MODID, "textures/gui/machineFurnace.png");
     }
 
     public GUIFurnace(InventoryPlayer invPlayer, TileEntityMachineFurnace tile2) {

@@ -1,5 +1,6 @@
 package getfluxed.fluxedcrystals.api.nbt;
 
+
 import getfluxed.fluxedcrystals.api.nbt.converters.*;
 
 /**
@@ -15,6 +16,7 @@ public enum EnumConverter {
     FLUIDTANK(NBTFluidTankConverter.class),
     INT(NBTIntConverter.class),
     INTARR(NBTIntArrayConverter.class),
+    ITEMSTACKHANDLER(NBTItemStackHandlerConverter.class),
     LONG(NBTLongConverter.class),
     SHORT(NBTShortConverter.class),
     STRING(NBTStringConverter.class),

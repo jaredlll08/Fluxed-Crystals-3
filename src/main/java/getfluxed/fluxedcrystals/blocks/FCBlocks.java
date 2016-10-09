@@ -3,6 +3,8 @@ package getfluxed.fluxedcrystals.blocks;
 import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.blocks.generators.BlockCoalGenerator;
 import getfluxed.fluxedcrystals.blocks.generators.BlockTrashGenerator;
+import getfluxed.fluxedcrystals.blocks.glassjar.BlockBoilingWater;
+import getfluxed.fluxedcrystals.blocks.glassjar.FluidBoilingWater;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrame;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrameBattery;
@@ -15,6 +17,7 @@ import getfluxed.fluxedcrystals.blocks.machines.BlockCrusher;
 import getfluxed.fluxedcrystals.blocks.machines.BlockFluxfurnace;
 import getfluxed.fluxedcrystals.blocks.machines.BlockSawmill;
 import getfluxed.fluxedcrystals.blocks.misc.BlockCrystalCube;
+import getfluxed.fluxedcrystals.blocks.misc.BlockPyrex;
 import getfluxed.fluxedcrystals.reference.Reference;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityCoalGenerator;
 import getfluxed.fluxedcrystals.tileentities.generators.TileEntityTrashGenerator;
@@ -32,6 +35,7 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -70,6 +74,11 @@ public class FCBlocks {
 
     public static Block crystalCube = new BlockCrystalCube();
 
+    public static Block pyrex = new BlockPyrex();
+
+    public static FluidBoilingWater fluidBoilingWater = new FluidBoilingWater();
+    public static BlockBoilingWater blockBoilingWater;
+
 
     public static void preInit() {
         registerBlock(ghController, "ghSoilController", TileEntitySoilController.class);
@@ -83,6 +92,13 @@ public class FCBlocks {
         registerBlockMultiblock(ghBatteryAdvanced, "ghBatteryAdvanced");
         registerBlock(ghPowerMonitor, "ghPowerMonitor", TileEntityPowerMonitor.class);
         registerBlock(crystalCube, "crystalCube", TileEntityCrystalCube.class);
+
+        registerBlock(pyrex, "pyrex");
+        FluidRegistry.registerFluid(fluidBoilingWater);
+        FluidRegistry.addBucketForFluid(fluidBoilingWater);
+        blockBoilingWater  = new BlockBoilingWater();
+        registerBlock(blockBoilingWater, "boiling_water");
+
 
         registerGenerators();
         registerMachines();
@@ -136,11 +152,11 @@ public class FCBlocks {
 
     private static void registerBlock(Block block, String key, String texture, Class tile, CreativeTabs tab) {
         block.setUnlocalizedName(key).setCreativeTab(tab);
-        if (FluxedCrystals.isDevEnv && FMLCommonHandler.instance().getEffectiveSide()== Side.CLIENT)
+        if (FluxedCrystals.isDevEnv && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
             writeFile(key, texture);
         renderMap.put(texture, block);
-        GameRegistry.register(block, new ResourceLocation(Reference.modid + ":" + key));
-        GameRegistry.register(new ItemBlock(block), new ResourceLocation(Reference.modid + ":" + key));
+        GameRegistry.register(block, new ResourceLocation(Reference.MODID + ":" + key));
+        GameRegistry.register(new ItemBlock(block), new ResourceLocation(Reference.MODID + ":" + key));
         if (tile != null) {
             GameRegistry.registerTileEntity(tile, key);
         }
@@ -153,9 +169,9 @@ public class FCBlocks {
             File baseItem = new File(System.getProperty("user.home") + "/getFluxed/" + key + ".json");
             if (System.getProperty("user.home").endsWith("Jared")) {
 
-                baseBlockState = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/blockstates/" + key + ".json");
-                baseBlockModel = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/models/block/" + key + ".json");
-                baseItem = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/models/item/" + key + ".json");
+                baseBlockState = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.MODID + "/blockstates/" + key + ".json");
+                baseBlockModel = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.MODID + "/models/block/" + key + ".json");
+                baseItem = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.MODID + "/models/item/" + key + ".json");
             }
             if (!baseBlockState.exists()) {
                 baseBlockState.createNewFile();
@@ -165,7 +181,7 @@ public class FCBlocks {
                 while (scan.hasNextLine()) {
                     String line = scan.nextLine();
                     if (line.contains("%modid%")) {
-                        line = line.replace("%modid%", Reference.modid);
+                        line = line.replace("%modid%", Reference.MODID);
                     }
                     if (line.contains("%key%")) {
                         line = line.replace("%key%", key);
@@ -190,7 +206,7 @@ public class FCBlocks {
                 while (scan.hasNextLine()) {
                     String line = scan.nextLine();
                     if (line.contains("%modid%")) {
-                        line = line.replace("%modid%", Reference.modid);
+                        line = line.replace("%modid%", Reference.MODID);
                     }
                     if (line.contains("%key%")) {
                         line = line.replace("%key%", key);
@@ -216,7 +232,7 @@ public class FCBlocks {
                 while (scan.hasNextLine()) {
                     String line = scan.nextLine();
                     if (line.contains("%modid%")) {
-                        line = line.replace("%modid%", Reference.modid);
+                        line = line.replace("%modid%", Reference.MODID);
                     }
                     if (line.contains("%key%")) {
                         line = line.replace("%key%", key);

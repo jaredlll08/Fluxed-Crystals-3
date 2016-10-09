@@ -52,7 +52,7 @@ public class FCItems {
         item.setUnlocalizedName(key).setCreativeTab(tab);
         renderMap.put(key, item);
 
-        GameRegistry.register(item, new ResourceLocation(Reference.modid + ":" + key));
+        GameRegistry.register(item, new ResourceLocation(Reference.MODID + ":" + key));
     }
 
     public static void registerItemColour(Item item, String name, String key, int[] layers) {
@@ -61,7 +61,7 @@ public class FCItems {
         item.setUnlocalizedName(key).setCreativeTab(tab);
         renderMap.put(key, item);
         colourMap.put(item, layers);
-        GameRegistry.register(item, new ResourceLocation(Reference.modid + ":" + key));
+        GameRegistry.register(item, new ResourceLocation(Reference.MODID + ":" + key));
     }
 
     public static void registerItemColour(Item item, String name, String key, String textures[], int[] layers) {
@@ -74,7 +74,7 @@ public class FCItems {
         item.setUnlocalizedName(key).setCreativeTab(tab);
         renderMap.put(key, item);
         colourMap.put(item, layers);
-        GameRegistry.register(item, new ResourceLocation(Reference.modid + ":" + key));
+        GameRegistry.register(item, new ResourceLocation(Reference.MODID + ":" + key));
     }
 
     public static void registerItemMeta(Item item, String name, String key) {
@@ -83,7 +83,7 @@ public class FCItems {
         item.setCreativeTab(tab);
         renderMap.put(key, item);
 
-        GameRegistry.register(item, new ResourceLocation(Reference.modid + ":" + key));
+        GameRegistry.register(item, new ResourceLocation(Reference.MODID + ":" + key));
     }
 
     public static void registerItem(Item item, String name, String key, String texture) {
@@ -91,14 +91,14 @@ public class FCItems {
             writeFile(key, texture);
         item.setUnlocalizedName(key).setCreativeTab(tab);
 
-        GameRegistry.register(item, new ResourceLocation(Reference.modid + ":" + key));
+        GameRegistry.register(item, new ResourceLocation(Reference.MODID + ":" + key));
     }
 
     public static void writeFile(String key, String texture) {
         try {
             File f = new File(System.getProperty("user.home") + "/getFluxed/" + key + ".json");
             if (System.getProperty("user.home").endsWith("Jared")) {
-                f = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.modid + "/models/item/" + key + ".json");
+                f = new File(new File(System.getProperty("user.dir")).getParentFile(), "src/main/resources/assets/" + Reference.MODID + "/models/item/" + key + ".json");
             }
             if (!f.exists()) {
                 f.createNewFile();
@@ -108,7 +108,7 @@ public class FCItems {
                 while (scan.hasNextLine()) {
                     String line = scan.nextLine();
                     if (line.contains("%modid%")) {
-                        line = line.replace("%modid%", Reference.modid);
+                        line = line.replace("%modid%", Reference.MODID);
                     }
                     if (line.contains("%key%")) {
                         line = line.replace("%key%", key);

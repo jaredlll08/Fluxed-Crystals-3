@@ -13,4 +13,9 @@ public class FCBlock extends Block{
         super(Material.IRON);
         setHardness(1.5f);
     }
+
+    public FCBlock(Material material) {
+        super(material);
+        setHardness(1.5f);
+    }
 }

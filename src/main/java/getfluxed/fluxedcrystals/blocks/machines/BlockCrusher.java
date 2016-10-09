@@ -31,6 +31,7 @@ public class BlockCrusher extends BlockMachine {
         return true;
     }
 
+
     public void setState(boolean active, World worldIn, BlockPos pos) {
         IBlockState iblockstate = worldIn.getBlockState(pos);
         TileEntity tileentity = worldIn.getTileEntity(pos);

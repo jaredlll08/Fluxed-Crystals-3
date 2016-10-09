@@ -28,7 +28,7 @@ public class Config {
 
 
     public static void load() {
-        Configuration configuration = new Configuration(new File(Reference.configDirectory, String.format("%s.cfg", Reference.modid)));
+        Configuration configuration = new Configuration(new File(Reference.configDirectory, String.format("%s.cfg", Reference.MODID)));
         configuration.load();
         configuration.save();
     }
@@ -43,7 +43,7 @@ public class Config {
         File seed = new File(jsons, "seedData.json");
         if (!seed.exists()) {
             try {
-                FileUtils.copyURLToFile(FluxedCrystals.class.getResource("/assets/" + Reference.modid + "/jsons/seedData.json"), seed);
+                FileUtils.copyURLToFile(FluxedCrystals.class.getResource("/assets/" + Reference.MODID + "/jsons/seedData.json"), seed);
             } catch (IOException e) {
                 e.printStackTrace();
             }

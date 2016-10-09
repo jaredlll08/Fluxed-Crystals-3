@@ -15,7 +15,7 @@ public class GUICrystalIO extends GuiBase {
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation(Reference.modid, "textures/gui/ioCrystal.png");
+        return new ResourceLocation(Reference.MODID, "textures/gui/ioCrystal.png");
     }
 
     public GUICrystalIO(InventoryPlayer invPlayer, TileEntityCrystalIO tile2) {

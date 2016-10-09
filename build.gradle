@@ -51,6 +51,10 @@ repositories {
         url 'http://mobiusstrip.eu/maven'
     }
     maven {
+        name 'Jared'
+        url 'http://blamejared.com/maven'
+    }
+    maven {
         name 'JEI'
         url "http://dvs1.progwml6.com/files/maven"
     }
@@ -58,8 +62,10 @@ repositories {
 
 dependencies {
     compile "net.darkhax.tesla:Tesla:1.10.2-1.2.1.42"
-    //compile "mcp.mobius.waila:Waila:1.7.0-B3_1.9.4"
-    deobfCompile "mezz.jei:jei_1.9.4:3.4.0.204"
+//    compile "mcp.mobius.waila:Waila:1.7.0-B3_1.9.4"
+    deobfCompile "mezz.jei:jei_1.10.2:3.12.6.304"
+    deobfCompile "com.acronym.base:base:1.10-25"
+
 }
 def commonManifest = {
     attributes 'Main-Class': 'us.getfluxed.fluxedcrystals.FluxedCrystals'

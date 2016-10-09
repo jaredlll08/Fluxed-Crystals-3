@@ -21,9 +21,7 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.HashMap;
 
@@ -288,7 +286,6 @@ public abstract class TileEntityMachineBase<E extends RecipeMachineBase> extends
         readFromNBT(pkt.getNbtCompound());
     }
 
-    @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
@@ -320,9 +317,4 @@ public abstract class TileEntityMachineBase<E extends RecipeMachineBase> extends
         return super.hasCapability(capability, facing);
     }
 
-
-    @Override
-    public IItemHandler getInventory() {
-        return itemStackHandler;
-    }
 }

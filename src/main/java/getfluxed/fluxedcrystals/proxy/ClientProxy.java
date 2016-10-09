@@ -55,7 +55,7 @@ public class ClientProxy extends CommonProxy {
     public void registerRenderersPre() {
         super.registerRenderersPre();
         ModelLoaderRegistry.registerLoader(OBJColourLoader.INSTANCE);
-        OBJColourLoader.INSTANCE.addDomain(Reference.modid);
+        OBJColourLoader.INSTANCE.addDomain(Reference.MODID);
     }
 
     @Override
@@ -64,13 +64,13 @@ public class ClientProxy extends CommonProxy {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         for (Map.Entry<String, Item> ent : FCItems.renderMap.entrySet()) {
             if (!(ent.getValue() instanceof ItemCrushedCrystal))
-                renderItem.getItemModelMesher().register(ent.getValue(), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
+                renderItem.getItemModelMesher().register(ent.getValue(), 0, new ModelResourceLocation(Reference.MODID + ":" + ent.getKey(), "inventory"));
         }
         List<ResourceLocation> locs = new ArrayList<>();
-        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedShardRough"));
-        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedShardSmooth"));
-        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedChunkRough"));
-        locs.add(new ResourceLocation(Reference.modid + ":" + "crystalCrushedChunkSmooth"));
+        locs.add(new ResourceLocation(Reference.MODID + ":" + "crystalCrushedShardRough"));
+        locs.add(new ResourceLocation(Reference.MODID + ":" + "crystalCrushedShardSmooth"));
+        locs.add(new ResourceLocation(Reference.MODID + ":" + "crystalCrushedChunkRough"));
+        locs.add(new ResourceLocation(Reference.MODID + ":" + "crystalCrushedChunkSmooth"));
 
         for (int i = 0; i < locs.size(); i++) {
             renderItem.getItemModelMesher().register(crystalCrushed, i, new ModelResourceLocation(locs.get(i), "inventory"));
@@ -101,7 +101,7 @@ public class ClientProxy extends CommonProxy {
         }
 
         for (Map.Entry<String, Block> ent : FCBlocks.renderMap.entrySet()) {
-            renderItem.getItemModelMesher().register(Item.getItemFromBlock(ent.getValue()), 0, new ModelResourceLocation(Reference.modid + ":" + ent.getKey(), "inventory"));
+            renderItem.getItemModelMesher().register(Item.getItemFromBlock(ent.getValue()), 0, new ModelResourceLocation(Reference.MODID + ":" + ent.getKey(), "inventory"));
         }
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
             @Override
@@ -114,7 +114,7 @@ public class ClientProxy extends CommonProxy {
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPowerMonitor.class, new RenderPowerMonitor());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySoilController.class, new RenderController(new ModelCube()));
-//        OBJLoader.INSTANCE.addDomain(Reference.modid);
+//        OBJLoader.INSTANCE.addDomain(Reference.MODID);
 
     }
 

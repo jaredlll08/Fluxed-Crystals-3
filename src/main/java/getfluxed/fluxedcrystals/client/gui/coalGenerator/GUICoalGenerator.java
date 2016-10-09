@@ -14,7 +14,7 @@ public class GUICoalGenerator extends GuiBase {
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation(Reference.modid, "textures/gui/coalGenerator.png");
+        return new ResourceLocation(Reference.MODID, "textures/gui/coalGenerator.png");
     }
 
     public GUICoalGenerator(InventoryPlayer invPlayer, TileEntityCoalGenerator tile2) {

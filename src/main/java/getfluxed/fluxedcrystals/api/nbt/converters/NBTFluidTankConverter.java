@@ -43,7 +43,6 @@ public class NBTFluidTankConverter implements INBTConverter<FluidTank> {
         } else {
             return new FluidTank(tank.getInteger("capacity"));
         }
-
     }
 
     @Override
