@@ -24,12 +24,13 @@ else {
     try {
         ext.buildnumber += "_" + "git rev-parse --abbrev-ref HEAD".execute().text.trim();
         ext.buildnumber += "_" + "git rev-parse --short HEAD".execute().text.trim();
-    } catch (all) {}
+    } catch (all) {
+    }
     logger.lifecycle "No build number detected, setting to ${ext.buildnumber}"
 }
 
 version = "1.10.2-1.0.0-b${buildnumber}"
-group= "us.getfluxed" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "us.getfluxed" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Fluxed-Crystals 3"
 
 minecraft {
@@ -39,7 +40,7 @@ minecraft {
     mappings = "snapshot_20160518"
 }
 
-repositories {    
+repositories {
     mavenLocal()
     mavenCentral()
     maven {
@@ -64,9 +65,10 @@ dependencies {
     compile "net.darkhax.tesla:Tesla:1.10.2-1.2.1.42"
 //    compile "mcp.mobius.waila:Waila:1.7.0-B3_1.9.4"
     deobfCompile "mezz.jei:jei_1.10.2:3.12.6.304"
-    deobfCompile "com.acronym.base:base:1.10-25"
+    compile "com.teamacronymcoders.base:base:1.10.2-1.1.1-Snapshot.+:deobf"
 
 }
+
 def commonManifest = {
     attributes 'Main-Class': 'us.getfluxed.fluxedcrystals.FluxedCrystals'
     //attributes 'FMLAT': 'base_at.cfg'
@@ -109,19 +111,19 @@ uploadArchives {
     }
 }
 processResources
-{
+        {
 
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+            inputs.property "version", project.version
+            inputs.property "mcversion", project.minecraft.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
 
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
 
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
+                expand 'version': project.version, 'mcversion': project.minecraft.version
+            }
+
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }

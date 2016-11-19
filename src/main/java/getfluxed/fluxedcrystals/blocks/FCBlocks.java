@@ -4,6 +4,8 @@ import getfluxed.fluxedcrystals.FluxedCrystals;
 import getfluxed.fluxedcrystals.blocks.generators.BlockCoalGenerator;
 import getfluxed.fluxedcrystals.blocks.generators.BlockTrashGenerator;
 import getfluxed.fluxedcrystals.blocks.glassjar.BlockBoilingWater;
+import getfluxed.fluxedcrystals.blocks.glassjar.BlockBurner;
+import getfluxed.fluxedcrystals.blocks.glassjar.BlockController;
 import getfluxed.fluxedcrystals.blocks.glassjar.FluidBoilingWater;
 import getfluxed.fluxedcrystals.blocks.greenhouse.BlockSoilController;
 import getfluxed.fluxedcrystals.blocks.greenhouse.frame.BlockFrame;
@@ -75,6 +77,9 @@ public class FCBlocks {
     public static Block crystalCube = new BlockCrystalCube();
 
     public static Block pyrex = new BlockPyrex();
+    public static Block controller = new BlockController();
+    public static Block burner = new BlockBurner();
+
 
     public static FluidBoilingWater fluidBoilingWater = new FluidBoilingWater();
     public static BlockBoilingWater blockBoilingWater;
@@ -94,9 +99,12 @@ public class FCBlocks {
         registerBlock(crystalCube, "crystalCube", TileEntityCrystalCube.class);
 
         registerBlock(pyrex, "pyrex");
+        registerBlock(burner, "burner");
+        registerBlock(controller, "controller");
+
         FluidRegistry.registerFluid(fluidBoilingWater);
         FluidRegistry.addBucketForFluid(fluidBoilingWater);
-        blockBoilingWater  = new BlockBoilingWater();
+        blockBoilingWater = new BlockBoilingWater();
         registerBlock(blockBoilingWater, "boiling_water");
 
 
