@@ -1,8 +1,0 @@
-{
-    "parent": "block/orientable",
-    "textures": {
-        "top": "fluxedcrystals:blocks/machineOther",
-        "front": "fluxedcrystals:blocks/machineCrusherActive",
-        "side": "fluxedcrystals:blocks/machineSide"
-    }
-}

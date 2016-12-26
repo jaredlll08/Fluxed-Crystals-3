@@ -35,9 +35,9 @@ archivesBaseName = "Fluxed-Crystals 3"
 
 minecraft {
     useDepAts = true
-    version = "1.10.2-12.18.1.2061"
+    version = "1.10.2-12.18.2.2151"
     runDir = "run"
-    mappings = "snapshot_20160518"
+    mappings = "snapshot_20161111"
 }
 
 repositories {
@@ -65,7 +65,7 @@ dependencies {
     compile "net.darkhax.tesla:Tesla:1.10.2-1.2.1.42"
 //    compile "mcp.mobius.waila:Waila:1.7.0-B3_1.9.4"
     deobfCompile "mezz.jei:jei_1.10.2:3.12.6.304"
-    compile "com.teamacronymcoders.base:base:1.10.2-1.1.1-Snapshot.+:deobf"
+    compile "com.teamacronymcoders.base:base:1.10.2-1.2.0-Snapshot.+:deobf"
 
 }
 
