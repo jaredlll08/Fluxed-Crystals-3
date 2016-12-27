@@ -7,7 +7,6 @@ import com.teamacronymcoders.base.modulesystem.*;
 import com.teamacronymcoders.base.registry.BlockRegistry;
 import com.teamacronymcoders.base.registry.config.ConfigRegistry;
 import net.minecraft.block.material.Material;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import static com.blamejared.fluxedcrystals.reference.Reference.MODID;
 
@@ -17,7 +16,6 @@ public class FCBlocks extends ModuleBase {
 	public static Material MATERIAL_CRYSTAL = new MaterialCrystal();
 	public static Material MATERIAL_HIDDEN = new MaterialHidden();
 	
-	
 	public static BlockQuartzGlass QUARTZ_GLASS = new BlockQuartzGlass();
 	public static BlockCrystal CRYSTAL = new BlockCrystal();
 	public static BlockCrystalCore CRYSTAL_CORE = new BlockCrystalCore();
@@ -25,12 +23,6 @@ public class FCBlocks extends ModuleBase {
 	public static BlockCrystalCluster CRYSTAL_CLUSTER = new BlockCrystalCluster();
 	
 	public static BlockHidden HIDDEN = new BlockHidden();
-	
-	
-	@Override
-	public void preInit(FMLPreInitializationEvent event) {
-		super.preInit(event);
-	}
 	
 	@Override
 	public void registerBlocks(ConfigRegistry configRegistry, BlockRegistry blockRegistry) {

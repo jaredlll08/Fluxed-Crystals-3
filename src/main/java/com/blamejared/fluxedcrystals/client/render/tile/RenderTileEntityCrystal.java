@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -43,11 +43,7 @@ public class RenderTileEntityCrystal extends TileEntitySpecialRenderer<TileEntit
 			GlStateManager.enableLighting();
 			GL11.glTranslated(-0.5, 0, -0.5);
 		} else {
-			/* Shift down a bit */
-			GL11.glTranslatef(0f, 0.5f, 0);
-		/* Rotate opposite direction at 20% speed */
-			GL11.glRotatef(35 * -0.2f % 360, 0.5f, 0.5f, 0.5f);
-
+		
 		/* Configuration tweaks */
 			float BEAM_START_DISTANCE = 1F;
 			float BEAM_END_DISTANCE = 1.2f;
@@ -59,6 +55,26 @@ public class RenderTileEntityCrystal extends TileEntitySpecialRenderer<TileEntit
 			if(progress > 0.4F) {
 				f2 = (progress - 0.4F) / 0.8F;
 			}
+			GlStateManager.pushMatrix();
+			GlStateManager.disableLighting();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(770, 768);
+			GL11.glRotatef(te.angle, 0, 1, 0);
+			GL11.glScalef(progress, progress, progress);
+			GL11.glColor4f(1, 1, 1, 0.2f);
+			renderBlockModel(te.getWorld(), te.getPos(), te.getWorld().getBlockState(te.getPos()), true);
+			GL11.glScalef(1, 1,1);
+			GL11.glRotatef(te.angle, 0, -1, 0);
+			GlStateManager.blendFunc(770, 771);
+			GlStateManager.disableBlend();
+			GlStateManager.popMatrix();
+//			GL11.glTranslated(-0.5, 0, -0.5);
+			
+			
+//				/* Shift down a bit */
+//			GL11.glTranslatef(0f, 0.5f, 0);
+		/* Rotate opposite direction at 20% speed */
+			GL11.glRotatef(35 * -0.2f % 360, 0.5f, 0.5f, 0.5f);
 			
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glShadeModel(GL11.GL_SMOOTH);
@@ -68,7 +84,6 @@ public class RenderTileEntityCrystal extends TileEntitySpecialRenderer<TileEntit
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glDepthMask(false);
 			Random RANDOM = new Random(te.getPos().toLong());//.setSeed(432L);
-			
 			for(int i = 0; i < (progress * progress) * 60; ++i) {
 				GL11.glRotatef(RANDOM.nextFloat() * 360.0F, 1.0F, 0.0F, 0.0F);
 				GL11.glRotatef(RANDOM.nextFloat() * 360.0F, 0.0F, 1.0F, 0.0F);
@@ -86,7 +101,13 @@ public class RenderTileEntityCrystal extends TileEntitySpecialRenderer<TileEntit
 				vert.pos(0.0D, f3, 1.0F * f4).color(65, 0, 199, 0).endVertex();
 				vert.pos(-0.866D * f4, f3, -0.5F * f4).color(65, 0, 199, 0).endVertex();
 				Tessellator.getInstance().draw();
+				GL11.glRotatef(-(RANDOM.nextFloat() * 360.0F), 1.0F, 0.0F, 0.0F);
+				GL11.glRotatef(-(RANDOM.nextFloat() * 360.0F), 0.0F, 1.0F, 0.0F);
+				GL11.glRotatef(-(RANDOM.nextFloat() * 360.0F), 0.0F, 0.0F, 1.0F);
+				GL11.glRotatef(-(RANDOM.nextFloat() * 360.0F), 1.0F, 0.0F, 0.0F);
+				GL11.glRotatef(-(RANDOM.nextFloat() * 360.0F), 0.0F, 1.0F, 0.0F);
 			}
+			
 			
 			GL11.glDepthMask(true);
 			GL11.glDisable(GL11.GL_CULL_FACE);
@@ -96,7 +117,6 @@ public class RenderTileEntityCrystal extends TileEntitySpecialRenderer<TileEntit
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glEnable(GL11.GL_ALPHA_TEST);
 			RenderHelper.enableStandardItemLighting();
-			//			te.getWorld().spawnParticle(EnumParticleTypes.CRIT_MAGIC, te.getPos().getX(),te.getPos().getY(),te.getPos().getZ(),0,0,0);
 		}
 		
 		

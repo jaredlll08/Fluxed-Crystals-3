@@ -13,11 +13,6 @@ public class FCItems extends ModuleBase {
 	
 	public static ItemTuningFork TUNING_FORK = new ItemTuningFork();
 	
-	@Override
-	public void preInit(FMLPreInitializationEvent event) {
-		super.preInit(event);
-	}
-	
 	
 	@Override
 	public void registerItems(ConfigRegistry configRegistry, ItemRegistry itemRegistry) {

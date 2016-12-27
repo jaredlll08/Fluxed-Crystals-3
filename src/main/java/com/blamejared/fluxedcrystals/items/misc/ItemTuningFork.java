@@ -5,7 +5,7 @@ import com.teamacronymcoders.base.items.ItemBase;
 public class ItemTuningFork extends ItemBase {
 	
 	public ItemTuningFork() {
-		super("tuning_fork");
+		super("quartz_resonator");
 		setFull3D();
 		setMaxStackSize(1);
 	}
