@@ -7,8 +7,10 @@ import com.blamejared.fluxedcrystals.reference.Reference;
 import com.blamejared.fluxedcrystals.tileentities.crystal.*;
 import com.blamejared.fluxedcrystals.util.models.OBJColourLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class ClientProxy extends ServerProxy {
@@ -40,5 +42,9 @@ public class ClientProxy extends ServerProxy {
 	public void setupEvents() {
 		super.setupEvents();
 		MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+	}
+	
+	public World getWorld() {
+		return FMLClientHandler.instance().getClient().theWorld;
 	}
 }

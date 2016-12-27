@@ -34,10 +34,10 @@ public class BlockQuartzGlass extends BlockBase {
 	
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		if(playerIn.getHeldItem(hand) !=null &&playerIn.getHeldItem(hand).getItem() instanceof ItemTuningFork) {
+		if(playerIn.getHeldItem(hand) != null && playerIn.getHeldItem(hand).getItem() instanceof ItemTuningFork) {
 			BlockPos core = getNearestCore(worldIn, pos, new ArrayList<>());
-			if(!core.equals(BlockPos.ORIGIN)){
-				((BlockCrystalCore)worldIn.getBlockState(core).getBlock()).activateCrystal(worldIn,playerIn, core);
+			if(!core.equals(BlockPos.ORIGIN)) {
+				((BlockCrystalCore) worldIn.getBlockState(core).getBlock()).activateCrystal(worldIn, playerIn, core);
 			}
 			return true;
 		}

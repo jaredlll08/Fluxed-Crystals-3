@@ -1,9 +1,9 @@
 package com.blamejared.fluxedcrystals.blocks.crystal;
 
 import com.blamejared.fluxedcrystals.blocks.FCBlocks;
+import com.blamejared.fluxedcrystals.blocks.misc.BlockHidden;
 import com.blamejared.fluxedcrystals.tileentities.crystal.TileEntityCrystal;
 import com.teamacronymcoders.base.blocks.BlockTEBase;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -12,6 +12,8 @@ import net.minecraft.world.*;
 import net.minecraftforge.fml.relauncher.*;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.stream.*;
 
 public class BlockCrystal extends BlockTEBase<TileEntityCrystal> {
 	
@@ -25,6 +27,19 @@ public class BlockCrystal extends BlockTEBase<TileEntityCrystal> {
 		return new TileEntityCrystal();
 	}
 	
+	public boolean checkValidity(IBlockAccess world, BlockPos pos) {
+		List<BlockPos> glassList = StreamSupport.stream(BlockPos.getAllInBox(pos.down(3).south().east(), pos.up(2).west().north()).spliterator(), false).filter(nPos -> !pos.equals(nPos) && world.getBlockState(nPos).getBlock() == FCBlocks.HIDDEN).collect(Collectors.toList());
+		return glassList.size() == 53;
+	}
+	
+	public void invalidate(World world, BlockPos pos){
+		StreamSupport.stream(BlockPos.getAllInBox(pos.down(3).south().east(), pos.up(2).west().north()).spliterator(), false).filter(nPos -> !pos.equals(nPos) && world.getBlockState(nPos).getBlock() == FCBlocks.HIDDEN).forEach(i->{
+			BlockHidden hid = (BlockHidden) world.getBlockState(i).getBlock();
+			hid.revert(world, i);
+		});
+		world.setBlockState(pos, FCBlocks.CRYSTAL_CORE.getDefaultState());
+		
+	}
 	
 	@Override
 	public Class<? extends TileEntity> getTileEntityClass() {

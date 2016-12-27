@@ -38,15 +38,16 @@ public class BlockCrystalCore extends BlockBase {
 		List<BlockPos> glassList = StreamSupport.stream(BlockPos.getAllInBox(pos.down(3).south().east(), pos.up(2).west().north()).spliterator(), false).filter(nPos -> !pos.equals(nPos) && world.getBlockState(nPos).getBlock() == FCBlocks.QUARTZ_GLASS).collect(Collectors.toList());
 		boolean active = glassList.size() == 53;
 		if(active) {
-			glassList.forEach(i->{
+			glassList.forEach(i -> {
 				world.setBlockState(i, FCBlocks.HIDDEN.getDefaultState());
 				TileEntityHidden tile = (TileEntityHidden) world.getTileEntity(i);
 				tile.setOldBlock(FCBlocks.QUARTZ_GLASS);
 			});
 			world.setBlockState(pos, FCBlocks.CRYSTAL.getDefaultState());
-		
+			
 		}
 		
 		return active;
 	}
+	
 }

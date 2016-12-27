@@ -2,6 +2,7 @@ package com.blamejared.fluxedcrystals.tileentities.crystal;
 
 import com.blamejared.fluxedcrystals.api.crystals.*;
 import com.blamejared.fluxedcrystals.api.harvestable.IHarvestable;
+import com.blamejared.fluxedcrystals.blocks.crystal.BlockCrystal;
 import com.blamejared.fluxedcrystals.client.particle.ParticleBeam;
 import com.blamejared.fluxedcrystals.client.sounds.FCSounds;
 import com.teamacronymcoders.base.tileentities.TileEntityBase;
@@ -42,6 +43,10 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 			activatingTime = 0;
 			activated = true;
 		}
+		if(worldObj.getTotalWorldTime() % 20 == 0)
+			if(!((BlockCrystal) worldObj.getBlockState(pos).getBlock()).checkValidity(worldObj, pos)) {
+				((BlockCrystal) worldObj.getBlockState(pos).getBlock()).invalidate(worldObj, pos);
+			}
 		if(activated) {
 			if(worldObj.getTotalWorldTime() % 40 == 0) {
 				if(pylons.isEmpty()) {
@@ -109,7 +114,7 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 							
 						}
 						if(!found) {
-							worldObj.setBlockState(i, Blocks.BARRIER.getDefaultState());
+//							worldObj.setBlockState(i, Blocks.BARRIER.getDefaultState());
 						}
 						
 					}
