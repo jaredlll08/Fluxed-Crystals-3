@@ -5,9 +5,10 @@ import com.blamejared.fluxedcrystals.api.harvestable.IHarvestable;
 import com.blamejared.fluxedcrystals.blocks.crystal.BlockCrystal;
 import com.blamejared.fluxedcrystals.client.particle.ParticleBeam;
 import com.blamejared.fluxedcrystals.client.sounds.FCSounds;
+import com.google.common.collect.*;
 import com.teamacronymcoders.base.tileentities.TileEntityBase;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -26,6 +27,11 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 	
 	private boolean activated = false;
 	private int activatingTime = 100;
+	
+	
+	private BiMap<BlockPos, IBlockState> stateCache = HashBiMap.create();
+	
+	private CrystalOre currentCrystal = null;
 	
 	public TileEntityCrystal() {
 	}
@@ -91,47 +97,41 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 					});
 				}
 			}
-			if(!ran) {
-				Map<String, Integer> commonMap = new HashMap<>();
-				BlockPos.getAllInBox(pos.offset(EnumFacing.DOWN, pos.getY() - 2).west(16).north(16), pos.east(16).south(16)).forEach(i -> {
-					if(worldObj.getBlockState(i) != null && worldObj.getBlockState(i).getBlock() != null && !worldObj.isAirBlock(i) && new ItemStack(worldObj.getBlockState(i).getBlock()) != null && new ItemStack(worldObj.getBlockState(i).getBlock()).getItem() != null || (worldObj.getTileEntity(i) != null && worldObj.getTileEntity(i) instanceof IHarvestable && (((IHarvestable) worldObj.getTileEntity(i)).isHarvestable()))) {
-						ItemStack stack = new ItemStack(worldObj.getBlockState(i).getBlock());
+			if(stateCache.isEmpty() && currentCrystal == null) {
+				BlockPos.getAllInBox(pos.offset(EnumFacing.DOWN, pos.getY() - 2).west(16).north(16), pos.east(16).south(16)).forEach(pos -> {
+					if(!worldObj.isAirBlock(pos) || (worldObj.getTileEntity(pos) != null && worldObj.getTileEntity(pos) instanceof IHarvestable && (((IHarvestable) worldObj.getTileEntity(pos)).isHarvestable()))) {
+						ItemStack stack = new ItemStack(worldObj.getBlockState(pos).getBlock());
 						int[] ids = OreDictionary.getOreIDs(stack);
-						boolean found = false;
 						for(int i1 : ids) {
 							if(OreDictionary.getOreName(i1).startsWith("ore")) {
-								found = true;
-								if(commonMap.containsKey(stack.getUnlocalizedName()))
-									commonMap.replace(stack.getUnlocalizedName(), commonMap.getOrDefault(stack.getUnlocalizedName(), 0) + 1);
-								else {
-									commonMap.put(stack.getUnlocalizedName(), commonMap.getOrDefault(stack.getUnlocalizedName(), 0) + 1);
-								}
-								//							if(!worldObj.isRemote)
-								//								worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), stack));
-								//								worldObj.setBlockToAir(i);
+								stateCache.put(pos, worldObj.getBlockState(pos));
 								break;
 							}
 							
 						}
-						if(!found) {
-//							worldObj.setBlockState(i, Blocks.BARRIER.getDefaultState());
-						}
-						
 					}
 				});
-				final String[] mostCommon = {null};
-				final int[] mostCommonInt = {-1};
-				commonMap.forEach((key, val) -> {
-					if(val > mostCommonInt[0]) {
-						mostCommonInt[0] = val;
-						mostCommon[0] = key;
-					}
-				});
-				System.out.println(mostCommon[0]);
-				ran = true;
+				List<BlockPos> positions = new ArrayList<>(stateCache.keySet());
+				//TODO set current crystal here
 			}
+			
+			//			if(!ran) {
+			//				Map<String, Integer> commonMap = new HashMap<>();
+			//
+			//				final String[] mostCommon = {null};
+			//				final int[] mostCommonInt = {-1};
+			//				commonMap.forEach((key, val) -> {
+			//					if(val > mostCommonInt[0]) {
+			//						mostCommonInt[0] = val;
+			//						mostCommon[0] = key;
+			//					}
+			//				});
+			//				System.out.println(mostCommon[0]);
+			//				ran = true;
+			//			}
 		}
 	}
+	
 	
 	@Override
 	public double getMaxRenderDistanceSquared() {
@@ -140,7 +140,7 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 	
 	@Override
 	public int getColour() {
-		return 0;
+		return colour;
 	}
 	
 	@Override
