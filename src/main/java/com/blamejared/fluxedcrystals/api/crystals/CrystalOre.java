@@ -1,23 +1,62 @@
 package com.blamejared.fluxedcrystals.api.crystals;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+
 public class CrystalOre {
 	
-	private String name;
+	private ItemStack stack;
+	private BlockPos pos;
 	private int colour;
-	private int amount;
 	
-	public CrystalOre(String name, int colour, int amount) {
-		this.name = name;
+	public static final CrystalOre NULL = new CrystalOre(new ItemStack(Blocks.AIR), BlockPos.ORIGIN, 0xFFFFFF);
+	
+	public CrystalOre() {
+		this(new ItemStack(Blocks.AIR), BlockPos.ORIGIN, 0xFFFFFF);
+	}
+	
+	
+	public CrystalOre(ItemStack stack, BlockPos pos, int colour) {
+		this.stack = stack;
+		this.pos = pos;
 		this.colour = colour;
-		this.amount = amount;
 	}
 	
-	public String getName() {
-		return name;
+	public CrystalOre(int colour) {
+		this(new ItemStack(Blocks.AIR), BlockPos.ORIGIN, colour);
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		NBTTagCompound item = new NBTTagCompound();
+		stack.writeToNBT(item);
+		tag.setTag("item", item);
+		tag.setLong("pos", pos.toLong());
+		tag.setInteger("colour", colour);
+		return tag;
+	}
+	
+	public static CrystalOre readFromNBT(NBTTagCompound tag) {
+		return new CrystalOre(ItemStack.loadItemStackFromNBT(tag.getCompoundTag("item")), BlockPos.fromLong(tag.getLong("pos")), tag.getInteger("colour"));
+	}
+	
+	
+	public ItemStack getStack() {
+		return stack;
+	}
+	
+	public void setStack(ItemStack stack) {
+		this.stack = stack;
+	}
+	
+	public BlockPos getPos() {
+		return pos;
+	}
+	
+	public void setPos(BlockPos pos) {
+		this.pos = pos;
 	}
 	
 	public int getColour() {
@@ -26,13 +65,5 @@ public class CrystalOre {
 	
 	public void setColour(int colour) {
 		this.colour = colour;
-	}
-	
-	public int getAmount() {
-		return amount;
-	}
-	
-	public void setAmount(int amount) {
-		this.amount = amount;
 	}
 }
