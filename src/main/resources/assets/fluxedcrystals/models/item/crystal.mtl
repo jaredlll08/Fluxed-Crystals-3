@@ -1,9 +1,0 @@
-# Exported from Wings 3D 1.5.4
-newmtl fluxed
-d 1.0
-Kd 1 1 1
-Ka 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ke 1.0 1.0 1.0
-
-map_Kd fluxedcrystals:models/crystal
