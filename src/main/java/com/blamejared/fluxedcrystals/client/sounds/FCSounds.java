@@ -31,7 +31,6 @@ public class FCSounds extends ModuleBase {
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 		CRYSTAL_HUM = getRegisteredSoundEvent(Reference.MODID + ":crystal_hum");
-		System.out.println(CRYSTAL_HUM.getSoundName());
 	}
 	
 	@Nullable
