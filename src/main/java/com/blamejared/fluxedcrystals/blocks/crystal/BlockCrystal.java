@@ -97,4 +97,6 @@ public class BlockCrystal extends BlockTEBase<TileEntityCrystal> {
 	public boolean isFullyOpaque(IBlockState state) {
 		return false;
 	}
+	
+	
 }

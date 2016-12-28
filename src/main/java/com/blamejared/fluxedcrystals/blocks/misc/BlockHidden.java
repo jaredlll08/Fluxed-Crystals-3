@@ -1,24 +1,20 @@
 package com.blamejared.fluxedcrystals.blocks.misc;
 
-import com.blamejared.fluxedcrystals.FluxedCrystals;
 import com.blamejared.fluxedcrystals.blocks.FCBlocks;
 import com.blamejared.fluxedcrystals.blocks.crystal.BlockCrystal;
 import com.blamejared.fluxedcrystals.tileentities.misc.TileEntityHidden;
 import com.teamacronymcoders.base.blocks.BlockTEBase;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
 import net.minecraftforge.fml.relauncher.*;
-import net.minecraftforge.fml.server.FMLServerHandler;
 
 import javax.annotation.*;
-import java.util.*;
+import java.util.List;
 
 public class BlockHidden extends BlockTEBase<TileEntityHidden> {
 	
@@ -47,9 +43,12 @@ public class BlockHidden extends BlockTEBase<TileEntityHidden> {
 	
 	@Override
 	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-		ItemStack stacks = new ItemStack(((TileEntityHidden)world.getTileEntity(pos)).getOldBlock());
-		spawnAsEntity(world, pos, stacks);
+		if(player.canHarvestBlock(state) && !player.isCreative()) {
+			ItemStack stacks = new ItemStack(((TileEntityHidden) world.getTileEntity(pos)).getOldBlock());
+			spawnAsEntity(world, pos, stacks);
+		}
 		return super.removedByPlayer(state, world, pos, player, willHarvest);
+		
 	}
 	
 	@Override
@@ -62,7 +61,7 @@ public class BlockHidden extends BlockTEBase<TileEntityHidden> {
 	
 	@Override
 	public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, @Nullable ItemStack stack) {
-		ItemStack stacks = new ItemStack(((TileEntityHidden)worldIn.getTileEntity(pos)).getOldBlock());
+		ItemStack stacks = new ItemStack(((TileEntityHidden) worldIn.getTileEntity(pos)).getOldBlock());
 		super.harvestBlock(worldIn, player, pos, state, te, stack);
 		spawnAsEntity(worldIn, pos, stacks);
 	}
