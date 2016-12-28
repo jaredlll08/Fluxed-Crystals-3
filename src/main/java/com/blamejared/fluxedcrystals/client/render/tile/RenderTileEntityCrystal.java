@@ -63,16 +63,15 @@ public class RenderTileEntityCrystal extends TileEntitySpecialRenderer<TileEntit
 			GL11.glScalef(progress, progress, progress);
 			GL11.glColor4f(1, 1, 1, 0.2f);
 			renderBlockModel(te.getWorld(), te.getPos(), te.getWorld().getBlockState(te.getPos()), true);
-			GL11.glScalef(1, 1,1);
+			GL11.glScalef(1, 1, 1);
 			GL11.glRotatef(te.angle, 0, -1, 0);
 			GlStateManager.blendFunc(770, 771);
 			GlStateManager.disableBlend();
 			GlStateManager.popMatrix();
-//			GL11.glTranslated(-0.5, 0, -0.5);
+			//			GL11.glTranslated(-0.5, 0, -0.5);
 			
-			
-//				/* Shift down a bit */
-//			GL11.glTranslatef(0f, 0.5f, 0);
+			//				/* Shift down a bit */
+			//			GL11.glTranslatef(0f, 0.5f, 0);
 		/* Rotate opposite direction at 20% speed */
 			GL11.glRotatef(35 * -0.2f % 360, 0.5f, 0.5f, 0.5f);
 			
