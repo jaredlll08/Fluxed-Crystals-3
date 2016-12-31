@@ -23,6 +23,20 @@ public class CrystalRegistry {
 		return crystalMap;
 	}
 	
+	
+	public static Crystal getCrystalFromName(String name) {
+		return getCrystalMap().get(name);
+	}
+	
+	public static Crystal getCrystalFromOreDict(String oreDict) {
+		for(Map.Entry<String, Crystal> entry : crystalMap.entrySet()) {
+			if(entry.getValue().getOredictIn().equals(oreDict)) {
+				return entry.getValue();
+			}
+		}
+		return null;
+	}
+	
 	public static void dump(boolean overide) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		File jsonFile = new File(Reference.configDirectory, "crystal_data.json");

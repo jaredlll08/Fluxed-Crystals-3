@@ -1,54 +1,59 @@
 package com.blamejared.fluxedcrystals.api.crystals;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
 public class CrystalOre {
 	
-	private ItemStack stack;
+	private String name;
+	private String oreDict;
+	private IBlockState state;
 	private BlockPos pos;
-	private int colour;
 	
-	public static final CrystalOre NULL = new CrystalOre(new ItemStack(Blocks.AIR), BlockPos.ORIGIN, 0xFFFFFF);
+	public static final CrystalOre NULL = new CrystalOre("null","null", Blocks.AIR.getDefaultState(), BlockPos.ORIGIN);
 	
 	public CrystalOre() {
-		this(new ItemStack(Blocks.AIR), BlockPos.ORIGIN, 0xFFFFFF);
+		this("null","null", Blocks.AIR.getDefaultState(), BlockPos.ORIGIN);
 	}
 	
 	
-	public CrystalOre(ItemStack stack, BlockPos pos, int colour) {
-		this.stack = stack;
+	public CrystalOre(String name, String oreDict, IBlockState state, BlockPos pos) {
+		this.name = name;
+		this.oreDict = oreDict;
+		this.state = state;
 		this.pos = pos;
-		this.colour = colour;
 	}
-	
-	public CrystalOre(int colour) {
-		this(new ItemStack(Blocks.AIR), BlockPos.ORIGIN, colour);
-	}
-	
 	
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-		NBTTagCompound item = new NBTTagCompound();
-		stack.writeToNBT(item);
-		tag.setTag("item", item);
+		tag.setString("name", name);
+		tag.setString("oreDict", oreDict);
+		tag.setString("block", state.getBlock().getRegistryName().toString());
+		tag.setInteger("meta", state.getBlock().getMetaFromState(state));
 		tag.setLong("pos", pos.toLong());
-		tag.setInteger("colour", colour);
 		return tag;
 	}
 	
 	public static CrystalOre readFromNBT(NBTTagCompound tag) {
-		return new CrystalOre(ItemStack.loadItemStackFromNBT(tag.getCompoundTag("item")), BlockPos.fromLong(tag.getLong("pos")), tag.getInteger("colour"));
+		return new CrystalOre(tag.getString("name"), tag.getString("oreDict"), Block.getBlockFromName(tag.getString("block")).getDefaultState().getBlock().getStateFromMeta(tag.getInteger("meta")), BlockPos.fromLong(tag.getLong("pos")));
 	}
 	
-	
-	public ItemStack getStack() {
-		return stack;
+	public String getName() {
+		return name;
 	}
 	
-	public void setStack(ItemStack stack) {
-		this.stack = stack;
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public IBlockState getState() {
+		return state;
+	}
+	
+	public void setState(IBlockState state) {
+		this.state = state;
 	}
 	
 	public BlockPos getPos() {
@@ -59,11 +64,22 @@ public class CrystalOre {
 		this.pos = pos;
 	}
 	
-	public int getColour() {
-		return colour;
+	
+	public String getOreDict() {
+		return oreDict;
 	}
 	
-	public void setColour(int colour) {
-		this.colour = colour;
+	public void setOreDict(String oreDict) {
+		this.oreDict = oreDict;
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("CrystalOre{");
+		sb.append("oreDict='").append(oreDict).append('\'');
+		sb.append(", state=").append(state);
+		sb.append(", pos=").append(pos);
+		sb.append('}');
+		return sb.toString();
 	}
 }
