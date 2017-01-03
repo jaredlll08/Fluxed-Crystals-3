@@ -33,7 +33,6 @@ public class FCBlocks extends ModuleBase {
 		blockRegistry.register(CRYSTAL_PYLON);
 		blockRegistry.register(CRYSTAL_CLUSTER);
 		blockRegistry.register(HIDDEN);
-		
 	}
 	
 	@Override

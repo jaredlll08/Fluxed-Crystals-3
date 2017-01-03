@@ -3,6 +3,7 @@ package com.blamejared.fluxedcrystals.blocks.crystal;
 import com.blamejared.fluxedcrystals.blocks.FCBlocks;
 import com.blamejared.fluxedcrystals.tileentities.crystal.TileEntityCrystalPylon;
 import com.teamacronymcoders.base.blocks.BlockTEBase;
+import com.teamacronymcoders.base.items.IIsHidden;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -15,7 +16,7 @@ import net.minecraftforge.fml.relauncher.*;
 
 import javax.annotation.Nonnull;
 
-public class BlockCrystalPylon extends BlockTEBase<TileEntityCrystalPylon> {
+public class BlockCrystalPylon extends BlockTEBase<TileEntityCrystalPylon> implements IIsHidden {
 	
 	public BlockCrystalPylon() {
 		super(FCBlocks.MATERIAL_CRYSTAL, "pylon");

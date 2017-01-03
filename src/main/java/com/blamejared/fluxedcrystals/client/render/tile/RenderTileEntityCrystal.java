@@ -1,6 +1,7 @@
 package com.blamejared.fluxedcrystals.client.render.tile;
 
 import com.blamejared.fluxedcrystals.tileentities.crystal.TileEntityCrystal;
+import com.teamacronymcoders.base.util.RenderingUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -68,10 +69,6 @@ public class RenderTileEntityCrystal extends TileEntitySpecialRenderer<TileEntit
 			GlStateManager.blendFunc(770, 771);
 			GlStateManager.disableBlend();
 			GlStateManager.popMatrix();
-			//			GL11.glTranslated(-0.5, 0, -0.5);
-			
-			//				/* Shift down a bit */
-			//			GL11.glTranslatef(0f, 0.5f, 0);
 		/* Rotate opposite direction at 20% speed */
 			GL11.glRotatef(35 * -0.2f % 360, 0.5f, 0.5f, 0.5f);
 			

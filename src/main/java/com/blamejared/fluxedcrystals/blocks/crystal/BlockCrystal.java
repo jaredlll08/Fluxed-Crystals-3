@@ -4,6 +4,7 @@ import com.blamejared.fluxedcrystals.blocks.FCBlocks;
 import com.blamejared.fluxedcrystals.blocks.misc.BlockHidden;
 import com.blamejared.fluxedcrystals.tileentities.crystal.TileEntityCrystal;
 import com.teamacronymcoders.base.blocks.BlockTEBase;
+import com.teamacronymcoders.base.items.IIsHidden;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -15,7 +16,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.*;
 
-public class BlockCrystal extends BlockTEBase<TileEntityCrystal> {
+public class BlockCrystal extends BlockTEBase<TileEntityCrystal> implements IIsHidden {
 	
 	public BlockCrystal() {
 		super(FCBlocks.MATERIAL_CRYSTAL, "crystal");

@@ -33,6 +33,18 @@ public class TileEntityHidden extends TileEntityBase implements IHarvestable {
 	}
 	
 	@Override
+	protected NBTTagCompound writeToUpdatePacket(NBTTagCompound data) {
+		writeToNBT(data);
+		return super.writeToUpdatePacket(data);
+	}
+	
+	@Override
+	protected void readFromUpdatePacket(NBTTagCompound data) {
+		super.readFromUpdatePacket(data);
+		readFromNBT(data);
+	}
+	
+	@Override
 	public boolean isHarvestable() {
 		return false;
 	}

@@ -33,10 +33,18 @@ public class ClientProxy extends ServerProxy {
 	public void setupBlockColours() {
 		Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
 			if(worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityCrystal) {
-				return ((TileEntityCrystal) worldIn.getTileEntity(pos)).colour;
+				return ((TileEntityCrystal) worldIn.getTileEntity(pos)).getColour();
 			}
-			return 0xFFFFFF;
+			return 0xFF55FF;
 		}, FCBlocks.CRYSTAL);
+		Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
+			if(((TileEntityCrystalCluster) worldIn.getTileEntity(pos)).getCrystalType() != null) {
+				return ((TileEntityCrystalCluster) worldIn.getTileEntity(pos)).getCrystalType().getColour();
+			}
+			return 0xFF55FF;
+		}, FCBlocks.CRYSTAL_CLUSTER);
+		
+		
 	}
 	
 	public void setupEvents() {

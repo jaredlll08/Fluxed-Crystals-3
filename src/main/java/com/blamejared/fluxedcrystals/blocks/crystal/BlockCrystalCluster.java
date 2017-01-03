@@ -2,7 +2,9 @@ package com.blamejared.fluxedcrystals.blocks.crystal;
 
 import com.blamejared.fluxedcrystals.blocks.FCBlocks;
 import com.blamejared.fluxedcrystals.tileentities.crystal.TileEntityCrystalCluster;
-import com.teamacronymcoders.base.blocks.BlockTEBase;
+import com.teamacronymcoders.base.blocks.*;
+import com.teamacronymcoders.base.items.IIsHidden;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -10,9 +12,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
 import net.minecraftforge.fml.relauncher.*;
 
-import javax.annotation.Nonnull;
+import javax.annotation.*;
 
-public class BlockCrystalCluster extends BlockTEBase<TileEntityCrystalCluster> {
+public class BlockCrystalCluster extends BlockTEBase<TileEntityCrystalCluster> implements IIsHidden {
 	
 	public BlockCrystalCluster() {
 		super(FCBlocks.MATERIAL_CRYSTAL, "crystal_cluster");
@@ -75,4 +77,6 @@ public class BlockCrystalCluster extends BlockTEBase<TileEntityCrystalCluster> {
 	public boolean isFullyOpaque(IBlockState state) {
 		return false;
 	}
+	
+	
 }

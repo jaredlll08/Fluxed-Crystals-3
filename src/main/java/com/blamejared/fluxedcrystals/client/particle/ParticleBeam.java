@@ -48,7 +48,7 @@ public class ParticleBeam extends Particle {
 		this.prevYaw = this.rotYaw;
 		this.prevPitch = this.rotPitch;
 		this.particleMaxAge = age;
-		
+		rotationspeed = 5;
 		Entity renderentity = FMLClientHandler.instance().getClient().getRenderViewEntity();
 		int visibleDistance = 50;
 		if(!FMLClientHandler.instance().getClient().gameSettings.fancyGraphics) {
@@ -60,28 +60,27 @@ public class ParticleBeam extends Particle {
 	}
 	
 	public void onUpdate() {
-		this.prevPosX = this.posX;
-		this.prevPosY = (this.posY + this.offset);
-		this.prevPosZ = this.posZ;
+//		this.prevPosX = this.posX;
+//		this.prevPosY = (this.posY + this.offset);
+//		this.prevPosZ = this.posZ;
 		
-		this.prevTickX = this.targX;
-		this.prevTickY = this.targY;
-		this.prevTickZ = this.targZ;
+//		this.prevTickX = this.targX;
+//		this.prevTickY = this.targY;
+//		this.prevTickZ = this.targZ;
 		
-		this.prevYaw = this.rotYaw;
-		this.prevPitch = this.rotPitch;
+//		this.prevYaw = this.rotYaw;
+//		this.prevPitch = this.rotPitch;
 		
 		float distX = (float) (this.posX - this.targX);
 		float distY = (float) (this.posY - this.targY);
 		float distZ = (float) (this.posZ - this.targZ);
-		
 		double var7 = MathHelper.sqrt_double(distX * distX + distZ * distZ);
 		this.rotYaw = ((float) (Math.atan2(distX, distZ) * 180.0D / Math.PI));
 		this.rotPitch = ((float) (Math.atan2(distY, var7) * 180.0D / Math.PI));
 		this.length = MathHelper.sqrt_float(distX * distX + distY * distY + distZ * distZ);
 		this.prevYaw = this.rotYaw;
 		this.prevPitch = this.rotPitch;
-		if(this.particleAge++ >= this.particleMaxAge) {
+		if(++this.particleAge >= this.particleMaxAge) {
 			setExpired();
 		}
 	}
@@ -98,14 +97,12 @@ public class ParticleBeam extends Particle {
 		float size = 1F;
 		size = this.prevSize + (Math.min(10 / 4.0F, 1.0F) - this.prevSize) * partialTicks;
 		float op = 0.4f;
-//		if((this.particleMaxAge - this.particleAge <= 4)) {
-//			op = partialTicks;
-//		}
+		//		if((this.particleMaxAge - this.particleAge <= 4)) {
+		//			op = partialTicks;
+		//		}
 		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Reference.MODID + ":textures/particles/beam.png"));
-		GL11.glTexParameterf(3553, 10242, 10497.0F);
-		GL11.glTexParameterf(3553, 10243, 10497.0F);
-		
-		GL11.glDisable(2884);
+		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+		GL11.glDisable(GL11.GL_CULL_FACE);
 		
 		float var11 = slide + partialTicks;
 		if(this.reverse) {
@@ -113,8 +110,8 @@ public class ParticleBeam extends Particle {
 		}
 		float var12 = var11 * 0.4F - MathHelper.floor_float(-var11 * 0.1F);
 		
-		GL11.glEnable(3042);
-		GL11.glBlendFunc(771, 770);
+		GL11.glEnable(GL11.GL_BLEND);
+//		GL11.glBlendFunc(771, 770);
 		
 		float xx = (float) (this.prevPosX + (this.posX - this.prevPosX) * partialTicks - interpPosX);
 		float yy = (float) (this.prevPosY + (this.posY - this.prevPosY) * partialTicks - interpPosY);
@@ -122,25 +119,27 @@ public class ParticleBeam extends Particle {
 		GL11.glTranslated(xx, yy, zz);
 		
 		float rotYaw = this.prevYaw + (this.rotYaw - this.prevYaw) * partialTicks;
-		float rotPitch = this.prevPitch + (this.rotPitch - this.prevPitch) * partialTicks;
+		float rotPitch = this.prevPitch + (this.rotPitch - this.prevPitch)* 360;
 		GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(180.0F + rotYaw, 0.0F, 0.0F, -1.0F);
 		GL11.glRotatef(rotPitch, 1.0F, 0.0F, 0.0F);
 		
-		double var44 = -0.08D * size;
-		double var17 = 0.08D * size;
-		double var44b = -0.08D * size * this.endMod;
-		double var17b = 0.08D * size * this.endMod;
+		double var44 = -0.08D ;
+		double var17 = 0.08D ;
+		double var44b = -0.08D  * this.endMod;
+		double var17b = 0.08D  * this.endMod;
 		
 		GL11.glPushMatrix();
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		
 		for(int t = 0; t < 6; t++) {
+			GlStateManager.enableNormalize();
 			worldRendererIn.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-			double var29 = this.length * size * var9;
+			double var29 = this.length  * var9;
 			double var31 = 0.0D;
 			double var33 = 1.0D;
-			double var35 = -1.0F + var12 + t / 6.0F;
-			double var37 = this.length * size * var9 + var35;
-			
+			double var35 = -1.0F;
+			double var37 = this.length  * var9;
 			GL11.glRotatef(30, 0.0F, 1.0F, 0.0F);
 			worldRendererIn.pos(var44b, var29, 0).tex(var33, var37).color(this.particleRed, this.particleGreen, this.particleBlue, op).endVertex();
 			worldRendererIn.pos(var44, 0, 0).tex(var33, var35).color(this.particleRed, this.particleGreen, this.particleBlue, op).endVertex();
@@ -148,7 +147,10 @@ public class ParticleBeam extends Particle {
 			worldRendererIn.pos(var17b, var29, 0).tex(var31, var37).color(this.particleRed, this.particleGreen, this.particleBlue, op).endVertex();
 			Tessellator.getInstance().draw();
 		}
+	
+		GL11.glPopAttrib();
 		GL11.glPopMatrix();
+		
 		
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glDisable(3042);
