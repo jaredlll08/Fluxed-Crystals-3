@@ -4,9 +4,10 @@ import com.blamejared.fluxedcrystals.blocks.FCBlocks;
 import com.blamejared.fluxedcrystals.blocks.crystal.BlockCrystal;
 import com.blamejared.fluxedcrystals.tileentities.misc.TileEntityHidden;
 import com.teamacronymcoders.base.blocks.BlockTEBase;
+import com.teamacronymcoders.base.items.IIsHidden;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.relauncher.*;
 import javax.annotation.*;
 import java.util.List;
 
-public class BlockHidden extends BlockTEBase<TileEntityHidden> {
+public class BlockHidden extends BlockTEBase<TileEntityHidden> implements IIsHidden {
 	
 	public BlockHidden() {
 		super(FCBlocks.MATERIAL_HIDDEN, "hidden");
@@ -37,8 +38,7 @@ public class BlockHidden extends BlockTEBase<TileEntityHidden> {
 	}
 	
 	public void revert(@Nonnull World world, @Nonnull BlockPos pos) {
-		IBlockState newState = ((TileEntityHidden) world.getTileEntity(pos)).getOldBlock().getDefaultState();
-		world.setBlockState(pos, newState, 3);
+		world.setBlockState(pos, FCBlocks.QUARTZ_GLASS.getDefaultState(), 3);
 	}
 	
 	@Override

@@ -3,4 +3,4 @@ newmtl default
 d 1.0
 Kd 0.7898538076923077 0.8133333333333334 0.6940444444444445
 
-map_Kd fluxedcrystals:models/crystal
+map_Kd fluxedcrystals:models/crystal_cluster
