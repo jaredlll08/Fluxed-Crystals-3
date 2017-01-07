@@ -7,9 +7,9 @@ import com.blamejared.fluxedcrystals.proxies.ServerProxy;
 import com.blamejared.fluxedcrystals.reference.Reference;
 import com.teamacronymcoders.base.BaseModFoundation;
 import com.teamacronymcoders.base.util.*;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.block.Block;
+import net.minecraft.init.*;
+import net.minecraft.item.*;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,7 +19,6 @@ import java.io.File;
 import java.util.*;
 
 import static com.blamejared.fluxedcrystals.reference.Reference.*;
-import static net.minecraftforge.oredict.OreDictionary.getOres;
 
 @Mod(modid = MODID, name = NAME, version = VERSION)
 public class FluxedCrystals extends BaseModFoundation<FluxedCrystals> {
@@ -67,30 +66,23 @@ public class FluxedCrystals extends BaseModFoundation<FluxedCrystals> {
 				ores.add(s);
 			}
 		}
-		Map<String, Float> rarityMap = new HashMap<>();
-		rarityMap.put("Coal", 0.1f);
-		rarityMap.put("Diamond", 10f);
-		rarityMap.put("Emerald", 15f);
-		rarityMap.put("Gold", 5f);
-		rarityMap.put("Iron", 2f);
-		rarityMap.put("Lapis", 0.5f);
-		rarityMap.put("Quartz", 1f);
-		rarityMap.put("Redstone", 0.8f);
-		ores.forEach(ore -> {
-			CrystalRegistry.register(new Crystal(ore.split("ore")[1], ore, getOreResults(ore), ColourHelper.getColour(ResourceUtils.getResourceFromItem(getOres(getOreResults(ore)).get(0)).getInputStream()), rarityMap.getOrDefault(ore.split("ore"), 1.5f)));
-			//						CrystalRegistry.register(ore, new Crystal(ore.split("ore")[1], ore, ColourHelper.getColour(ResourceUtils.getResourceFromItem(getOres(ore).get(0)).getInputStream()), rarityMap.getOrDefault(ore.split("ore")[1], 1.5f)));
-		});
+		registerCrystal("Coal", Blocks.COAL_ORE, Items.COAL, 0.1f);
+		registerCrystal("Diamond", Blocks.DIAMOND_ORE, Items.DIAMOND, 10);
+		registerCrystal("Emerald", Blocks.EMERALD_ORE, Items.EMERALD, 15f);
+		registerCrystal("Gold", Blocks.GOLD_ORE, Items.GOLD_INGOT, 5f);
+		registerCrystal("Iron", Blocks.IRON_ORE, Items.IRON_INGOT, 2f);
+		registerCrystal("Lapis", Blocks.LAPIS_ORE, new ItemStack(Items.DYE, 1, 4), 0.5f);
+		registerCrystal("Quartz", Blocks.QUARTZ_ORE, Items.QUARTZ, 1f);
+		registerCrystal("Redstone", Blocks.REDSTONE_ORE, Items.REDSTONE, 0.8f);
 		CrystalRegistry.dump(true);
 	}
 	
-	public String getOreResults(String oreDict) {
-		ItemStack stackIn = (!getOres(oreDict, false).isEmpty()) ? getOres(oreDict, false).get(0) : null;
-		if(stackIn == null) {
-			return oreDict;
-		} else {
-			ItemStack out = FurnaceRecipes.instance().getSmeltingResult(stackIn);
-			return OreDictionary.getOreName(OreDictionary.getOreIDs(out)[0]);
-		}
+	public void registerCrystal(String name, Block blockin, Item itemout, float cost) {
+		CrystalRegistry.register(new Crystal(name, new ItemStack(blockin), new ItemStack(itemout), ColourHelper.getColour(ResourceUtils.getResourceFromItem(new ItemStack(itemout)).getInputStream()), cost));
+	}
+	
+	public void registerCrystal(String name, Block blockin, ItemStack itemout, float cost) {
+		CrystalRegistry.register(new Crystal(name, new ItemStack(blockin), itemout, ColourHelper.getColour(ResourceUtils.getResourceFromItem(itemout).getInputStream()), cost));
 	}
 	
 	@Override

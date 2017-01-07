@@ -4,6 +4,7 @@ import com.blamejared.fluxedcrystals.tileentities.crystal.TileEntityCrystalClust
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.*;
 import net.minecraftforge.fml.server.FMLServerHandler;
 
@@ -36,7 +37,9 @@ public class MessageCrystalClusterSyncClient implements IMessage, IMessageHandle
 	
 	@Override
 	public IMessage onMessage(MessageCrystalClusterSyncClient message, MessageContext ctx) {
-		FMLServerHandler.instance().getServer().addScheduledTask(() -> handle(message, ctx));
+		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+//		if(FMLServerHandler.instance().getServer() != null)
+//			FMLServerHandler.instance().getServer().addScheduledTask(() -> handle(message, ctx));
 		return null;
 	}
 	

@@ -9,27 +9,24 @@ import net.minecraft.util.math.BlockPos;
 public class CrystalOre {
 	
 	private String name;
-	private String oreDict;
 	private IBlockState state;
 	private BlockPos pos;
 	
-	public static final CrystalOre NULL = new CrystalOre("null","null", Blocks.AIR.getDefaultState(), BlockPos.ORIGIN);
+	public static final CrystalOre NULL = new CrystalOre("null", Blocks.AIR.getDefaultState(), BlockPos.ORIGIN);
 	
 	public CrystalOre() {
-		this("null","null", Blocks.AIR.getDefaultState(), BlockPos.ORIGIN);
+		this("null", Blocks.AIR.getDefaultState(), BlockPos.ORIGIN);
 	}
 	
 	
-	public CrystalOre(String name, String oreDict, IBlockState state, BlockPos pos) {
+	public CrystalOre(String name, IBlockState state, BlockPos pos) {
 		this.name = name;
-		this.oreDict = oreDict;
 		this.state = state;
 		this.pos = pos;
 	}
 	
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setString("name", name);
-		tag.setString("oreDict", oreDict);
 		tag.setString("block", state.getBlock().getRegistryName().toString());
 		tag.setInteger("meta", state.getBlock().getMetaFromState(state));
 		tag.setLong("pos", pos.toLong());
@@ -37,7 +34,7 @@ public class CrystalOre {
 	}
 	
 	public static CrystalOre readFromNBT(NBTTagCompound tag) {
-		return new CrystalOre(tag.getString("name"), tag.getString("oreDict"), Block.getBlockFromName(tag.getString("block")).getDefaultState().getBlock().getStateFromMeta(tag.getInteger("meta")), BlockPos.fromLong(tag.getLong("pos")));
+		return new CrystalOre(tag.getString("name"), Block.getBlockFromName(tag.getString("block")).getDefaultState().getBlock().getStateFromMeta(tag.getInteger("meta")), BlockPos.fromLong(tag.getLong("pos")));
 	}
 	
 	public String getName() {
@@ -65,18 +62,10 @@ public class CrystalOre {
 	}
 	
 	
-	public String getOreDict() {
-		return oreDict;
-	}
-	
-	public void setOreDict(String oreDict) {
-		this.oreDict = oreDict;
-	}
-	
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("CrystalOre{");
-		sb.append("oreDict='").append(oreDict).append('\'');
+		sb.append("name='").append(name).append('\'');
 		sb.append(", state=").append(state);
 		sb.append(", pos=").append(pos);
 		sb.append('}');

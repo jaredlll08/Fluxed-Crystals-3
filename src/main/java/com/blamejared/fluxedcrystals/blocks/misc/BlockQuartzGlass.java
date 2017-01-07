@@ -1,5 +1,6 @@
 package com.blamejared.fluxedcrystals.blocks.misc;
 
+import com.blamejared.fluxedcrystals.blocks.FCBlocks;
 import com.blamejared.fluxedcrystals.blocks.crystal.BlockCrystalCore;
 import com.blamejared.fluxedcrystals.items.misc.ItemTuningFork;
 import com.teamacronymcoders.base.blocks.BlockBase;
@@ -38,6 +39,8 @@ public class BlockQuartzGlass extends BlockBase {
 			BlockPos core = getNearestCore(worldIn, pos, new ArrayList<>());
 			if(!core.equals(BlockPos.ORIGIN)) {
 				((BlockCrystalCore) worldIn.getBlockState(core).getBlock()).activateCrystal(worldIn, playerIn, core);
+			}else{
+				worldIn.setBlockState(pos, FCBlocks.CRYSTAL_CLUSTER.getDefaultState());
 			}
 			return true;
 		}

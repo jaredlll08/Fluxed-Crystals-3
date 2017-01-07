@@ -7,6 +7,7 @@ import com.blamejared.fluxedcrystals.reference.Reference;
 import com.blamejared.fluxedcrystals.tileentities.crystal.*;
 import com.blamejared.fluxedcrystals.util.models.OBJColourLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
@@ -54,5 +55,10 @@ public class ClientProxy extends ServerProxy {
 	
 	public World getWorld() {
 		return FMLClientHandler.instance().getClient().theWorld;
+	}
+	
+	@Override
+	public EntityPlayer getClientPlayer() {
+		return FMLClientHandler.instance().getClient().thePlayer;
 	}
 }

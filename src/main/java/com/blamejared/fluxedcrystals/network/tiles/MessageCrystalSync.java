@@ -12,6 +12,8 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.*;
 
+import java.util.*;
+
 public class MessageCrystalSync implements IMessage, IMessageHandler<MessageCrystalSync, IMessage> {
 	
 	private BlockPos pos;
@@ -19,9 +21,8 @@ public class MessageCrystalSync implements IMessage, IMessageHandler<MessageCrys
 	private CrystalOre currentType;
 	private float selectedCost;
 	private float currentCost;
-	private BiMap<BlockPos, CrystalOre> stateCache = HashBiMap.create();
+	private HashMap<BlockPos.MutableBlockPos, CrystalOre> stateCache = new HashMap<>();
 	private boolean stateCacheDepleted;
-	private boolean shouldPlaceCrystals;
 	
 	public MessageCrystalSync() {
 		
@@ -35,7 +36,6 @@ public class MessageCrystalSync implements IMessage, IMessageHandler<MessageCrys
 		this.currentCost = tile.getCurrentCost();
 		this.stateCache = tile.getStateCache();
 		this.stateCacheDepleted = tile.isStateCacheDepleted();
-		this.shouldPlaceCrystals = tile.isShouldPlaceCrystals();
 	}
 	
 	@Override
@@ -54,9 +54,8 @@ public class MessageCrystalSync implements IMessage, IMessageHandler<MessageCrys
 		this.currentCost = buf.readFloat();
 		int size = buf.readInt();
 		for(int i = 0; i < size; i++) {
-			stateCache.put(BlockPos.fromLong(buf.readLong()), CrystalOre.readFromNBT(ByteBufUtils.readTag(buf)));
+			stateCache.put(new BlockPos.MutableBlockPos(BlockPos.fromLong(buf.readLong())), CrystalOre.readFromNBT(ByteBufUtils.readTag(buf)));
 		}
-		this.shouldPlaceCrystals = buf.readBoolean();
 	}
 	
 	@Override
@@ -73,8 +72,6 @@ public class MessageCrystalSync implements IMessage, IMessageHandler<MessageCrys
 			buf.writeLong(key.toLong());
 			ByteBufUtils.writeTag(buf, val.writeToNBT(new NBTTagCompound()));
 		});
-		
-		buf.writeBoolean(this.shouldPlaceCrystals);
 		
 	}
 	
@@ -97,7 +94,6 @@ public class MessageCrystalSync implements IMessage, IMessageHandler<MessageCrys
 				tile.setSelectedTypeCost(message.selectedCost);
 				tile.setStateCache(message.stateCache);
 				tile.setStateCacheDepleted(message.stateCacheDepleted);
-				tile.setShouldPlaceCrystals(message.shouldPlaceCrystals);
 			}
 		}
 	}

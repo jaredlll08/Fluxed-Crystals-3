@@ -9,8 +9,6 @@ import com.blamejared.fluxedcrystals.blocks.crystal.BlockCrystal;
 import com.blamejared.fluxedcrystals.client.particle.ParticleBeam;
 import com.blamejared.fluxedcrystals.client.sounds.FCSounds;
 import com.blamejared.fluxedcrystals.network.tiles.*;
-import com.google.common.collect.*;
-import com.teamacronymcoders.base.items.IIsHidden;
 import com.teamacronymcoders.base.tileentities.TileEntityBase;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
@@ -19,7 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -35,8 +32,7 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 	private boolean activated = false;
 	private int activatingTime = 100;
 	
-	
-	private BiMap<BlockPos, CrystalOre> stateCache = HashBiMap.create();
+	private HashMap<BlockPos.MutableBlockPos, CrystalOre> stateCache = new HashMap<>();
 	
 	private CrystalOre selectedType = null;
 	private CrystalOre currentType = null;
@@ -117,15 +113,17 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 			if(stateCache.isEmpty() && !stateCacheDepleted) {
 				if(!worldObj.isRemote) {
 					if(selectedType != null && currentCost >= selectedTypeCost) {
-						while((currentCost -= selectedTypeCost) > 0) {
-							BlockPos clusterPos = getRandomEmptyPos(getPos(), 5);
-							if(worldObj.getBlockState(clusterPos).getBlock() == FCBlocks.CRYSTAL_CLUSTER) {
-								((TileEntityCrystalCluster) worldObj.getTileEntity(clusterPos)).setAmount(	((TileEntityCrystalCluster) worldObj.getTileEntity(clusterPos)).getAmount()+1);
-							} else {
-								worldObj.setBlockState(clusterPos, FCBlocks.CRYSTAL_CLUSTER.getDefaultState());
+						BlockPos clusterPos = getRandomCrystalPos(getPos(), 5);
+						while(worldObj.getBlockState(clusterPos).getBlock() == FCBlocks.CRYSTAL_CLUSTER && (currentCost -= selectedTypeCost) > 0) {
+							
+							if(((TileEntityCrystalCluster) worldObj.getTileEntity(clusterPos)).getCrystalType() == null || ((TileEntityCrystalCluster) worldObj.getTileEntity(clusterPos)).getCrystalType().getName().isEmpty()) {
 								((TileEntityCrystalCluster) worldObj.getTileEntity(clusterPos)).setCrystalType(CrystalRegistry.getCrystalFromName(selectedType.getName()));
+								
+								worldObj.getTileEntity(clusterPos).markDirty();
+								FluxedCrystals.INSTANCE.getPacketHandler().sendToAllAround(new MessageCrystalClusterSync(((TileEntityCrystalCluster) worldObj.getTileEntity(clusterPos))), new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
+								
 							}
-							FluxedCrystals.INSTANCE.getPacketHandler().sendToAllAround(new MessageCrystalClusterSync(((TileEntityCrystalCluster) worldObj.getTileEntity(clusterPos))), new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
+							clusterPos = getRandomCrystalPos(getPos(), 5);
 							
 						}
 						currentCost = 0;
@@ -140,13 +138,9 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 						BlockPos.getAllInBox(pos.offset(EnumFacing.DOWN, pos.getY() - 2).west(16).north(16), pos.east(16).south(16)).forEach(pos -> {
 							if(!worldObj.isAirBlock(pos) && !(worldObj.getBlockState(pos).getBlock() instanceof BlockLiquid) || (worldObj.getTileEntity(pos) != null && worldObj.getTileEntity(pos) instanceof IHarvestable && (((IHarvestable) worldObj.getTileEntity(pos)).isHarvestable()))) {
 								ItemStack stack = new ItemStack(worldObj.getBlockState(pos).getBlock());
-								int[] ids = OreDictionary.getOreIDs(stack);
-								for(int i1 : ids) {
-									if(OreDictionary.getOreName(i1).startsWith("ore")) {
-										stateCache.put(pos, new CrystalOre(CrystalRegistry.getCrystalFromOreDict(OreDictionary.getOreName(i1)).getName(), OreDictionary.getOreName(i1), worldObj.getBlockState(pos), pos));
-										break;
-									}
-									
+								Crystal crystal = CrystalRegistry.getCrystalFromBlock(stack);
+								if(crystal != null) {
+									stateCache.put(new BlockPos.MutableBlockPos(pos), new CrystalOre(crystal.getName(), worldObj.getBlockState(pos), pos));
 								}
 							}
 						});
@@ -155,7 +149,7 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 					
 				}
 			} else if(!stateCache.isEmpty() && !worldObj.isRemote) {
-				if(selectedType ==null) {
+				if(selectedType == null) {
 					List<CrystalOre> positions = new ArrayList<>(stateCache.values());
 					
 					CrystalOre current = null;
@@ -182,9 +176,9 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 						if(worldObj.getBlockState(currentType.getPos()).equals(currentType.getState())) {
 							worldObj.setBlockToAir(currentType.getPos());
 							currentCost += CrystalRegistry.getCrystalFromName(currentType.getName()).getCost();
-							System.out.println(currentCost + ":" + stateCache.size() + ":" + angle++);
-							dirty = true;
+							//							dirty = true;
 							stateCache.remove(keys.get(chosenPos), values.get(chosenPos));
+							System.out.println(stateCache.size() + ":" +angle++);
 						}
 					}
 				}
@@ -192,32 +186,37 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 			
 			
 			if(!worldObj.isRemote && dirty) {
+				FluxedCrystals.INSTANCE.getPacketHandler().sendToAllAround(new MessageCrystalSync(this), new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
 				markDirty();
 			}
 		}
 		
 	}
 	
-	public BlockPos getRandomEmptyPos(BlockPos base, int range) {
-		BlockPos pos = BlockPos.ORIGIN;
-		int triedCount = 0;
-		while(pos == BlockPos.ORIGIN) {
-			if(triedCount++ > 30) {
-				return getRandomEmptyPos(base.down(), range);
+	public BlockPos getRandomCrystalPos(BlockPos base, int range) {
+		List<BlockPos> clusters = new ArrayList<>();
+		BlockPos.getAllInBox(base.down(range).north(range).west(range), base.up(range).south(range).east(range)).forEach(pos -> {
+			if(worldObj.getBlockState(pos).getBlock() == FCBlocks.CRYSTAL_CLUSTER) {
+				clusters.add(pos);
 			}
-			BlockPos newPos = new BlockPos(base.getX() + worldObj.rand.nextInt(range * 2) - range, base.getY() + worldObj.rand.nextInt(range * 2) - range, base.getZ() + worldObj.rand.nextInt(range * 2) - range);
-			if((worldObj.getBlockState(newPos).getBlock() == FCBlocks.CRYSTAL_CLUSTER) || worldObj.isAirBlock(newPos) && !worldObj.isAirBlock(newPos.down()) && !(worldObj.getBlockState(newPos.down()).getBlock() instanceof IIsHidden)) {
-				pos = newPos;
-			}
-		}
-		return pos;
+		});
+		return clusters.size() > 0 ? clusters.get(worldObj.rand.nextInt(clusters.size())) : base;
+		//		while(pos == BlockPos.ORIGIN) {
+		//			if(triedCount++ > 30) {
+		//				return getRandomCrystalPos(base.down(), range);
+		//			}
+		//			BlockPos newPos = new BlockPos(base.getX() + worldObj.rand.nextInt(range * 2) - range, base.getY() + worldObj.rand.nextInt(range * 2) - range, base.getZ() + worldObj.rand.nextInt(range * 2) - range);
+		//			if((worldObj.getBlockState(newPos).getBlock() == FCBlocks.CRYSTAL_CLUSTER)) {
+		//				pos = newPos;
+		//			}
+		//		}
+		//		return pos;
 	}
 	
 	
 	@Override
 	public void markDirty() {
 		super.markDirty();
-		FluxedCrystals.INSTANCE.getPacketHandler().sendToAllAround(new MessageCrystalSync(this), new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 128D));
 	}
 	
 	@Nonnull
@@ -231,6 +230,7 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 			data.setTag("currentType", currentType.writeToNBT(new NBTTagCompound()));
 		data.setFloat("selectedTypeCost", selectedTypeCost);
 		data.setFloat("currentCost", currentCost);
+		data.setBoolean("stateCacheDepleted", stateCacheDepleted);
 		return super.writeToNBT(data);
 	}
 	
@@ -245,6 +245,7 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 			this.currentType = CrystalOre.readFromNBT(data.getCompoundTag("currentType"));
 		this.selectedTypeCost = data.getFloat("selectedTypeCost");
 		this.currentCost = data.getFloat("currentCost");
+		this.stateCacheDepleted = data.getBoolean("stateCacheDepleted");
 	}
 	
 	@Override
@@ -268,11 +269,11 @@ public class TileEntityCrystal extends TileEntityBase implements ITickable, ICry
 		this.pylons = pylons;
 	}
 	
-	public BiMap<BlockPos, CrystalOre> getStateCache() {
+	public HashMap<BlockPos.MutableBlockPos, CrystalOre> getStateCache() {
 		return stateCache;
 	}
 	
-	public void setStateCache(BiMap<BlockPos, CrystalOre> stateCache) {
+	public void setStateCache(HashMap<BlockPos.MutableBlockPos, CrystalOre> stateCache) {
 		this.stateCache = stateCache;
 	}
 	

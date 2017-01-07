@@ -1,19 +1,20 @@
 package com.blamejared.fluxedcrystals.api.crystals;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class Crystal {
 	
 	private final String name;
-	private final String oredictIn;
-	private final String oredictOut;
+	private final ItemStack blockIn;
+	private final ItemStack itemOut;
 	private int colour;
 	private final float cost;
 	
-	public Crystal(String name, String oredictIn, String oredictOut, int colour, float cost) {
+	public Crystal(String name, ItemStack blockIn, ItemStack itemOut, int colour, float cost) {
 		this.name = name;
-		this.oredictIn = oredictIn;
-		this.oredictOut = oredictOut;
+		this.blockIn = blockIn;
+		this.itemOut = itemOut;
 		this.colour = colour;
 		this.cost = cost;
 	}
@@ -22,12 +23,12 @@ public class Crystal {
 		return name;
 	}
 	
-	public String getOredictIn() {
-		return oredictIn;
+	public ItemStack getBlockIn() {
+		return blockIn;
 	}
 	
-	public String getOredictOut() {
-		return oredictOut;
+	public ItemStack getItemOut() {
+		return itemOut;
 	}
 	
 	public int getColour() {
@@ -44,23 +45,24 @@ public class Crystal {
 	
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setString("name", name);
-		tag.setString("oreDictIn", oredictIn);
-		tag.setString("oreDictOut", oredictIn);
+		System.out.println(toString());
+		tag.setTag("blockIn", blockIn.writeToNBT(new NBTTagCompound()));
+		tag.setTag("itemOut", itemOut.writeToNBT(new NBTTagCompound()));
 		tag.setInteger("colour", colour);
 		tag.setFloat("cost", cost);
 		return tag;
 	}
 	
 	public static Crystal readFromNBT(NBTTagCompound tag) {
-		return new Crystal(tag.getString("name"), tag.getString("oreDictIn"), tag.getString("oreDictOut"), tag.getInteger("colour"), tag.getInteger("cost"));
+		return new Crystal(tag.getString("name"), ItemStack.loadItemStackFromNBT(tag.getCompoundTag("blockIn")), ItemStack.loadItemStackFromNBT(tag.getCompoundTag("itemOut")), tag.getInteger("colour"), tag.getInteger("cost"));
 	}
 	
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("Crystal{");
 		sb.append("name='").append(name).append('\'');
-		sb.append(", oredictIn='").append(oredictIn).append('\'');
-		sb.append(", oredictOut='").append(oredictOut).append('\'');
+		sb.append(", blockIn=").append(blockIn);
+		sb.append(", itemOut=").append(itemOut);
 		sb.append(", colour=").append(colour);
 		sb.append(", cost=").append(cost);
 		sb.append('}');

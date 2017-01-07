@@ -1,12 +1,14 @@
 package com.blamejared.fluxedcrystals.network.tiles;
 
 import com.blamejared.fluxedcrystals.api.crystals.Crystal;
+import com.blamejared.fluxedcrystals.events.ClientEventHandler;
 import com.blamejared.fluxedcrystals.tileentities.crystal.TileEntityCrystalCluster;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.*;
@@ -52,15 +54,17 @@ public class MessageCrystalClusterSync implements IMessage, IMessageHandler<Mess
 	}
 	
 	private void handle(MessageCrystalClusterSync message, MessageContext ctx) {
-		if(FMLClientHandler.instance().getClient().theWorld != null) {
-			
-			TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(message.pos);
-			if(tileEntity instanceof TileEntityCrystalCluster) {
-				TileEntityCrystalCluster tile = (TileEntityCrystalCluster) tileEntity;
-				tile.setCrystalType(message.crystal);
-				tile.setAmount(message.amount);
-				FMLClientHandler.instance().getClient().theWorld.markBlockRangeForRenderUpdate(message.pos, message.pos);
-			}
-		}
+				ClientEventHandler.crystalMap.put(message.pos, message.crystal);
+//		World world = FMLClientHandler.instance().getClient().theWorld;
+//		if(world != null) {
+			//			//TODO place tile down!
+//			TileEntity tileEntity = world.getTileEntity(message.pos);
+//			if(world.getTileEntity(message.pos) instanceof TileEntityCrystalCluster) {
+//				TileEntityCrystalCluster tile = (TileEntityCrystalCluster) tileEntity;
+//				tile.setCrystalType(message.crystal);
+//				tile.setAmount(message.amount);
+//				FMLClientHandler.instance().getClient().theWorld.markBlockRangeForRenderUpdate(message.pos, message.pos);
+//			}
+//		}
 	}
 }

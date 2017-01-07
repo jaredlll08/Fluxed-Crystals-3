@@ -1,6 +1,7 @@
 package com.blamejared.fluxedcrystals.proxies;
 
 import com.blamejared.fluxedcrystals.events.CommonEventHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.server.FMLServerHandler;
@@ -25,5 +26,10 @@ public class ServerProxy {
 	
 	public World getWorld(){
 		return FMLServerHandler.instance().getServer().getEntityWorld();
+	}
+	
+	
+	public EntityPlayer getClientPlayer(){
+		return null;
 	}
 }

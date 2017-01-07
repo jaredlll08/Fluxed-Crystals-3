@@ -2,9 +2,14 @@ package com.blamejared.fluxedcrystals.api.registries;
 
 import com.blamejared.fluxedcrystals.api.crystals.Crystal;
 import com.blamejared.fluxedcrystals.reference.Reference;
+import com.blamejared.fluxedcrystals.util.json.StackHelper;
 import com.google.gson.*;
+import com.google.gson.stream.*;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class CrystalRegistry {
@@ -28,9 +33,9 @@ public class CrystalRegistry {
 		return getCrystalMap().get(name);
 	}
 	
-	public static Crystal getCrystalFromOreDict(String oreDict) {
+	public static Crystal getCrystalFromBlock(ItemStack block) {
 		for(Map.Entry<String, Crystal> entry : crystalMap.entrySet()) {
-			if(entry.getValue().getOredictIn().equals(oreDict)) {
+			if(entry.getValue().getBlockIn().getItem() == block.getItem()) {
 				return entry.getValue();
 			}
 		}
@@ -38,7 +43,21 @@ public class CrystalRegistry {
 	}
 	
 	public static void dump(boolean overide) {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(ItemStack.class, new TypeAdapter<ItemStack>() {
+			
+			@Override
+			public void write(JsonWriter out, ItemStack value) throws IOException {
+				out.value(StackHelper.getStringFromStack(value));
+				
+			}
+			
+			@Override
+			public ItemStack read(JsonReader in) throws IOException {
+				String next = in.nextString();
+				System.out.println(next);
+				return StackHelper.getStackFromString(next);
+			}
+		}).create();
 		File jsonFile = new File(Reference.configDirectory, "crystal_data.json");
 		boolean existed = true;
 		if(!jsonFile.exists()) {
